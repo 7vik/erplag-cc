@@ -1,0 +1,44 @@
+## ERPLAG Rules - corrected
+
+The start symbol is: <program>
+EPS denotes the empty string
+New nonterminals introduced are: <input_plist_lr>, <output_plist_lr>, <idList_lr>, <arithmeticExpr_lr>, <term_lr>  
+
+- <program> -> <moduleDeclarations> <otherModules> <driverModule> <otherModules>
+- <moduleDeclarations> -> <moduleDeclaration> <moduleDeclarations> | EPS
+- <moduleDeclaration> -> DECLARE MODULE ID SEMICOL
+- <otherModules> -> <module> <otherModules> | EPS
+- <driverModule> -> DEF DRIVER PROGRAM ENDDEF <moduleDef>
+- <module> -> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef>
+- <ret> -> RETURNS SQBP <output_plist> SQBC SEMICOL | EPS
+- <input_plist_lr> -> COMMA ID COLON <dataType> <input_plist_lr> | EPS
+- <input_plist> -> ID COLON <dataType> <input_plist_lr>
+- <output_plist_lr> -> COMMA ID COLON <type> <output_plist_lr> | EPS
+- <output_plist> -> ID COLON <type> <output_plist_lr>
+- <dataType> -> INTEGER | REAL | BOOLEAN | ARRAY SQBO <range> SQBC OF <type>
+- <type> -> INTEGER | REAL | BOOLEAN
+- <moduleDef> -> START <statements> END
+- <statements> -> <statement> <statements> | EPS
+- <statement> -> <ioStmt> | <simpleStmt> | <declareStmt> | <conditionalStmt> | <iterativeStmt>
+- <ioStmt> -> GET_VALUE BO ID BC SEMICOL | PRINT BO <var> BC SEMICOL
+- <var> -> ID <whichId> | NUM | RNUM
+- <whichId> -> SQBO ID SQBC | EPS
+- <simpleStmt> -> <assignmentStmt> | <moduleReuseStmt>
+- <assignmentStmt> -> ID <whichStmt>
+- <whichStmt> -> <lvalueIDStmt> | <lvalueARRStmt>
+- <lvalueIDStmt> -> ASSIGNOP <expression> SEMICOL
+- <lvalueARRStmt> -> SQBO <index> SQBC ASSIGNOP <expression> SEMICOL
+- <index> -> NUM | ID
+- <moduleReuseStmt> -> <optional> USE MODULE ID WITH PARAMETERS <idList> SEMICOL
+- <optional> -> SQBO <idList> SQBC ASSIGNOP | EPS
+- <idList_lr> -> COMMA ID <idList_lr> | EPS
+- <idList> -> ID <idList_lr> 
+- <expression> -> <arithmeticExpr> | <booleanExpr>
+- <arithmeticExpr_lr> -> <op> <term> <arithmeticExpr_lr> | EPS
+- <arithmeticExpr> -> <term> <arithmeticExpr_lr>
+- <term_lr> -> <op> <factor> <term_lr> | EPS
+- <term> -> <factor> <term_lr>
+- <factor> -> BO <arithmeticExpr> BC | <var>
+- <op> -> PLUS | MINUS | MUL | DIV
+- 
+

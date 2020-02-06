@@ -1,4 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct 
+typedef struct linked_list
+{
+    void *
+} LIST;
