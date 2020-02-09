@@ -28,3 +28,11 @@
 **Section 2.3**
 
 IMP: Definition of <caseStmt> doesn't have a base case. Need to make modifications appropriately.
+
+**Section 2.4**
+
+//correct this
+- <moduleReuseStmt> -> <optional> USE ID WITH PARAMETERS <idList> SEMICOL
+
+//this one's fine
+- <optional> -> SQBO <idList> SQBC ASSIGNOP | EPS
