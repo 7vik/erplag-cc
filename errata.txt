@@ -1,15 +1,17 @@
 *************************************
 ***** TENTATIVE ERRATA ******
-***** COMPILER PROJECT *****
+***** COMPILER PROJECT ******
 *************************************
-Section 2.1
+
+**Section 2.1**
+
 //modify
 - <datatype>  -> INTEGER | REAL | BOOLEAN | ARRAY SQBO <rangeARR> SQBC OF <type>
 
 //add
 - <rangeARR> -> <index> RANGEOP <index>
 
-Section 2.2
+**Section 2.2**
 
 //modify
 - <arithmeticExpr> -> <term> <arithmeticExpr_lr>
@@ -22,3 +24,7 @@ Section 2.2
 //add
 - <op1> -> PLUS | MINUS
 - <op2> -> MUL | DIV
+
+**Section 2.3**
+
+IMP: Definition of <caseStmt> doesn't have a base case. Need to make modifications appropriately.
