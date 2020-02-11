@@ -52,8 +52,12 @@
 <idList_lr> -> COMMA ID <idList_lr> 
 <idList_lr> -> EPS
 <idList> -> ID <idList_lr> 
-<expression> -> <arithmeticExpr> 
-<expression> -> <booleanExpr>
+<expression> -> <opt_expr> <opt_expr_lr>
+<opt_expr_lr> -> <logicalOp> <opt_expr> <opt_expr_lr>
+<opt_expr_lr> -> EPS
+<opt_expr> -> <arithmeticExpr> <one_more_opt>
+<one_more_opt> -> <relationalOp> <arithmeticExpr> <one_more_opt>
+<one_more_opt> -> EPS
 <arithmeticExpr_lr> -> <op1> <term> <arithmeticExpr_lr> 
 <arithmeticExpr_lr> -> EPS
 <arithmeticExpr> -> <term> <arithmeticExpr_lr>
