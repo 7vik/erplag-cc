@@ -90,7 +90,7 @@ New nonterminals introduced are: <input_plist_lr>, <output_plist_lr>, <idList_lr
 - <booleanExpr_lr> -> EPS
 - <booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr> <booleanExpr_lr> 
 - <booleanExpr> -> BO <booleanExpr> BC <booleanExpr_lr>
-- <declareStmt> -> DECLARE <idList> COLON <dataType> SEMICOL
+- <declareStmt> -> DECLARE <idList> COLON <datatype> SEMICOL
 - <value> -> NUM 
 - <value> -> TRUE 
 - <value> -> FALSE
