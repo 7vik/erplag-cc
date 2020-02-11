@@ -24,6 +24,29 @@ void print_rule(RULE *lst)
     return;
 }
 
+void print_grammar(RULE* grammar[], int index)
+{
+    for(int i = 0; i < index; i++)
+        print_rule(grammar[index]);
+}
+
+// returns 0 if the token is non-terminal
+int is_terminal(char* tnt)
+{
+    if (tnt == NULL)
+    {
+        printf("In is_terminal: NULL String\n");
+        exit(2);
+    }
+
+    if (tnt[0] == '<')
+        return 0;
+    else
+        return 1;
+    
+}
+
+
 int main()
 {
     FILE *f = fopen(RULE_FILE_PATH, "r");
@@ -34,10 +57,46 @@ int main()
     }
     char line[200];
     RULE *grammar[150];
+    int rule_count = 0;
+
     while (EOF != fscanf(f, "%[^\n]\n", line))
     {
+        char* token = strtok(line, " ");
+
+        if (is_terminal(token))
+        {
+            printf("Error, first token cannot be terminal: got %s", token);
+            exit(3);
+        }
+
+        // add non terminal as head
+        RULE* cur_pointer = grammar[rule_count];
+        grammar[rule_count] = (RULE*)malloc(sizeof(RULE));
+        strcpy(grammar[rule_count]->tnt, token);
+        grammar[rule_count]->next = NULL;
+        
+        printf("here\n");
+        while(token != NULL)
+        {
+            //printf("%s %d\n", token, is_terminal(token));
+            if (strcmp(token, "->") == 0)
+            {
+                continue;
+                token = strtok(NULL, " ");
+            }
+
+            RULE* node = (RULE*) malloc(sizeof(RULE));
+            strcpy(node->tnt, token);
+            node->next = NULL;
+            cur_pointer->next = node;
+            cur_pointer = cur_pointer->next; 
+            token = strtok(NULL, " ");
+        }
+        printf("here\n");
+        rule_count++;
         
     }
+    
     fclose(f);
     return 0;
 }
