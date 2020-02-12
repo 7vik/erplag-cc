@@ -53,7 +53,8 @@ int is_terminal(char* tnt)
 }
 
 RULE* exist_first(RULE* first_set[], char* search_token)
-{
+{   
+    //printf("%s", search_token);
     for (int i = 0; i < MAX_RULE; i++)
     {
         if (first_set[i] == NULL)
@@ -61,7 +62,7 @@ RULE* exist_first(RULE* first_set[], char* search_token)
             return NULL;
         }
 
-        if(strcmp(first_set[i]->tnt, search_token))
+        if(strcmp(first_set[i]->tnt, search_token) == 0)
             return first_set[i];
     }
 
@@ -92,7 +93,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
         for (int i = 0; i < index; i++)
         {
 
-            if(strcmp(token, grammar[i]->tnt))
+            if(strcmp(token, grammar[i]->tnt) == 0)
             {
                 printf("match: %s\n", token);
                 RULE* temp_set = return_first(first_table, grammar, index, grammar[i]->next->tnt);
@@ -146,9 +147,10 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
     return first_set;
 
 }
-RULE* construct_first_set(RULE* grammar[], int index)
+RULE** construct_first_set(RULE* grammar[], int index)
 {
-    RULE *first_table[MAX_RULE];
+    
+    RULE **first_table = (RULE**)malloc(MAX_RULE * sizeof(RULE*));
     int count = 0;
     for (int i = 0; i < MAX_RULE; i++)
     {
@@ -164,9 +166,15 @@ RULE* construct_first_set(RULE* grammar[], int index)
             count++;
         }
 
-        print_grammar(first_table, count);
+        
     }
+    printf("%d", count);
+    print_grammar(first_table, count);
+    return first_table;
 
+    /*****************To DO**********************
+     * Remove duplicates from first_table
+     */
 }
 
 
@@ -220,7 +228,9 @@ int main()
         rule_count++;
         
     }
-    print_grammar(grammar, rule_count-1);
+    //print_grammar(grammar, rule_count-1);
+
+    construct_first_set(grammar, rule_count - 1);
     fclose(f);
     return 0;
 }
