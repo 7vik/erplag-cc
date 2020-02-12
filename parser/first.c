@@ -6,6 +6,7 @@
 
 #define RULE_FILE_PATH "../grammar/grammar.txt"
 #define TOKEN_MAX_SIZE 50
+#define MAX_RULE 150
 
 typedef struct grammar_rule
 {
@@ -14,6 +15,7 @@ typedef struct grammar_rule
     struct grammar_rule *next;
 
 } RULE;
+
 
 void print_rule(RULE *lst)
 {
@@ -50,6 +52,110 @@ int is_terminal(char* tnt)
     
 }
 
+int exist_first(RULE* first_set[], char* search_token)
+{
+    for (int i = 0; i < MAX_RULE; i++)
+    {
+        if (first_set[i] == NULL)
+        {
+            return NULL;
+        }
+
+        if(strcmp(first_set[i]->tnt, search_token))
+            return first_set[i];
+    }
+
+    return NULL;
+}
+
+RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
+{
+    if((RULE* set = exist_first(first_table, token)) != NULL)
+        return set;
+    RULE* first_set = (RULE*) malloc(sizeof(RULE));
+    RULE* cur_ptr = first_set;
+    strcmp(first_set->tnt, "\0");
+    first_set->next = NULL;
+    if (token == NULL)
+        return NULL;
+    if (is_terminal(token))
+    {
+        //RULE* first_set = (RULE*)malloc(sizeof(RULE));
+        strcpy(first_set->tnt, token);
+        first_set->next = NULL;
+        
+    }
+    
+    else
+    {
+        for (int i = 0; i < index; i++)
+        {
+
+            if(strcmp(token, grammar[i]->tnt))
+            {
+                printf("match: %s\n", token);
+                RULE* temp_set = return_first(grammar, index, grammar[i]->next->tnt);
+                RULE* rule_ptr = grammar[i]->next;
+                while(strcmp(temp_set->tnt, "EPS"))
+                {
+                    if(cur_ptr == first_set)
+                    {
+                        first_set = temp_set;
+                        while(cur_ptr->next != NULL)
+                        {
+                            cur_ptr = cur_ptr->next;
+                        }
+                    }
+                    else
+                    {
+                        cur_ptr->next = temp_set;
+                        while(cur_ptr->next != NULL)
+                        {
+                            cur_ptr = cur_ptr->next;
+                        }
+                    }
+
+                    temp_set = (RULE*) malloc(sizeof(RULE));
+                    if (rule_ptr->next != NULL)
+                    {
+                        temp_set = return_first(grammar, index, rule_ptr->next->tnt);
+                        rule_ptr = rule_ptr->next;
+                    }
+
+                    else
+                    {
+                        cur_ptr->next = (RULE*) malloc(sizeof(RULE));
+                        strcpy(cur_ptr->next->tnt, "EPS");
+                        cur_ptr->next->next = NULL;
+                        break;
+                    }
+
+                }
+
+                if(cur_ptr == first_set)
+                    first_set = temp_set;
+                else
+                    cur_ptr->next = temp_set;
+
+            }
+
+        }
+    }
+    
+    return first_set;
+
+}
+RULE* construct_first_set(RULE* grammar[], int index)
+{
+    RULE *first_set[MAX_RULE];
+
+    for(int i = 0; i < index; i++)
+    {
+        
+    }
+
+}
+
 
 int main()
 {
@@ -60,7 +166,7 @@ int main()
         exit(1);
     }
     char line[200];
-    RULE *grammar[150];
+    RULE *grammar[MAX_RULE];
     int rule_count = 0;
 
     while (EOF != fscanf(f, "%[^\n]\n", line))
@@ -105,3 +211,4 @@ int main()
     fclose(f);
     return 0;
 }
+
