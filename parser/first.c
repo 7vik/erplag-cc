@@ -52,7 +52,7 @@ int is_terminal(char* tnt)
     
 }
 
-int exist_first(RULE* first_set[], char* search_token)
+RULE* exist_first(RULE* first_set[], char* search_token)
 {
     for (int i = 0; i < MAX_RULE; i++)
     {
@@ -69,8 +69,9 @@ int exist_first(RULE* first_set[], char* search_token)
 }
 
 RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
-{
-    if((RULE* set = exist_first(first_table, token)) != NULL)
+{   
+    RULE* set;
+    if((set = exist_first(first_table, token)) != NULL)
         return set;
     RULE* first_set = (RULE*) malloc(sizeof(RULE));
     RULE* cur_ptr = first_set;
@@ -94,7 +95,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
             if(strcmp(token, grammar[i]->tnt))
             {
                 printf("match: %s\n", token);
-                RULE* temp_set = return_first(grammar, index, grammar[i]->next->tnt);
+                RULE* temp_set = return_first(first_table, grammar, index, grammar[i]->next->tnt);
                 RULE* rule_ptr = grammar[i]->next;
                 while(strcmp(temp_set->tnt, "EPS"))
                 {
@@ -118,7 +119,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
                     temp_set = (RULE*) malloc(sizeof(RULE));
                     if (rule_ptr->next != NULL)
                     {
-                        temp_set = return_first(grammar, index, rule_ptr->next->tnt);
+                        temp_set = return_first(first_table ,grammar, index, rule_ptr->next->tnt);
                         rule_ptr = rule_ptr->next;
                     }
 
@@ -147,11 +148,23 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
 }
 RULE* construct_first_set(RULE* grammar[], int index)
 {
-    RULE *first_set[MAX_RULE];
-
+    RULE *first_table[MAX_RULE];
+    int count = 0;
+    for (int i = 0; i < MAX_RULE; i++)
+    {
+        first_table[i] = (RULE*) malloc(sizeof(RULE));
+        strcpy(first_table[i]->tnt, "\0");
+        first_table[i]->next = NULL;
+    }
     for(int i = 0; i < index; i++)
     {
-        
+        if (exist_first(first_table, grammar[i]->tnt) == NULL)
+        {
+            first_table[count] = return_first(first_table, grammar, index, grammar[i]->tnt);
+            count++;
+        }
+
+        print_grammar(first_table, count);
     }
 
 }
