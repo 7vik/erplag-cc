@@ -31,12 +31,14 @@
 <statement> -> <conditionalStmt> 
 <statement> -> <iterativeStmt>
 <ioStmt> -> GET_VALUE BO ID BC SEMICOL 
-<ioStmt> -> PRINT BO <var> BC SEMICOL
+<ioStmt> -> PRINT BO <printOpt> BC SEMICOL
 <var> -> ID <whichId> 
-<var> -> NUM 
+<var> -> NUM
 <var> -> RNUM
 <whichId> -> SQBO <index> SQBC 
 <whichId> -> EPS
+<printOpt> -> <booleanConst>
+<printOpt> -> <var>
 <simpleStmt> -> <assignmentStmt> 
 <simpleStmt> -> <moduleReuseStmt>
 <assignmentStmt> -> ID <whichStmt>
@@ -56,8 +58,11 @@
 <opt_expr_lr> -> <logicalOp> <opt_expr> <opt_expr_lr>
 <opt_expr_lr> -> EPS
 <opt_expr> -> <arithmeticExpr> <one_more_opt>
+<opt_expr> -> <booleanConst>
 <one_more_opt> -> <relationalOp> <arithmeticExpr> <one_more_opt>
 <one_more_opt> -> EPS
+<booleanConst> -> true
+<booleanConst> -> false
 <arithmeticExpr_lr> -> <op1> <term> <arithmeticExpr_lr> 
 <arithmeticExpr_lr> -> EPS
 <arithmeticExpr> -> <term> <arithmeticExpr_lr>
