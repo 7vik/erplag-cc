@@ -5,11 +5,12 @@
 #include<math.h>
 
 #define RULE_FILE_PATH "../grammar/grammar.txt"
+#define TOKEN_MAX_SIZE 50
 
 typedef struct grammar_rule
 {
     // linked list representing a grammar rule (X -> Y1 Y2 Y3) as X -> Y1 -> Y2 -> Y3 -> null
-    char *tnt;
+    char tnt[TOKEN_MAX_SIZE];
     struct grammar_rule *next;
 
 } RULE;
@@ -18,7 +19,7 @@ void print_rule(RULE *lst)
 {
     while(lst != NULL)
     {
-        printf("%s\n",lst->tnt);
+        printf("%s -> ",lst->tnt);
         lst = lst->next;
     }
     return;
@@ -27,7 +28,10 @@ void print_rule(RULE *lst)
 void print_grammar(RULE* grammar[], int index)
 {
     for(int i = 0; i < index; i++)
-        print_rule(grammar[index]);
+    {
+        print_rule(grammar[i]);
+        printf("\n");
+    }   
 }
 
 // returns 0 if the token is non-terminal
@@ -70,19 +74,20 @@ int main()
         }
 
         // add non terminal as head
-        RULE* cur_pointer = grammar[rule_count];
+        
         grammar[rule_count] = (RULE*)malloc(sizeof(RULE));
+        RULE* cur_pointer = grammar[rule_count];
         strcpy(grammar[rule_count]->tnt, token);
         grammar[rule_count]->next = NULL;
-        
-        printf("here\n");
+        token = strtok(NULL, " ");
+        //printf("here\n");
         while(token != NULL)
         {
             //printf("%s %d\n", token, is_terminal(token));
             if (strcmp(token, "->") == 0)
             {
-                continue;
                 token = strtok(NULL, " ");
+                continue;
             }
 
             RULE* node = (RULE*) malloc(sizeof(RULE));
@@ -92,11 +97,11 @@ int main()
             cur_pointer = cur_pointer->next; 
             token = strtok(NULL, " ");
         }
-        printf("here\n");
+        //printf("here\n");
         rule_count++;
         
     }
-    
+    print_grammar(grammar, rule_count-1);
     fclose(f);
     return 0;
 }
