@@ -67,6 +67,7 @@
 <term> -> <factor> <term_lr>
 <factor> -> BO <arithmeticExpr> BC 
 <factor> -> <var>
+<factor> -> <op1> <factor>
 <op> -> PLUS 
 <op> -> MINUS 
 <op> -> MUL 
