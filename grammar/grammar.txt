@@ -87,7 +87,7 @@
 <value> -> TRUE 
 <value> -> FALSE
 <caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> 
-<caseStmt> -> EPS
+<caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL
 <default> -> DEFAULT COLON <statements> BREAK SEMICOL 
 <default> -> EPS
 <conditionalStmt> -> SWITCH BO ID BC START <caseStmt> <default> END
