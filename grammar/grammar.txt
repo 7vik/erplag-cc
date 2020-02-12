@@ -46,7 +46,7 @@
 <lvalueARRStmt> -> SQBO <index> SQBC ASSIGNOP <expression> SEMICOL
 <index> -> NUM 
 <index> -> ID
-<moduleReuseStmt> -> <optional> USE ID WITH PARAMETERS <idList> SEMICOL
+<moduleReuseStmt> -> <optional> USE MODULE ID WITH PARAMETERS <idList> SEMICOL
 <optional> -> SQBO <idList> SQBC ASSIGNOP 
 <optional> -> EPS
 <idList_lr> -> COMMA ID <idList_lr> 
