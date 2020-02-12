@@ -4,7 +4,7 @@
 <moduleDeclaration> -> DECLARE MODULE ID SEMICOL
 <otherModules> -> <module> <otherModules> 
 <otherModules> -> EPS
-<driverModule> -> DEF DRIVER PROGRAM ENDDEF <moduleDef>
+<driverModule> -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef>
 <module> -> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef>
 <ret> -> RETURNS SQBO <output_plist> SQBC SEMICOL 
 <ret> -> EPS
@@ -53,6 +53,7 @@
 <idList_lr> -> EPS
 <idList> -> ID <idList_lr> 
 <expression> -> <opt_expr> <opt_expr_lr>
+<expression> -> <op1> BO 
 <opt_expr_lr> -> <logicalOp> <opt_expr> <opt_expr_lr>
 <opt_expr_lr> -> EPS
 <opt_expr> -> <arithmeticExpr> <one_more_opt>
