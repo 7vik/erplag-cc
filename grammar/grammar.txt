@@ -52,8 +52,12 @@
 <idList_lr> -> COMMA ID <idList_lr> 
 <idList_lr> -> EPS
 <idList> -> ID <idList_lr> 
-<expression> -> <arithmeticExpr> 
-<expression> -> <booleanExpr>
+<expression> -> <opt_expr> <opt_expr_lr>
+<opt_expr_lr> -> <logicalOp> <opt_expr> <opt_expr_lr>
+<opt_expr_lr> -> EPS
+<opt_expr> -> <arithmeticExpr> <one_more_opt>
+<one_more_opt> -> <relationalOp> <arithmeticExpr> <one_more_opt>
+<one_more_opt> -> EPS
 <arithmeticExpr_lr> -> <op1> <term> <arithmeticExpr_lr> 
 <arithmeticExpr_lr> -> EPS
 <arithmeticExpr> -> <term> <arithmeticExpr_lr>
@@ -78,10 +82,6 @@
 <relationalOp> -> GE 
 <relationalOp> -> EQ 
 <relationalOp> -> NE
-<booleanExpr_lr> -> <logicalOp> <booleanExpr> <booleanExpr_lr> 
-<booleanExpr_lr> -> EPS
-<booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr> <booleanExpr_lr> 
-<booleanExpr> -> BO <booleanExpr> BC <booleanExpr_lr>
 <declareStmt> -> DECLARE <idList> COLON <dataType> SEMICOL
 <value> -> NUM 
 <value> -> TRUE 
@@ -93,4 +93,4 @@
 <conditionalStmt> -> SWITCH BO ID BC START <caseStmt> <default> END
 <range> -> NUM RANGEOP NUM
 <iterativeStmt> -> FOR BO ID IN <range> BC START <statements> END 
-<iterativeStmt> -> WHILE BO <booleanExpr> BC START <statements> END
+<iterativeStmt> -> WHILE BO <expression> BC START <statements> END
