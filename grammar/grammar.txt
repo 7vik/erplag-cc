@@ -53,7 +53,6 @@
 <idList_lr> -> EPS
 <idList> -> ID <idList_lr> 
 <expression> -> <opt_expr> <opt_expr_lr>
-<expression> -> <op1> BO 
 <opt_expr_lr> -> <logicalOp> <opt_expr> <opt_expr_lr>
 <opt_expr_lr> -> EPS
 <opt_expr> -> <arithmeticExpr> <one_more_opt>
