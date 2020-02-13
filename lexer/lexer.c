@@ -91,11 +91,6 @@ LEXEME *lexer(FILE *src_file)
     return head;
 }
 
-FILE *get_stream(FILE *fp)
-{
-    
-} 
-
 void remove_comments(char *test_case_file, char *clean_file)
 {
     FILE *f1 = fopen(test_case_file, "r");
