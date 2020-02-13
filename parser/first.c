@@ -4,7 +4,7 @@
 #include<ctype.h>
 #include<math.h>
 
-#define RULE_FILE_PATH "../grammar/grammar.txt"
+#define RULE_FILE_PATH "../parser/grammar_test.txt"
 #define TOKEN_MAX_SIZE 50
 #define MAX_RULE 150
 
@@ -76,7 +76,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
         return set;
     RULE* first_set = (RULE*) malloc(sizeof(RULE));
     RULE* cur_ptr = first_set;
-    strcmp(first_set->tnt, "\0");
+    strcpy(first_set->tnt, "\0");
     first_set->next = NULL;
     if (token == NULL)
         return NULL;
@@ -97,8 +97,10 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
             {
                 printf("match: %s\n", token);
                 RULE* temp_set = return_first(first_table, grammar, index, grammar[i]->next->tnt);
+                printf("%s\n", temp_set->tnt);
+                //exit(0);
                 RULE* rule_ptr = grammar[i]->next;
-                while(strcmp(temp_set->tnt, "EPS"))
+                while(strcmp(temp_set->tnt, "EPS") == 0)
                 {
                     if(cur_ptr == first_set)
                     {
