@@ -73,11 +73,13 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
 {   
     //printf("inside return first: %s\n", token);
     RULE* set;
+    /*
     if((set = exist_first(first_table, token)) != NULL)
     {   
         //printf("first already counted\n");
         return set;
-    }    
+    }
+    */    
     RULE* first_set = (RULE*) malloc(sizeof(RULE));
     RULE* cur_ptr = first_set;
     strcpy(first_set->tnt, "\0");
@@ -107,7 +109,8 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
                 //printf("match: %s\n", token);
                 RULE* temp_set = return_first(first_table, grammar, index, grammar[i]->next->tnt);
                 //printf("enr");
-                //print_rule(temp_set);
+                print_rule(temp_set);
+                printf("\n%s, \n\n", token);
                 //exit(0);
                 RULE* rule_ptr = grammar[i]->next;
                 while(strcmp(temp_set->tnt, "EPS") == 0)
