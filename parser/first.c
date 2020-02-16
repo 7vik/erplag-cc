@@ -9,11 +9,10 @@
 #define MAX_RULE 150
 
 
-typedef enum {"program", "moduleDeclarations", "moduleDeclaration", "otherModules", "driverModule", "module", "ret", "input_plist_lr", "input_plist", "output_plist_lr",
-"output_plist", "datatype", "rangeArr", "type", "moduleDef", "statements", "statement", "ioStmt", "var", "whichId", "printOpt",
-"simpleStmt", "assignmentStmt", "whichStmt", "lvalueIDStmt", "lvalueARRStmt", "index", "module ReuseStmt", "optional", "idList_lr", "idList", "expression",
-"opt_expr_lr", "opt_expr", "one_more_opt", "booleanConst", "arithmeticExpr_ lr", "arithmeticExpr_lr", "arithmeticExpr", "term_lr", "term", "factor", "op",
-"op1", "op2", "logicalOp", "relationalOp", "declareStmt", "value", "caseStmt", "default", "conditionalStmt", "range", "iterativeStmt"} NT;
+typedef enum {program, moduleDeclarations, moduleDeclaration, otherModules, driverModule, module, ret, input_plist_lr, input_plist, output_plist_lr, output_plist,
+datatype, rangeArr, type, moduleDef, statements, statement, ioStmt, var, whichId, printOpt, simpleStmt, assignmentStmt, whichStmt, lvalueIDStmt, lvalueARRStmt,
+index_nt, moduleReuseStmt, optional, idList_lr, idList, expression, opt_expr_lr, opt_expr, one_more_opt, booleanConst, arithmeticExpr_lr, arithmeticExpr, term_lr,
+term, factor, op, op1, op2, logicalOp, relationalOp, declareStmt, value, caseStmt, default_nt, conditionalStmt, range, iterativeStmt} NT;
 
 typedef struct set
 {
@@ -43,9 +42,9 @@ void print_rule(RULE *lst)
     return;
 }
 
-void print_grammar(RULE* grammar[], int index)
+void print_grammar(RULE* grammar[], int idx)
 {
-    for(int i = 0; i < index; i++)
+    for(int i = 0; i < idx; i++)
     {
         print_rule(grammar[i]);
         printf("\n");
@@ -85,7 +84,7 @@ RULE* exist_first(RULE* first_set[], char* search_token)
     return NULL;
 }
 
-RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
+RULE* return_first(RULE* first_table[], RULE* grammar[], int idx, char* token)
 {   
     //printf("inside return first: %s\n", token);
     RULE* set;
@@ -117,13 +116,13 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
     else
     {
 
-        for (int i = 0; i < index; i++)
+        for (int i = 0; i < idx; i++)
         {
 
             if(strcmp(token, grammar[i]->tnt) == 0)
             {
                 //printf("match: %s\n", token);
-                RULE* temp_set = return_first(first_table, grammar, index, grammar[i]->next->tnt);
+                RULE* temp_set = return_first(first_table, grammar, idx, grammar[i]->next->tnt);
                 //printf("enr");
                 print_rule(temp_set);
                 printf("\n%s, \n\n", token);
@@ -151,7 +150,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
                     temp_set = (RULE*) malloc(sizeof(RULE));
                     if (rule_ptr->next != NULL)
                     {
-                        temp_set = return_first(first_table ,grammar, index, rule_ptr->next->tnt);
+                        temp_set = return_first(first_table ,grammar, idx, rule_ptr->next->tnt);
                         rule_ptr = rule_ptr->next;
                     }
 
@@ -178,7 +177,7 @@ RULE* return_first(RULE* first_table[], RULE* grammar[], int index, char* token)
     return first_set;
 
 }
-RULE** construct_first_set(RULE* grammar[], int index)
+RULE** construct_first_set(RULE* grammar[], int idx)
 {
     
     RULE **first_table = (RULE**)malloc(MAX_RULE * sizeof(RULE*));
@@ -189,12 +188,12 @@ RULE** construct_first_set(RULE* grammar[], int index)
         strcpy(first_table[i]->tnt, "\0");
         first_table[i]->next = NULL;
     }
-    for(int i = 0; i < index; i++)
+    for(int i = 0; i < idx; i++)
     {
         if (exist_first(first_table, grammar[i]->tnt) == NULL)
         {
             //first_table[count] = (RULE*) malloc(sizeof(RULE));
-            first_table[count]->next = return_first(first_table, grammar, index, grammar[i]->tnt);
+            first_table[count]->next = return_first(first_table, grammar, idx, grammar[i]->tnt);
             strcpy(first_table[count]->tnt, grammar[i]->tnt);
             //printf("%s\n", grammar[i]->tnt);
             //print_rule(first_table[count]);
@@ -213,11 +212,11 @@ RULE** construct_first_set(RULE* grammar[], int index)
      */
 }
 
-void print_non_terminals(RULE* grammar[], int index)
+void print_non_terminals(RULE* grammar[], int idx)
 {
-    for(int i = 0; i < index; i++)
+    for(int i = 0; i < idx; i++)
     {
-        printf("\"%s\", ", grammar[i]->tnt);
+        printf("%s, ", grammar[i]->tnt);
     }   
 }
 
