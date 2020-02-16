@@ -18,7 +18,7 @@ datatype -> INTEGER
 datatype -> REAL 
 datatype -> BOOLEAN 
 datatype -> ARRAY SQBO rangeArr SQBC OF type
-rangeArr -> index RANGEOP index
+rangeArr -> index_nt RANGEOP index_nt
 type -> INTEGER 
 type -> REAL 
 type -> BOOLEAN
@@ -35,7 +35,7 @@ ioStmt -> PRINT BO printOpt BC SEMICOL
 var -> ID whichId 
 var -> NUM
 var -> RNUM
-whichId -> SQBO index SQBC 
+whichId -> SQBO index_nt SQBC 
 whichId -> EPS
 printOpt -> booleanConst
 printOpt -> var
@@ -45,9 +45,9 @@ assignmentStmt -> ID whichStmt
 whichStmt -> lvalueIDStmt 
 whichStmt -> lvalueARRStmt
 lvalueIDStmt -> ASSIGNOP expression SEMICOL
-lvalueARRStmt -> SQBO index SQBC ASSIGNOP expression SEMICOL
-index -> NUM 
-index -> ID
+lvalueARRStmt -> SQBO index_nt SQBC ASSIGNOP expression SEMICOL
+index_nt -> NUM 
+index_nt -> ID
 moduleReuseStmt -> optional USE MODULE ID WITH PARAMETERS idList SEMICOL
 optional -> SQBO idList SQBC ASSIGNOP 
 optional -> EPS
@@ -94,9 +94,9 @@ value -> TRUE
 value -> FALSE
 caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt 
 caseStmt -> CASE value COLON statements BREAK SEMICOL
-default -> DEFAULT COLON statements BREAK SEMICOL 
-default -> EPS
-conditionalStmt -> SWITCH BO ID BC START caseStmt default END
+default_nt -> default_nt COLON statements BREAK SEMICOL 
+default_nt -> EPS
+conditionalStmt -> SWITCH BO ID BC START caseStmt default_nt END
 range -> NUM RANGEOP NUM
 iterativeStmt -> FOR BO ID IN range BC START statements END 
 iterativeStmt -> WHILE BO expression BC START statements END
