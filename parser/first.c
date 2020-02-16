@@ -8,10 +8,22 @@
 #define TOKEN_MAX_SIZE 50
 #define MAX_RULE 150
 
+/*
+typedef enum {} NT;
+
+typedef struct set
+{
+    NT token;
+    long long int mask;
+} SET;
+
+
+*/
 typedef struct grammar_rule
 {
     // linked list representing a grammar rule (X -> Y1 Y2 Y3) as X -> Y1 -> Y2 -> Y3 -> null
     char tnt[TOKEN_MAX_SIZE];
+    int is_terminal_flag;
     struct grammar_rule *next;
 
 } RULE;
@@ -45,10 +57,10 @@ int is_terminal(char* tnt)
         exit(2);
     }
 
-    if (tnt[0] == '<')
-        return 0;
-    else
+    if (isupper(tnt[0]))
         return 1;
+    else
+        return 0;
     
 }
 
@@ -197,6 +209,14 @@ RULE** construct_first_set(RULE* grammar[], int index)
      */
 }
 
+void print_non_terminals(RULE* grammar[], int index)
+{
+    for(int i = 0; i < index; i++)
+    {
+        printf("\"%s\", ", grammar[i]->tnt);
+    }   
+}
+
 
 int main()
 {
@@ -214,17 +234,12 @@ int main()
     {
         char* token = strtok(line, " ");
 
-        if (is_terminal(token))
-        {
-            printf("Error, first token cannot be terminal: got %s", token);
-            exit(3);
-        }
-
         // add non terminal as head
         
         grammar[rule_count] = (RULE*)malloc(sizeof(RULE));
         RULE* cur_pointer = grammar[rule_count];
         strcpy(grammar[rule_count]->tnt, token);
+        grammar[rule_count]->is_terminal_flag = 0;
         grammar[rule_count]->next = NULL;
         token = strtok(NULL, " ");
         //printf("here\n");
@@ -239,6 +254,7 @@ int main()
 
             RULE* node = (RULE*) malloc(sizeof(RULE));
             strcpy(node->tnt, token);
+            node->is_terminal_flag = is_terminal(token);
             node->next = NULL;
             cur_pointer->next = node;
             cur_pointer = cur_pointer->next; 
@@ -248,9 +264,9 @@ int main()
         rule_count++;
         
     }
-    //print_grammar(grammar, rule_count-1);
+    //print_non_terminals(grammar, rule_count-1);
 
-    construct_first_set(grammar, rule_count - 1);
+    //construct_first_set(grammar, rule_count - 1);
     fclose(f);
     return 0;
 }
