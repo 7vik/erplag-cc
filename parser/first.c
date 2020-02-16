@@ -8,8 +8,12 @@
 #define TOKEN_MAX_SIZE 50
 #define MAX_RULE 150
 
-/*
-typedef enum {} NT;
+
+typedef enum {"program", "moduleDeclarations", "moduleDeclaration", "otherModules", "driverModule", "module", "ret", "input_plist_lr", "input_plist", "output_plist_lr",
+"output_plist", "datatype", "rangeArr", "type", "moduleDef", "statements", "statement", "ioStmt", "var", "whichId", "printOpt",
+"simpleStmt", "assignmentStmt", "whichStmt", "lvalueIDStmt", "lvalueARRStmt", "index", "module ReuseStmt", "optional", "idList_lr", "idList", "expression",
+"opt_expr_lr", "opt_expr", "one_more_opt", "booleanConst", "arithmeticExpr_ lr", "arithmeticExpr_lr", "arithmeticExpr", "term_lr", "term", "factor", "op",
+"op1", "op2", "logicalOp", "relationalOp", "declareStmt", "value", "caseStmt", "default", "conditionalStmt", "range", "iterativeStmt"} NT;
 
 typedef struct set
 {
@@ -18,7 +22,7 @@ typedef struct set
 } SET;
 
 
-*/
+
 typedef struct grammar_rule
 {
     // linked list representing a grammar rule (X -> Y1 Y2 Y3) as X -> Y1 -> Y2 -> Y3 -> null
@@ -264,7 +268,7 @@ int main()
         rule_count++;
         
     }
-    //print_non_terminals(grammar, rule_count-1);
+    print_non_terminals(grammar, rule_count-1);
 
     //construct_first_set(grammar, rule_count - 1);
     fclose(f);
