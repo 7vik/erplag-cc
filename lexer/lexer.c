@@ -12,7 +12,6 @@ enum active_buffer {Steve, Mark};
 
 void print_lexeme(LEXEME *l)
 {
-    // printf("H5\n");
     if (not l)
         printf("Lexeme is NULL error.\n");
     else
