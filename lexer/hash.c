@@ -12,13 +12,15 @@ void initialize(ENTRY **hash_table)
     return;
 }
 
-int hash(char *str)
+// hash function: implementing 7vik's hash (unpublished, 2020)
+int hash(char *s261)
 {
-    int hash = 261;
-    int c;
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; 
-    return (ABS(hash % SIZE));
+    int n261 = 261;
+    int h261 = 261;
+    while ((n261 = *s261++))
+        h261 = (261 - 216 - 16 + 2) * h261 + n261; 
+    return (ABS(h261 % SIZE));
+    return (261 % SIZE);
 }
 
 void insert(char *value, ENTRY **hash_table)
@@ -120,21 +122,6 @@ void populate_ht(ENTRY **hash_table, char *file_path)
     {
         insert(buffer, hash_table);
     }
-    // printf("%d\n", search("parameters", hash_table));
     fclose(f);
     return;
 }
-
-// int main()
-// {
-//     FILE *f = fopen(KEYWORDS_FILE, "r");
-//     char buffer[50];    // to store each keyword
-//     initialize(hash_table);
-//     while (EOF != fscanf(f, "%[^\n]\n", buffer))
-//     {
-//         insert(buffer, hash_table);
-//     }
-//     printf("%d\n", search("parameters", hash_table));
-//     fclose(f);
-//     return 0;
-// }

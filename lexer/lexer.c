@@ -17,7 +17,7 @@ void print_lexeme(LEXEME *l)
     if (not l)
         printf("Lexeme is NULL error.\n");
     else
-        printf("token: %s\tvalue: %s\tline_no: %u\n",l->token, l->value, l->line);
+        printf("token: %10s\tvalue: %15s\tline_no: %u\n",l->token, l->value, l->line);
     return;
 }
 
