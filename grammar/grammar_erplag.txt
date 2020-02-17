@@ -67,15 +67,15 @@ opt_expr -> arithmeticExpr one_more_opt
 opt_expr -> booleanConst
 one_more_opt -> relationalOp arithmeticExpr one_more_opt
 one_more_opt -> EPS
-booleanConst -> true
-booleanConst -> false
+booleanConst -> TRUE
+booleanConst -> FALSE
 arithmeticExpr_lr -> op1 term arithmeticExpr_lr 
 arithmeticExpr_lr -> EPS
 arithmeticExpr -> term arithmeticExpr_lr
 term_lr -> op2 factor term_lr 
 term_lr -> EPS
 term -> factor term_lr
-factor -> BO arithmeticExpr BC 
+factor -> BO arithmeticOrBooleanExpression BC 
 factor -> var
 op -> PLUS 
 op -> MINUS 
