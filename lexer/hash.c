@@ -1,22 +1,7 @@
 #include <stdio.h>
 #include<stdlib.h>          // malloc()
-#include<string.h>          // strcmp(), strcpy()
-
-#if !defined(KEYWORDS_FILE)
-#define KEYWORDS_FILE "./keywords.txt"
-#endif
-
-#define SIZE 64
-#define MAXLEN 25                           // length of identifier can't be > 20
-#define ABS(N) ((N<0)?(-N):(N))           
-
-typedef struct hash_table_entry_list_node
-{
-    char *data;
-    struct hash_table_entry_list_node *next;            //  chaining for collisions
-} ENTRY;
-
-ENTRY *hash_table[SIZE];                 
+#include<string.h>          // strcmp(), strcpy()      
+#include "hash.h"         
 
 void initialize(ENTRY **hash_table)
 {
@@ -125,16 +110,31 @@ int search(char *value, ENTRY **hash_table)
     return 0;
 }
 
-int main()
+void populate_ht(ENTRY **hash_table, char *file_path)
 {
-    FILE *f = fopen(KEYWORDS_FILE, "r");
+    FILE *f = fopen(file_path, "r");
     char buffer[50];    // to store each keyword
     initialize(hash_table);
+    
     while (EOF != fscanf(f, "%[^\n]\n", buffer))
     {
         insert(buffer, hash_table);
     }
-    printf("%d\n", search("parameters", hash_table));
+    // printf("%d\n", search("parameters", hash_table));
     fclose(f);
-    return 0;
+    return;
 }
+
+// int main()
+// {
+//     FILE *f = fopen(KEYWORDS_FILE, "r");
+//     char buffer[50];    // to store each keyword
+//     initialize(hash_table);
+//     while (EOF != fscanf(f, "%[^\n]\n", buffer))
+//     {
+//         insert(buffer, hash_table);
+//     }
+//     printf("%d\n", search("parameters", hash_table));
+//     fclose(f);
+//     return 0;
+// }

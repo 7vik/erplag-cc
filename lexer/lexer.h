@@ -2,7 +2,7 @@
 #define max_id_len 20           // maximum allowed length of identifier
 #endif
 
-#define TWIN_BUFFER_SIZE 50
+#define TWIN_BUFFER_SIZE 16
 
 typedef struct lexeme_tuple
 {

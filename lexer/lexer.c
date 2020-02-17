@@ -1,5 +1,6 @@
 #include<stdio.h>
-#include<stdlib.h>      // malloc()
+#include<stdlib.h>
+#include "hash.h"      // malloc()
 #include "lexer.h"
 #include<ctype.h>       // isalpha(), isalnum(), isnumber()
 #include<string.h>      // strlen(), strcpy(), memset()
@@ -43,7 +44,12 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
     int char_count;
     while ((lookahead = get_stream(f, twin_buff)) != EOF)
     {
-        if (lookahead == '\n')  ++(*line_count);
+        //printf("%c\n", lookahead);
+        if (lookahead == '\n')
+        {
+            ++(*line_count);
+            continue;
+        }
         char_count = 0;
         if (isalpha(lookahead))
         // dfa for identifier
@@ -72,12 +78,14 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             buff[char_count] = '\0';
             char *detected_id = (char *) malloc(strlen(buff));
             strcpy(detected_id, buff);
-            // LOOKUP using symbol table
-            // *********************************** left ************************
             new->token = (char *) malloc (sizeof(char) * TOKEN_SIZE);
-            strcpy(new->token,"ID");
-        // printf("H1\n");
+            if (search(detected_id, hash_table) == 1)
+                strcpy(new->token, "KEYWORD");
+            else
+                strcpy(new->token,"ID");
             new->value = detected_id;
+            twin_buff->fp--;
+            twin_buff->bp = twin_buff->fp;
             new->line = *line_count;
             return new;
         }
@@ -132,17 +140,14 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff)
 
 int main()
 {
+    populate_ht(hash_table, KEYWORDS_FILE);
     FILE *f = fopen("test.erplag", "r");
     int line_count = 0;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
     init_buffer(f, twin_buff);
     printf("%s\n", twin_buff->steve);
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
-    print_lexeme(get_token(f, twin_buff, &line_count));
+    LEXEME *temp;
+    while((temp = get_token(f, twin_buff, &line_count)))
+        print_lexeme(temp);
     return 0;
 }
