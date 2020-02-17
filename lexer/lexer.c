@@ -21,6 +21,22 @@ void print_lexeme(LEXEME *l)
     return;
 }
 
+void retract(TWIN_BUFFER *buff) //name to be modified later
+{
+    if(buff->fp == 0)
+    {
+        buff->active = 1 - buff->active;
+        buff->fp = TWIN_BUFFER_SIZE - 1;
+    }
+    else
+    {
+        buff->fp--;
+    }
+    buff->bp = buff->fp;
+    return;
+    
+}
+
 /*  IMPLEMENTATION DETAIL:
 get_token() is supposed to return a TUPLE, taking input from get_stream(), which returns a character each time 
 when called, using the concept of twin buffers for efficient implementation of I/O to avoid intensive 
@@ -85,7 +101,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             else
                 strcpy(new->token,"ID");
             new->value = detected_id;
-            twin_buff->fp--;
+            twin_buff->fp--; //retract-fn
             twin_buff->bp = twin_buff->fp;
             new->line = *line_count;
             return new;
@@ -195,6 +211,90 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     twin_buff->bp = twin_buff->fp;
                     new->line = *line_count;
                     return new;
+                    break;
+                }
+                case '=':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '=')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("EQ"));
+                        new->value = (char *) malloc (sizeof(char) * strlen("=="));
+                        strcpy(new->token, "EQ");
+                        strcpy(new->value, "==");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;
+                    }
+                    else
+                    {
+                        printf("Lexical Error at line # %d.\t. Invalid lexeme '='.\n", *line_count);
+                        retract(twin_buff);
+                        continue; //don't return any lexeme-token-line tuple
+                    }
+                    break;
+                }
+                case '!':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '=')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("NE"));
+                        new->value = (char *) malloc (sizeof(char) * strlen("!="));
+                        strcpy(new->token, "NE");
+                        strcpy(new->value, "!=");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;
+                    }
+                    else
+                    {
+                        printf("Lexical Error at line # %d.\t. Invalid lexeme '!'.\n", *line_count);
+                        retract(twin_buff);
+                        continue; //don't return any lexeme-token-line tuple
+                    }
+                    break;
+                }
+                case ':':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '=')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("ASSIGNOP"));
+                        new->value = (char *) malloc (sizeof(char) * strlen(":="));
+                        strcpy(new->token, "ASSIGNOP");
+                        strcpy(new->value, ":=");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;
+                    }
+                    else
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("COLON"));
+                        new->value = (char *) malloc (sizeof(char) * strlen(":"));
+                        strcpy(new->token, "COLON");
+                        strcpy(new->value, ":");
+                        retract(twin_buff);
+                        new->line = *line_count;
+                        return new;
+                    }
+                    break;
+                }
+                case '.':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '.')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("RANGEOP"));
+                        new->value = (char *) malloc (sizeof(char) * strlen(".."));
+                        strcpy(new->token, "RANGEOP");
+                        strcpy(new->value, "..");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;
+                    }
+                    else
+                    {
+                        printf("Lexical Error at line # %d.\t. Expected '.' after '.'.\n", *line_count);
+                        retract(twin_buff);
+                        continue; //don't return any lexeme-token-line tuple
+                    }
                     break;
                 }
                 default: break;
