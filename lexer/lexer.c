@@ -6,6 +6,7 @@
 #include<string.h>      // strlen(), strcpy(), memset()
 
 #define TOKEN_SIZE 22
+#define SOURCE_CODE_FILE "./testcase4.txt"
 #define not !
 
 char get_stream(FILE *f, TWIN_BUFFER *buff);
@@ -93,6 +94,112 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
         {
         // dfa for integer/real
         }
+        else
+        {
+            switch (lookahead)
+            {
+                case '+': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("PLUS"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("+"));
+                    strcpy(new->token, "PLUS");
+                    strcpy(new->value, "+");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case '-': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("MINUS"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("-"));
+                    strcpy(new->token, "MINUS");
+                    strcpy(new->value, "-");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case '/': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("DIV"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("/"));
+                    strcpy(new->token, "DIV");
+                    strcpy(new->value, "/");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case '[': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("SQBO"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("["));
+                    strcpy(new->token, "SQBO");
+                    strcpy(new->value, "[");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case ']': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("SQBC"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("]"));
+                    strcpy(new->token, "SQBC");
+                    strcpy(new->value, "]");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case '(': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("BO"));
+                    new->value = (char *) malloc (sizeof(char) * strlen("("));
+                    strcpy(new->token, "BO");
+                    strcpy(new->value, "(");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case ')': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("BC"));
+                    new->value = (char *) malloc (sizeof(char) * strlen(")"));
+                    strcpy(new->token, "BC");
+                    strcpy(new->value, ")");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case ';': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("SEMICOL"));
+                    new->value = (char *) malloc (sizeof(char) * strlen(";"));
+                    strcpy(new->token, "SEMICOL");
+                    strcpy(new->value, ";");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                case ',': 
+                {
+                    new->token = (char *) malloc (sizeof(char) * strlen("COMMA"));
+                    new->value = (char *) malloc (sizeof(char) * strlen(","));
+                    strcpy(new->token, "COMMA");
+                    strcpy(new->value, ",");
+                    twin_buff->bp = twin_buff->fp;
+                    new->line = *line_count;
+                    return new;
+                    break;
+                }
+                default: break;
+            }
+        } 
     }
     return NULL;
 }
@@ -141,7 +248,7 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff)
 int main()
 {
     populate_ht(hash_table, KEYWORDS_FILE);
-    FILE *f = fopen("test.erplag", "r");
+    FILE *f = fopen(SOURCE_CODE_FILE, "r");
     int line_count = 0;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
     init_buffer(f, twin_buff);
