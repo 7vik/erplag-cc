@@ -6,7 +6,7 @@
 #include<string.h>      // strlen(), strcpy(), memset()
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "./testcase4.txt"
+#define SOURCE_CODE_FILE /*"./testcase4.txt"*/"./test.erplag"
 #define not !
 
 char get_stream(FILE *f, TWIN_BUFFER *buff);
@@ -106,7 +106,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             new->line = *line_count;
             return new;
         }
-        else if(isnumber(lookahead))
+        else if(isdigit(lookahead))
         {
         // dfa for integer/real
         }
@@ -296,6 +296,98 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                         continue; //don't return any lexeme-token-line tuple
                     }
                     break;
+                }
+                case '<':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '=')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("LE"));
+                        new->value = (char *) malloc (sizeof(char) * strlen("<="));
+                        strcpy(new->token, "LE");
+                        strcpy(new->value, "<=");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;    
+                    }
+                    else if(lookahead == '<')
+                    {
+                        if((lookahead = get_stream(f, twin_buff)) == '<')
+                        {
+                            new->token = (char *) malloc (sizeof(char) * strlen("DRIVERDEF"));
+                            new->value = (char *) malloc (sizeof(char) * strlen("<<<"));
+                            strcpy(new->token, "DRIVERDEF");
+                            strcpy(new->value, "<<<");
+                            twin_buff->bp = twin_buff->fp;
+                            new->line = *line_count;
+                            return new;
+                        }
+                        else
+                        {
+                            new->token = (char *) malloc (sizeof(char) * strlen("DEF"));
+                            new->value = (char *) malloc (sizeof(char) * strlen("<<"));
+                            strcpy(new->token, "DEF");
+                            strcpy(new->value, "<<");
+                            retract(twin_buff);
+                            new->line = *line_count;
+                            return new;
+                        }    
+                    }
+                    else
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("LT"));
+                        new->value = (char *) malloc (sizeof(char) * strlen("<"));
+                        strcpy(new->token, "LT");
+                        strcpy(new->value, "<");
+                        retract(twin_buff);
+                        new->line = *line_count;
+                        return new;
+                    }    
+                }
+                case '>':
+                {
+                    if((lookahead = get_stream(f, twin_buff)) == '=')
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("GE"));
+                        new->value = (char *) malloc (sizeof(char) * strlen(">="));
+                        strcpy(new->token, "GE");
+                        strcpy(new->value, ">=");
+                        twin_buff->bp = twin_buff->fp;
+                        new->line = *line_count;
+                        return new;    
+                    }
+                    else if(lookahead == '>')
+                    {
+                        if((lookahead = get_stream(f, twin_buff)) == '>')
+                        {
+                            new->token = (char *) malloc (sizeof(char) * strlen("DRIVERENDDEF"));
+                            new->value = (char *) malloc (sizeof(char) * strlen(">>>"));
+                            strcpy(new->token, "DRIVERENDDEF");
+                            strcpy(new->value, ">>>");
+                            twin_buff->bp = twin_buff->fp;
+                            new->line = *line_count;
+                            return new;
+                        }
+                        else
+                        {
+                            new->token = (char *) malloc (sizeof(char) * strlen("ENDDEF"));
+                            new->value = (char *) malloc (sizeof(char) * strlen(">>"));
+                            strcpy(new->token, "ENDDEF");
+                            strcpy(new->value, ">>");
+                            retract(twin_buff);
+                            new->line = *line_count;
+                            return new;
+                        }    
+                    }
+                    else
+                    {
+                        new->token = (char *) malloc (sizeof(char) * strlen("GT"));
+                        new->value = (char *) malloc (sizeof(char) * strlen(">"));
+                        strcpy(new->token, "GT");
+                        strcpy(new->value, ">");
+                        retract(twin_buff);
+                        new->line = *line_count;
+                        return new;
+                    }    
                 }
                 default: break;
             }
