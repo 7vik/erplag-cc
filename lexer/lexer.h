@@ -3,7 +3,7 @@
 #define max_num_len 100         // maximum allowed length of any number (this has been defined by us)
 #endif
 
-#define TWIN_BUFFER_SIZE 512
+#define TWIN_BUFFER_SIZE 32
 
 typedef struct lexeme_tuple
 {

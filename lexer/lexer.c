@@ -655,8 +655,10 @@ char get_stream(FILE *f, TWIN_BUFFER *buff)
         buff->fp = -1;
         buff->active = 1 - buff->active;        // change the active buffer
     }
-    else
+    else if (buff->read == 0)
     {
+        buff->fp = -1;
+        buff->active = 1 - buff->active;
         buff->read = 1;
     }
     buff->fp++;
