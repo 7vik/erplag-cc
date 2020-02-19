@@ -6,7 +6,7 @@
 #include<string.h>      // strlen(), strcpy(), memset()
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE /*"./testcase4.txt"*/"./test.erplag"
+#define SOURCE_CODE_FILE "./testcase4.txt"/*"./test.erplag"*/
 #define not !
 
 char get_stream(FILE *f, TWIN_BUFFER *buff);
@@ -59,7 +59,10 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
     char lookahead;
     char *buff = (char *) (malloc(sizeof(char) * (max_id_len + 1)));
     int char_count;
-    while ((lookahead = get_stream(f, twin_buff)) != EOF)
+    int state_for_com = 0;
+    int state_for_dig = 0;
+    int flag_com = 0;
+    while ((lookahead = get_stream(f, twin_buff)) != EOF) 
     {
         //printf("%c\n", lookahead);
         if (lookahead == '\n')
@@ -101,14 +104,15 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             else
                 strcpy(new->token,"ID");
             new->value = detected_id;
-            twin_buff->fp--; //retract-fn
-            twin_buff->bp = twin_buff->fp;
+            //twin_buff->fp--;                  //retract-fn
+            //twin_buff->bp = twin_buff->fp;
+            retract(twin_buff);
             new->line = *line_count;
             return new;
         }
-        else if(isdigit(lookahead))
+        else if(lookahead >= '0' && lookahead <= '9')
         {
-        // dfa for integer/real
+            
         }
         else
         {
@@ -341,7 +345,8 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                         retract(twin_buff);
                         new->line = *line_count;
                         return new;
-                    }    
+                    }
+                    break;    
                 }
                 case '>':
                 {
@@ -387,7 +392,66 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                         retract(twin_buff);
                         new->line = *line_count;
                         return new;
-                    }    
+                    }
+                    break;    
+                }
+                case '*':
+                {
+                    lookahead = get_stream(f, twin_buff);
+                    switch(lookahead)
+                    {
+                        case '*':
+                        {
+                            while((lookahead = get_stream(f, twin_buff)) != EOF)
+                            {
+                                switch(state_for_com)
+                                {
+                                    case 0:
+                                    {
+                                        if(lookahead == '*')
+                                            state_for_com = 1;
+                                        else if(lookahead == '\n')
+                                            *line_count = *line_count + 1;
+                                        
+                                        break;
+                                    }
+                                    case 1:
+                                    {
+                                        if(lookahead == '*')
+                                        {
+                                            state_for_com = 0;
+                                            flag_com = 1;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            state_for_com = 0;
+                                            if(lookahead == '\n')
+                                                *line_count = *line_count + 1;
+                                        }
+                                        break;
+                                    }
+                                }
+                                if(flag_com == 1)
+                                {
+                                    flag_com = 0;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                            new->token = (char *) malloc (sizeof(char) * strlen("MUL"));
+                            new->value = (char *) malloc (sizeof(char) * strlen("*"));
+                            strcpy(new->token, "MUL");
+                            strcpy(new->value, "*");
+                            retract(twin_buff);
+                            new->line = *line_count;
+                            return new;
+                        }
+                    }
+                    break;
                 }
                 default: break;
             }
@@ -441,7 +505,7 @@ int main()
 {
     populate_ht(hash_table, KEYWORDS_FILE);
     FILE *f = fopen(SOURCE_CODE_FILE, "r");
-    int line_count = 0;
+    int line_count = 1;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
     init_buffer(f, twin_buff);
     printf("%s\n", twin_buff->steve);
