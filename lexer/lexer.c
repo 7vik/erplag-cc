@@ -7,7 +7,9 @@
 
 #define TOKEN_SIZE 22
 #define SOURCE_CODE_FILE "./testcase2.txt"/*"./test.erplag"*/
+
 #define not !
+#define and &&
 
 char get_stream(FILE *f, TWIN_BUFFER *buff);
 enum active_buffer {Steve, Mark};
@@ -27,6 +29,7 @@ void retract(TWIN_BUFFER *buff) //name to be modified later
     {
         buff->active = 1 - buff->active;
         buff->fp = TWIN_BUFFER_SIZE - 1;
+        buff->read = 0;
     }
     else
     {
@@ -637,7 +640,7 @@ char get_stream(FILE *f, TWIN_BUFFER *buff)
         c = buff->steve[buff->fp];
     else
         c = buff->mark[buff->fp];
-    if (buff->fp == (TWIN_BUFFER_SIZE - 1))
+    if (buff->fp == (TWIN_BUFFER_SIZE - 1) and buff->read == 1)
     {
         if (buff->active == Steve)
         {   
@@ -651,7 +654,11 @@ char get_stream(FILE *f, TWIN_BUFFER *buff)
         }
         buff->fp = -1;
         buff->active = 1 - buff->active;        // change the active buffer
-    }   
+    }
+    else
+    {
+        buff->read = 1;
+    }
     buff->fp++;
     return c;
 }
@@ -664,6 +671,7 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff)
     buff->fp = 0;
     buff->bp = 0;
     buff->active = 0;
+    buff->read = 1;
     // printf("%d\n", buff->active);
     //printf("H3\n");
     return;

@@ -1,6 +1,0 @@
-<program> -> <moduleDeclarations> <otherModules> <driverModule> <otherModules>
-<moduleDeclarations> -> <moduleDeclaration> <moduleDeclarations> 
-<moduleDeclarations> -> EPS
-<moduleDeclaration> -> DECLARE MODULE ID SEMICOL
-<otherModules> -> <module> <otherModules> 
-<otherModules> -> EPS

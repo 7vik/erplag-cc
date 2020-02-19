@@ -21,5 +21,6 @@ typedef struct twin_buffer
     int bp;     // base pointer
     int fp;     // forward pointer
     int active;          // active buffer for the forward pointer (don't need one for base p)
+    int read;
 }   TWIN_BUFFER;
 
