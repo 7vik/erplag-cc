@@ -262,7 +262,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             }
             if(flag_num == 1)
             {
-                realloc(buff_num, char_count+1);
+                buff_num = (char*) realloc(buff_num, char_count+1);
                 char *detected_num = (char *) malloc(strlen(buff_num));
                 strcpy(detected_num, buff_num);
                 new->token = (char *) malloc (sizeof(char) * TOKEN_SIZE);
