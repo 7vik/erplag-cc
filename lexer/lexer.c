@@ -6,7 +6,7 @@
 #include<string.h>      // strlen(), strcpy(), memset()
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "./testcase4.txt"/*"./test.erplag"*/
+#define SOURCE_CODE_FILE "./testcase2.txt"/*"./test.erplag"*/
 #define not !
 
 char get_stream(FILE *f, TWIN_BUFFER *buff);
@@ -58,10 +58,15 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
     // when token is identified, set bp = fp
     char lookahead;
     char *buff = (char *) (malloc(sizeof(char) * (max_id_len + 1)));
+    char *buff_num;
+    char temp_lookahead; //to be used in case of double retraction
+
     int char_count;
     int state_for_com = 0;
     int state_for_dig = 0;
     int flag_com = 0;
+    int flag_num = 0;
+    int flag_int = 0;
     while ((lookahead = get_stream(f, twin_buff)) != EOF) 
     {
         //printf("%c\n", lookahead);
@@ -71,7 +76,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             continue;
         }
         char_count = 0;
-        if (isalpha(lookahead))
+        if ((lookahead >= 'A' && lookahead <= 'Z') || (lookahead >= 'a' && lookahead <= 'z')) //isalpha(lookahead)
         // dfa for identifier
         {
             buff[char_count] = lookahead;
@@ -99,8 +104,10 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             char *detected_id = (char *) malloc(strlen(buff));
             strcpy(detected_id, buff);
             new->token = (char *) malloc (sizeof(char) * TOKEN_SIZE);
-            if (search(detected_id, hash_table) == 1)
+        
+            if (search(detected_id, hash_table) == 1){
                 strcpy(new->token, "KEYWORD");
+            }
             else
                 strcpy(new->token,"ID");
             new->value = detected_id;
@@ -111,8 +118,169 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             return new;
         }
         else if(lookahead >= '0' && lookahead <= '9')
+        //dfa for integer/real number
         {
-            
+            buff_num = (char *) calloc((max_num_len + 1), sizeof (char));
+            buff_num[char_count] = lookahead;
+            char_count++;
+            state_for_dig = 1;
+            while((lookahead = get_stream(f, twin_buff)) != EOF)
+            {
+                switch(state_for_dig)
+                {
+                    case 1:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                        }
+                        else if(lookahead == '.')
+                        {
+                            temp_lookahead = lookahead;
+                            if((lookahead = get_stream(f, twin_buff)) == '.')
+                            {
+                                retract(twin_buff);
+                                flag_num = 1;
+                                flag_int = 1;
+                                state_for_dig = 0;
+                                break;
+                            }
+                            else
+                            {   
+                                retract(twin_buff);
+                                buff_num[char_count] = temp_lookahead;
+                                char_count++;
+                                state_for_dig = 2;
+                            }
+                        }
+                        else
+                        {
+                            flag_num = 1;
+                            flag_int = 1;                    
+                            state_for_dig = 0;
+                            break;
+                        }               
+                        break;
+                    }
+                    case 2:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                            state_for_dig = 3;
+                        }
+                        else
+                        {
+                            buff_num[char_count] = '\0';
+                            state_for_dig = 0;
+                            break;
+                        }
+                        break;    
+                    }
+                    case 3:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                        }
+                        else if(lookahead == 'e' || lookahead == 'E')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                            state_for_dig = 4;
+                        }
+                        else
+                        {
+                            flag_num = 1;
+                            state_for_dig = 0;
+                            break;
+                        }
+                        break;    
+                    }
+                    case 4:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                            state_for_dig = 6;
+                        }
+                        else if(lookahead == '+' || lookahead == '-')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                            state_for_dig = 5;
+                        }
+                        else
+                        {
+                            buff_num[char_count] = '\0';
+                            state_for_dig = 0;
+                            break;
+                        }
+                        break;
+                    }
+                    case 5:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                            state_for_dig = 6;
+                        }
+                        else
+                        {
+                            buff_num[char_count] = '\0';
+                            state_for_dig = 0;
+                            break;
+                        }
+                        break;    
+                    }
+                    case 6:
+                    {
+                        if(lookahead >= '0' && lookahead <= '9')
+                        {
+                            buff_num[char_count] = lookahead;
+                            char_count++;
+                        }
+                        else
+                        {
+                            flag_num = 1;
+                            state_for_dig = 0;
+                            break;
+                        }
+                        break;    
+                    }
+                }
+                if(state_for_dig == 0)
+                    break;    
+            }
+            if(flag_num == 1)
+            {
+                realloc(buff_num, char_count+1);
+                char *detected_num = (char *) malloc(strlen(buff_num));
+                strcpy(detected_num, buff_num);
+                new->token = (char *) malloc (sizeof(char) * TOKEN_SIZE);
+                
+                if (flag_int == 1)
+                    strcpy(new->token, "NUM");
+                else
+                    strcpy(new->token,"RNUM");
+                
+                new->value = detected_num;
+                retract(twin_buff);
+                new->line = *line_count;
+                flag_int = 0;
+                flag_num = 0;
+                return new;    
+            }
+            else //flag_num is zero
+            {
+                printf("Lexical Error at line # %d.\t. Invalid lexeme %s\n", *line_count, buff_num);
+                retract(twin_buff);
+            }
         }
         else
         {
@@ -231,7 +399,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     }
                     else
                     {
-                        printf("Lexical Error at line # %d.\t. Invalid lexeme '='.\n", *line_count);
+                        printf("Lexical Error at line # %d.\t. Invalid lexeme '='. Expected '=='.\n", *line_count);
                         retract(twin_buff);
                         continue; //don't return any lexeme-token-line tuple
                     }
@@ -251,7 +419,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     }
                     else
                     {
-                        printf("Lexical Error at line # %d.\t. Invalid lexeme '!'.\n", *line_count);
+                        printf("Lexical Error at line # %d.\t. Invalid lexeme '!'. Expected '!='.\n", *line_count);
                         retract(twin_buff);
                         continue; //don't return any lexeme-token-line tuple
                     }
@@ -295,7 +463,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     }
                     else
                     {
-                        printf("Lexical Error at line # %d.\t. Expected '.' after '.'.\n", *line_count);
+                        printf("Lexical Error at line # %d.\t. Invalid lexeme '.'. Expected '..'.\n", *line_count);
                         retract(twin_buff);
                         continue; //don't return any lexeme-token-line tuple
                     }
