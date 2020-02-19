@@ -13,7 +13,7 @@ typedef struct first_and_follow
 typedef struct grammar_node
 {
     // a single node of a grammar rule. If rule is A->FOO BAR, then FOO is a node
-    char variable[MAX_VAR_SIZE];
+    int variable;
     int is_terminal;
     struct grammar_node *next;
 
