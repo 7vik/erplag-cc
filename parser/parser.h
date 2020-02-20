@@ -91,7 +91,13 @@ typedef struct parse_table
 typedef struct parse_tree_node_data
 {
     // data for printing and storing the parse tree effectively ftw
-    
+    char *lexeme;       // value in our passed lexeme tuple 
+    int line;           // line in our passed lexeme
+    char *token_name;   // token in our passed lexeme    
+    char *value_if_number;
+    char *parent_node_symbol;             
+    int is_leaf_node;               // 1 for yes       
+    char *node_symbol;
 }
 
 typedef struct parse_tree
