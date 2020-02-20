@@ -10,3 +10,4 @@ bool* and(bool * arr1, bool* arr2);
 bool* xor(bool * arr1, bool* arr2);
 bool* not(bool * arr1);
 void print_bool(bool* arr, int size);
+void or_and_store(bool * arr1, bool* arr2);

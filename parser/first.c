@@ -81,33 +81,28 @@ GRAMMAR_NODE* exist_first(GRAMMAR_NODE* first_set[], char* search_token)
 }
 */
 
-GRAMMAR_NODE* populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* token)
+void populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* token)
 {   
     //printf("inside return first: %s\n", token);
-    GRAMMAR_NODE* set;
+
+    
+    if (is_terminal(token))
+    {
+        printf("Terminal: %s, returning\n", token);
+        return;
+        
+    }
     
     if(first_table[token]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
     {   
-        //printf("first already counted\n");
-        return set;
+        printf("first already counted: %s\n", token);
+        return;
     }
-        
-    GRAMMAR_NODE* first_set = (GRAMMAR_NODE*) malloc(sizeof(GRAMMAR_NODE));
-    GRAMMAR_NODE* cur_ptr = first_set;
-    strcpy(first_set->variable, "\0");
-    first_set->next = NULL;
     if (token == NULL)
     {
-        return NULL;
+        printf("NULL token in populate first");
+        return;
         //printf("nshbf");
-    }    
-    else if (is_terminal(token))
-    {
-        //GRAMMAR_NODE* first_set = (GRAMMAR_NODE*)malloc(sizeof(GRAMMAR_NODE));
-        //printf("terminal found: %s\n", token);
-        strcpy(first_set->variable, token);
-        first_set->next = NULL;
-        
     }
     
     else
@@ -116,55 +111,38 @@ GRAMMAR_NODE* populate_first(first_follow* first_table, GRAMMAR grammar, int idx
         for (int i = 0; i < idx; i++)
         {
 
-            if(strcmp(token, grammar[i]->variable) == 0)
+            if(strcmp(token, grammar.rules[i]->variable) == 0)
             {
-                //printf("match: %s\n", token);
-                GRAMMAR_NODE* temp_set = return_first(first_table, grammar, idx, grammar[i]->next->variable);
-                //printf("enr");
-                print_rule(temp_set);
-                printf("\n%s, \n\n", token);
-                //exit(0);
-                GRAMMAR_NODE* rule_ptr = grammar[i]->next;
-                while(strcmp(temp_set->variable, "EPS") == 0)
+                printf("match: %s\n", token);
+                
+                // if token -> Terminal NT...
+                
+                char* temp_tnt = grammar.rules[i]->next->variable;
+                GRAMMAR_NODE* temp_next = grammar.rules[i]->next;
+                if (is_terminal(temp_tnt) != 0)
                 {
-                    if(strcmp(first_set->variable, "\0"))
-                    {
-                        first_set = temp_set;
-                        while(cur_ptr->next != NULL)
-                        {
-                            cur_ptr = cur_ptr->next;
-                        }
-                    }
-                    else
-                    {
-                        cur_ptr->next = temp_set;
-                        while(cur_ptr->next != NULL)
-                        {
-                            cur_ptr = cur_ptr->next;
-                        }
-                    }
-
-                    temp_set = (GRAMMAR_NODE*) malloc(sizeof(GRAMMAR_NODE));
-                    if (rule_ptr->next != NULL)
-                    {
-                        temp_set = return_first(first_table ,grammar, idx, rule_ptr->next->variable);
-                        rule_ptr = rule_ptr->next;
-                    }
-
-                    else
-                    {
-                        cur_ptr->next = (GRAMMAR_NODE*) malloc(sizeof(GRAMMAR_NODE));
-                        strcpy(cur_ptr->next->variable, "EPS");
-                        cur_ptr->next->next = NULL;
-                        break;
-                    }
-
+                    first_table->fnf[string_to_enum(token)].first_set_array[string_to_enum(temp_tnt)] = 1;
+                    continue;
                 }
 
-                if(strcmp(first_set->variable, "/0"))
-                    first_set = temp_set;
+                // means temp_tnt is a NT
+                else 
+                {
+                    populate_first(first_table, grammar, idx, temp_tnt);
+                    int str_to_enum = string_to_enum(temp_tnt);
+                    assert(first_table->fnf[str_to_enum].first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0);
+
+                    or_and_store(first_table->fnf[string_to_enum(token)].first_set_array, first_table->fnf[str_to_enum].first_set_array);
+                    continue;
+                }
+
+                // temp_tnt is EPS
                 else
-                    cur_ptr->next = temp_set;
+                {
+                    // this is of the form A -> EPS
+                    if ()
+                }
+              
 
             }
 

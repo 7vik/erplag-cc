@@ -13,18 +13,29 @@ bool* or(bool * arr1, bool* arr2)
 {
     bool* arr = (bool*) malloc (sizeof(bool) * MAX_BOOL_ARRAY_SIZE);
 
-   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE; i++)
+   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
        arr[i] = arr1[i] | arr2[i];
    
 
    return arr;
 }
 
+// stores results in first array
+void or_and_store(bool * arr1, bool* arr2)
+{
+
+   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
+       arr1[i] = arr1[i] | arr2[i];
+   
+
+   return;
+}
+
 bool* and(bool * arr1, bool* arr2)
 {
     bool* arr = (bool*) malloc (sizeof(bool) * MAX_BOOL_ARRAY_SIZE);
 
-   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE; i++)
+   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
        arr[i] = arr1[i] & arr2[i];
    
 
@@ -35,7 +46,7 @@ bool* xor(bool * arr1, bool* arr2)
 {
     bool* arr = (bool*) malloc (sizeof(bool) * MAX_BOOL_ARRAY_SIZE);
 
-   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE; i++)
+   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
        arr[i] = arr1[i] ^ arr2[i];
     
 
@@ -46,7 +57,7 @@ bool* not(bool * arr1)
 {
     bool* arr = (bool*) malloc (sizeof(bool) * MAX_BOOL_ARRAY_SIZE);
 
-   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE; i++)
+   for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
        arr[i] = ~arr1[i];
 
    return arr;
