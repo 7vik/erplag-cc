@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-#define RULE_FILE_PATH "../grammar/grammar.txt"
+#define RULE_FILE_PATH "../grammar/grammar_erplag.txt"
 #define MAX_VAR_SIZE 50
 #define MAX_RULE_NUM 150
 
