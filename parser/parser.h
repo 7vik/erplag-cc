@@ -113,11 +113,7 @@ typedef struct parse_tree_node_data
     char *parent_node_symbol;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
-<<<<<<< HEAD
-}PARSE_TREE_NODE_DATA;
-=======
 } TREE_NODE;
->>>>>>> b56e0cd6915bbc4693399e8cff380e98bef7c978
 
 typedef struct parse_tree
 {

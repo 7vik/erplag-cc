@@ -46,6 +46,22 @@ void print_grammar(GRAMMAR g, int index)
     return;
 }
 
+// returns integer value mapping of string
+int string_to_enum(char* string)
+{
+    int variable_array_size = sizeof(variables_array) / sizeof ( *variables_array);
+
+    for (int i = 0; i < variable_array_size; i++)
+    {
+        if(strcmp(variables_array[i], string) == 0)
+            return i;
+    }
+
+    printf("String to enum failed for %s\n", string);
+    return -1;
+}
+
+
 /*
 GRAMMAR_NODE* exist_first(GRAMMAR_NODE* first_set[], char* search_token)
 {   
