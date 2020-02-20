@@ -77,10 +77,6 @@ term_lr -> EPS
 term -> factor term_lr
 factor -> BO arithmeticOrBooleanExpression BC 
 factor -> var
-op -> PLUS 
-op -> MINUS 
-op -> MUL 
-op -> DIV
 op1 -> PLUS 
 op1 -> MINUS
 op2 -> MUL 
