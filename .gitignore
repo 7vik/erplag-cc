@@ -1,1 +1,4 @@
 Compiler-ERPLAG-master/
+*.out
+*.exe
+*.o 
