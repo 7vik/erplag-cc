@@ -2,7 +2,7 @@
 #define MAX_VAR_SIZE 50            // maximum allowed length of variable
 #endif
 
-#define GRAMMAR_NODE_FILE_PATH "../grammar/grammar_erplag.txt"
+#define GRAMMAR_NODE_FILE_PATH "../grammar/grammar_test.txt"
 #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
@@ -111,8 +111,6 @@ typedef struct parse_tree_node_data
     char *parent_node_symbol;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
-}
-    
 }PARSE_TREE_NODE_DATA;
 
 typedef struct parse_tree
