@@ -1,11 +1,11 @@
 #if !defined(define MAX_VAR_SIZE)
-#define MAX_VAR_SIZE 50            // maximum allowed length of boolean array
+#define MAX_VAR_SIZE 50            // maximum allowed length of variable
 #endif
 
 #define RULE_FILE_PATH "../grammar/grammar_erplag.txt"
 #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
-#define NUM_NON_TERMINALS 56  // number of non-terminals
+#define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 
 enum terminals  {   AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
                     CASE,COLON,COMMA,DECLARE,DEF,DEFAULT,DIV,
@@ -56,21 +56,21 @@ typedef first_follow_node
 
 typedef first_follow
 {
-    first_follow_node* fnf[NUM_NON_TERMINALS];
+    first_follow_node* fnf[MAX_NUM_NON_TERMINALS];
 }first_follow;
 
 
 typedef struct grammar_node
 {
     // a single node of a grammar rule. If rule is A->FOO BAR, then FOO is a node
-    int variable;
-    int is_terminal;
+    char variable[MAX_VAR_SIZE];
+    int is_terminal_flag;
     struct grammar_node *next;
-} NODE;
+} GRAMMAR_NODE;
 
 typedef struct grammar
 {
-    NODE *rules[MAX_RULE_NUM];
+    GRAMMAR_NODE *rules[MAX_RULE_NUM];
 }   GRAMMAR;
 
 typedef struct parse_table
