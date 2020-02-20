@@ -103,6 +103,12 @@ typedef struct parse_table
     
 }   TABLE;
 
+typedef struct stack_of_grammar_symbols
+{
+    char *symbol;
+    struct stack_of_grammar_symbols *next;
+} STACK;
+
 typedef struct parse_tree_node_data
 {
     // data for printing and storing the parse tree effectively ftw
