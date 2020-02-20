@@ -6,6 +6,7 @@
 #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
+#include "bool.h"
 
 /*
 enum terminals  {   AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
@@ -37,7 +38,8 @@ enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     END,ENDDEF,EQ,FALSE,FOR,GE,GET_VALUE,GT,IN,INPUT,INTEGER,
                     LE,LT,MINUS,MODULE,MUL,NE,NUM,OF,OR,PARAMETERS,PLUS,PRINT,
                     PROGRAM,RANGEOP,REAL,RETURNS,RNUM,SEMICOL,SQBC,SQBO,START,
-                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,arithmeticExpr,arithmeticExpr_lr,
+                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,
+                    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
                     caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
                     expression,factor,idList,idList_lr,index_nt,input_plist,
@@ -98,7 +100,7 @@ typedef struct grammar
 
 typedef struct parse_table
 {
-    // fill after doubt 1
+    
 }   TABLE;
 
 typedef struct parse_tree_node_data
@@ -111,12 +113,12 @@ typedef struct parse_tree_node_data
     char *parent_node_symbol;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
-}PARSE_TREE_NODE_DATA;
+} TREE_NODE;
 
 typedef struct parse_tree
 {
     // n-ary tree structure
-    PARSE_TREE_NODE_DATA *data;
+    TREE_NODE *data;
     int num_of_kids;
     struct parse_tree *kids[N_ARY_LIM];     // children nodes
 }   PARSE_TREE;
