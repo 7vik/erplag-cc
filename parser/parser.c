@@ -38,12 +38,26 @@ void print_grammar(GRAMMAR *g)
 void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
 {
     // prints the given parse tree in an output file in inorder traversal
+    // for an n-ary tree, inorder traversal means:
+    //          leftmost kid, then pop, then other kids
     FILE *f = fopen(out_file_name, "w");
-    if (tree == NULL)
-        fprintf
+    if (tree == NULL)   
+        return;         // print nothing
     else
     {
-        fprintf(f, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", var_enum_arr[tree->data->lexeme]);
+        print_parse_tree(tree->kids[0]);
+        fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15s\t%15s\t%15s\n",
+                    tree->data->lexeme,
+                    tree->data->line,
+                    tree->data->token_name,
+                    tree->data->value_if_number,
+                    tree->data->parent_node_symbol,
+                    tree->data->is_leaf_node,
+                    tree->data->node_symbol
+                    );
+        int temp = tree->num_of_kids;
+        while (--temp)
+            print_parse_tree(tree->kids[0]);
     }
     return;
 }

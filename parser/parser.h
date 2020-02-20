@@ -49,7 +49,7 @@ enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     statement,statements,term,term_lr,type,unary_opt,
                     unaryExpression,value,var,whichId,whichStmt
                 };
-                
+
 char *variables_array[] = {  "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
                             "COMMA","DECLARE","DEF","DEFAULT","DIV","DRIVER","DRIVERDEF",
                             "DRIVERENDDEF","END","ENDDEF","EQ","FALSE","FOR","GE","GET_VALUE",
@@ -105,14 +105,12 @@ typedef struct parse_tree_node_data
 {
     // data for printing and storing the parse tree effectively ftw
     char *lexeme;       // value in our passed lexeme tuple 
-    int line;           // line in our passed lexeme
+    unsigned int line;           // line in our passed lexeme
     char *token_name;   // token in our passed lexeme    
     char *value_if_number;
     char *parent_node_symbol;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
-}
-    
 }PARSE_TREE_NODE_DATA;
 
 typedef struct parse_tree
