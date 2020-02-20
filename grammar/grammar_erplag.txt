@@ -65,7 +65,7 @@ opt_expr_lr -> logicalOp opt_expr opt_expr_lr
 opt_expr_lr -> EPS
 opt_expr -> arithmeticExpr one_more_opt
 opt_expr -> booleanConst
-one_more_opt -> relationalOp arithmeticExpr one_more_opt
+one_more_opt -> relationalOp arithmeticExpr
 one_more_opt -> EPS
 booleanConst -> TRUE
 booleanConst -> FALSE
@@ -77,10 +77,6 @@ term_lr -> EPS
 term -> factor term_lr
 factor -> BO arithmeticOrBooleanExpression BC 
 factor -> var
-op -> PLUS 
-op -> MINUS 
-op -> MUL 
-op -> DIV
 op1 -> PLUS 
 op1 -> MINUS
 op2 -> MUL 

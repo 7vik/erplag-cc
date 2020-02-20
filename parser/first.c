@@ -3,53 +3,13 @@
 #include<string.h>
 #include<ctype.h>
 #include<math.h>
+#include "bool.h"
+#include "parser.h"
 
 #define RULE_FILE_PATH "../grammar/grammar.txt"
 #define TOKEN_MAX_SIZE 50
 #define MAX_RULE 150
 
-
-typedef enum {program, moduleDeclarations, moduleDeclaration, otherModules, driverModule, module, ret, input_plist_lr, input_plist, output_plist_lr, output_plist,
-datatype, rangeArr, type, moduleDef, statements, statement, ioStmt, var, whichId, printOpt, simpleStmt, assignmentStmt, whichStmt, lvalueIDStmt, lvalueARRStmt,
-index_nt, moduleReuseStmt, optional, idList_lr, idList, expression, opt_expr_lr, opt_expr, one_more_opt, booleanConst, arithmeticExpr_lr, arithmeticExpr, term_lr,
-term, factor, op, op1, op2, logicalOp, relationalOp, declareStmt, value, caseStmt, default_nt, conditionalStmt, range, iterativeStmt} NT;
-
-typedef struct set
-{
-    NT token;
-    long long int mask;
-} SET;
-
-
-
-typedef struct grammar_rule
-{
-    // linked list representing a grammar rule (X -> Y1 Y2 Y3) as X -> Y1 -> Y2 -> Y3 -> null
-    char tnt[TOKEN_MAX_SIZE];
-    int is_terminal_flag;
-    struct grammar_rule *next;
-
-} RULE;
-
-
-void print_rule(RULE *lst)
-{
-    while(lst != NULL)
-    {
-        printf("%s -> ",lst->tnt);
-        lst = lst->next;
-    }
-    return;
-}
-
-void print_grammar(RULE* grammar[], int idx)
-{
-    for(int i = 0; i < idx; i++)
-    {
-        print_rule(grammar[i]);
-        printf("\n");
-    }   
-}
 
 // returns 0 if the token is non-terminal
 int is_terminal(char* tnt)
