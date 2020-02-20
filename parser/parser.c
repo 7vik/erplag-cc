@@ -70,8 +70,15 @@ typedef struct parse_table
 typedef struct parse_tree_node_data
 {
     // data for printing and storing the parse tree effectively ftw
-    
-}
+    char *lexeme;   
+    int current_node;
+    int line;     
+    char *token_name;      
+    char *value_if_number;    
+    char *parent_node_symbol;             
+    int is_leaf_node;                      // 1 for YES        
+    char *node_symbol;
+}   TREE_NODE;
 
 typedef struct parse_tree
 {
@@ -81,7 +88,7 @@ typedef struct parse_tree
     struct parse_tree *kids[N_ARY_LIM];     // children nodes
 }   PARSE_TREE;
 
-PARSE_TREE *create_new_node (int data)
+PARSE_TREE *create_new_node (TREE_NODE *data)
 {
     // creates a new leaf node storing data, and returns the node
     PARSE_TREE *new = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
@@ -116,13 +123,13 @@ void print_grammar(GRAMMAR *g)
 // recursive
 void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
 {
-    // prints the given parse tree in an output file 
+    // prints the given parse tree in an output file in inorder traversal
     FILE *f = fopen(out_file_name, "w");
     if (tree == NULL)
-        return;         // print nothing
+        fprintf
     else
     {
-        fprintf(f, "%s ", var_enum_arr[tree->data]);
+        fprintf(f, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", var_enum_arr[tree->data->lexeme]);
     }
     return;
 }
