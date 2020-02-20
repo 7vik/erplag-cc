@@ -6,7 +6,7 @@
 #include<string.h>      // strlen(), strcpy(), memset()
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "./testcase2.txt"/*"./test.erplag"*/
+#define SOURCE_CODE_FILE "./t1.txt"/*"./test.erplag"*/
 
 #define not !
 #define and &&
@@ -94,15 +94,21 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     if (len_flag == 1)
                     {
                         len_flag = 0;
-                        printf("Lexical Error at line # %d.\t. Variable length exceeds 20.\n", *line_count);
                     }
+                    buff[char_count] = lookahead;
+                    ++char_count;
                     continue;
                 }
                 buff[char_count] = lookahead;
                 ++char_count;
             }
             if (len_flag == 0)
+            {
+                retract(twin_buff);
+                buff[char_count] = '\0';
+                printf("Lexical Error at line # %d.\t Invalid lexeme '%s'. Variable length exceeds 20.\n", *line_count, buff);
                 continue;
+            }
             buff[char_count] = '\0';
             char *detected_id = (char *) malloc(strlen(buff));
             strcpy(detected_id, buff);
@@ -281,7 +287,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             }
             else //flag_num is zero
             {
-                printf("Lexical Error at line # %d.\t. Invalid lexeme %s\n", *line_count, buff_num);
+                printf("Lexical Error at line # %d.\t. Invalid lexeme '%s'.\n", *line_count, buff_num);
                 retract(twin_buff);
             }
         }
@@ -686,7 +692,7 @@ int main()
     int line_count = 1;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
     init_buffer(f, twin_buff);
-    printf("%s\n", twin_buff->steve);
+    //printf("%s\n", twin_buff->steve);
     LEXEME *temp;
     while((temp = get_token(f, twin_buff, &line_count)))
         print_lexeme(temp);
