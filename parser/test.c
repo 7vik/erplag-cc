@@ -1,6 +1,10 @@
-#include<stdio.h>
+#include "bool.h"
+#include <stdio.h>
 
-int main()
+int main(void)
 {
-    printf("%d\n", sizeof(long double));
+    bool arr1[MAX_BOOL_ARRAY_SIZE];
+    initialize_bool_array(arr1);
+    print_bool(arr1, 3);
+
 }
