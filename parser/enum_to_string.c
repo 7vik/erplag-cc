@@ -21,7 +21,8 @@ int main(int c, char *argv[])
             fputc('"',fp2);
             continue;
         }
-        fputc(ch,fp2);
+        if(ch != '\n' && ch != ' ' && ch != '\t')
+            fputc(ch,fp2);
     }
     fputc('"',fp2);
     fclose(fp);

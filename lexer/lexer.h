@@ -7,7 +7,7 @@
 
 typedef struct lexeme_tuple
 {
-    // lexeme (tuple of (TOKEN, VALUE))
+    // lexeme (tuple of (TOKEN, VALUE, LINE))
     char *token;
     char *value;
     unsigned int line;
