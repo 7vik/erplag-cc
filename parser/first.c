@@ -36,18 +36,21 @@ void print_rule(GRAMMAR_NODE *rule)
 void print_grammar(GRAMMAR g)
 {
     int start = 0;
-    while(g->rules[start])
+    while(g.rules[start] != NULL)
     {
-        print_rule(g->rules[start++]);
+        print_rule(g.rules[start]);
         putchar('\n');
-    }   
+        printf("%d\n", start);
+        start++;
+    }
+    printf("%d\n", start - 1);   
     return;
 }
 
 GRAMMAR_NODE* exist_first(GRAMMAR_NODE* first_set[], char* search_token)
 {   
     //printf("%s", search_token);
-    for (int i = 0; i < MAX_GRAMMAR_NODE_NUM; i++)
+    for (int i = 0; i < MAX_NUM_NON_TERMINALS; i++)
     {
         if (first_set[i] == NULL)
         {
@@ -154,6 +157,7 @@ GRAMMAR_NODE* return_first(GRAMMAR_NODE* first_table[], GRAMMAR_NODE* grammar[],
     return first_set;
 
 }
+/*
 GRAMMAR_NODE** construct_first_set(GRAMMAR_NODE* grammar[], int idx)
 {
     
@@ -184,11 +188,9 @@ GRAMMAR_NODE** construct_first_set(GRAMMAR_NODE* grammar[], int idx)
     print_grammar(first_table, count);
     return first_table;
 
-    /*****************To DO**********************
-     * Remove duplicates from first_table
-     */
+    
 }
-
+*/
 void print_non_terminals(GRAMMAR_NODE* grammar[], int idx)
 {
     for(int i = 0; i < idx; i++)
@@ -197,6 +199,11 @@ void print_non_terminals(GRAMMAR_NODE* grammar[], int idx)
     }   
 }
 
+void initialize_grammar(GRAMMAR grammar)
+{
+    for (int i = 0; i < MAX_RULE_NUM; i++)
+        grammar.rules[i] = NULL;
+}
 
 int main()
 {
@@ -208,19 +215,28 @@ int main()
     }
     char line[200];
     GRAMMAR grammar;
+    initialize_grammar(grammar);
+
     int rule_count = 0;
 
     while (EOF != fscanf(f, "%[^\n]\n", line))
     {
+        //printf("%s\n", line);
+        //exit(0);
         char* token = strtok(line, " ");
-
+        //printf("%s", token);
+        //exit(1);
         // add non terminal as head
         
         grammar.rules[rule_count] = (GRAMMAR_NODE*)malloc(sizeof(GRAMMAR_NODE));
-        GRAMMAR_NODE* cur_pointer = grammar->rules[rule_count];
+        GRAMMAR_NODE* cur_pointer = grammar.rules[rule_count];
         strcpy(grammar.rules[rule_count]->variable, token);
         grammar.rules[rule_count]->is_terminal_flag = 0;
         grammar.rules[rule_count]->next = NULL;
+
+    
+        //printf("%s\n", grammar.rules[rule_count]->variable);
+        //exit(0);
         token = strtok(NULL, " ");
         //printf("here\n");
         while(token != NULL)
@@ -231,20 +247,33 @@ int main()
                 token = strtok(NULL, " ");
                 continue;
             }
-
+            // print_rule(grammar.rules[0]);
+            // putchar('\n');
             GRAMMAR_NODE* node = (GRAMMAR_NODE*) malloc(sizeof(GRAMMAR_NODE));
+            print_rule(grammar.rules[0]);
             strcpy(node->variable, token);
             node->is_terminal_flag = is_terminal(token);
             node->next = NULL;
+            printf("Cur value: %s\n", cur_pointer->variable);
             cur_pointer->next = node;
             cur_pointer = cur_pointer->next; 
+            printf("Cur value: %s\n", cur_pointer->variable);
+            print_rule(grammar.rules[0]);
+            putchar('\n');
             token = strtok(NULL, " ");
+            printf("token: %s\n", token);
+            print_rule(grammar.rules[0]);
+            putchar('\n');
         }
+        exit(0);
         //printf("here\n");
         rule_count++;
         
     }
-    print_grammar(grammar);
+    
+    print_rule(grammar.rules[30]);
+    
+    //print_grammar(grammar);
     //print_non_terminals(grammar, rule_count-1);
 
     //construct_first_set(grammar, rule_count - 1);
