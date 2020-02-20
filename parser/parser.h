@@ -7,6 +7,7 @@
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 
+/*
 enum terminals  {   AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
                     CASE,COLON,COMMA,DECLARE,DEF,DEFAULT,DIV,
                     DRIVER,DRIVERDEF,DRIVERENDDEF,END,ENDDEF,EQ,FALSE,
@@ -29,8 +30,8 @@ enum non_terminals {    arithmeticExpr,arithmeticExpr_lr,arithmeticOrBooleanExpr
                         ,statements,term,term_lr,type,unary_opt,unaryExpression,value,
                         var,whichId,whichStmt
                     };
+*/
 
-/*
 enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     DECLARE,DEF,DEFAULT,DIV,DRIVER,DRIVERDEF,DRIVERENDDEF,
                     END,ENDDEF,EQ,FALSE,FOR,GE,GET_VALUE,GT,IN,INPUT,INTEGER,
@@ -48,7 +49,7 @@ enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     statement,statements,term,term_lr,type,unary_opt,
                     unaryExpression,value,var,whichId,whichStmt
                 };
-*/
+                
 char *variables_array[] = {  "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
                             "COMMA","DECLARE","DEF","DEFAULT","DIV","DRIVER","DRIVERDEF",
                             "DRIVERENDDEF","END","ENDDEF","EQ","FALSE","FOR","GE","GET_VALUE",
