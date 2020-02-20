@@ -29,6 +29,16 @@ enum non_terminals {    arithmeticExpr,arithmeticExpr_lr,arithmeticOrBooleanExpr
                         var,whichId,whichStmt
                     };
 
+char *non_terminals_array[] = {  "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression","assignmentStmt",
+                                "booleanConst","caseStmt","caseStmts","conditionalStmt","datatype","declareStmt","default_nt",
+                                "driverModule","expression","factor","idList","idList_lr","index_nt","input_plist",
+                                "input_plist_lr","ioStmt","iterativeStmt","logicalOp","lvalueARRStmt","lvalueIDStmt","module",
+                                "moduleDeclaration","moduleDeclarations","moduleDef","moduleReuseStmt","one_more_opt","op1",
+                                "op2","opt_expr","opt_expr_lr","optional","otherModules","output_plist","output_plist_lr",
+                                "printOpt","program","range","rangeArr","relationalOp","ret","simpleStmt","statement","statements",
+                                "term","term_lr","type","unary_opt","unaryExpression","value","var","whichId","whichStmt"
+                            }; 
+
 enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     DECLARE,DEF,DEFAULT,DIV,DRIVER,DRIVERDEF,DRIVERENDDEF,
                     END,ENDDEF,EQ,FALSE,FOR,GE,GET_VALUE,GT,IN,INPUT,INTEGER,
