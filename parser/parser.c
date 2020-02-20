@@ -14,16 +14,17 @@ enum terminals  {   AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
                     SQBC,SQBO,START,SWITCH,TAKES,TRUE,USE,WHILE,WITH
                 };
 
-enum non_terminals {    arithmeticExpr,arithmeticExpr_lr,assignmentStmt,
-                        booleanConst,caseStmt,conditionalStmt,datatype,
-                        declareStmt,default_nt,driverModule,expression,factor,
+enum non_terminals {    arithmeticExpr,arithmeticExpr_lr,arithmeticOrBooleanExpression,
+                        assignmentStmt,booleanConst,caseStmt,caseStmts,conditionalStmt,
+                        datatype,declareStmt,default_nt,driverModule,expression,factor,
                         idList,idList_lr,index_nt,input_plist,input_plist_lr,
                         ioStmt,iterativeStmt,logicalOp,lvalueARRStmt,lvalueIDStmt,
                         module,moduleDeclaration,moduleDeclarations,moduleDef,
                         moduleReuseStmt,one_more_opt,op1,op2,opt_expr,opt_expr_lr,
                         optional,otherModules,output_plist,output_plist_lr,printOpt
                         ,program,range,rangeArr,relationalOp,ret,simpleStmt,statement
-                        ,statements,term,term_lr,type,value,var,whichId,whichStmt
+                        ,statements,term,term_lr,type,unary_opt,unaryExpression,value,
+                        var,whichId,whichStmt
                     };
 
 enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
@@ -31,16 +32,17 @@ enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     END,ENDDEF,EQ,FALSE,FOR,GE,GET_VALUE,GT,IN,INPUT,INTEGER,
                     LE,LT,MINUS,MODULE,MUL,NE,NUM,OF,OR,PARAMETERS,PLUS,PRINT,
                     PROGRAM,RANGEOP,REAL,RETURNS,RNUM,SEMICOL,SQBC,SQBO,START,
-                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,arithmeticExpr,
-                    arithmeticExpr_lr,assignmentStmt,booleanConst,caseStmt,
-                    conditionalStmt,datatype,declareStmt,default_nt,driverModule,
+                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,arithmeticExpr,arithmeticExpr_lr,
+                    arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
+                    caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
                     expression,factor,idList,idList_lr,index_nt,input_plist,
                     input_plist_lr,ioStmt,iterativeStmt,logicalOp,lvalueARRStmt,
                     lvalueIDStmt,module,moduleDeclaration,moduleDeclarations,
                     moduleDef,moduleReuseStmt,one_more_opt,op1,op2,opt_expr,
                     opt_expr_lr,optional,otherModules,output_plist,output_plist_lr,
                     printOpt,program,range,rangeArr,relationalOp,ret,simpleStmt,
-                    statement,statements,term,term_lr,type,value,var,whichId,whichStmt
+                    statement,statements,term,term_lr,type,unary_opt,
+                    unaryExpression,value,var,whichId,whichStmt
                 };
 
 typedef struct first_and_follow
