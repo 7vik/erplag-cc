@@ -13,6 +13,8 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
     return new;
 }
 
+void push(STACK *)
+
 void print_rule(GRAMMAR_NODE *rule)
 {
     while(rule != NULL)
