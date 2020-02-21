@@ -198,6 +198,8 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
 
 void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char* token)
 {
+
+    printf("%s\n", token);
     if(follow_table->fnf[string_to_enum(token)]->follow_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 1)
     {   
         printf("follow already counted: %s\n", token);
@@ -240,7 +242,7 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
                         follow_table->fnf[string_to_enum(token)]->follow_set_array[EPS] = 0;
                         
 
-                        if(follow_table->fnf[string_to_enum(token)]->first_set_array[EPS] == 1 && node->next == NULL)
+                        if(follow_table->fnf[string_to_enum(token)]->first_set_array[EPS] == 1 && node->next == NULL && strcmp(grammar->rules[i]->variable, token) != 0)
                         {
                             populate_follow(follow_table, grammar, idx, grammar->rules[i]->variable);
                             or_and_store(follow_table->fnf[string_to_enum(token)]->follow_set_array ,follow_table->fnf[string_to_enum(grammar->rules[i]->variable)]->follow_set_array);
@@ -253,7 +255,7 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
 
                 // A -> B
 
-                else
+                else if (strcmp(grammar->rules[i]->variable, token) != 0)
                 {
                     printf("H4\n");
                     populate_follow(follow_table, grammar, idx, grammar->rules[i]->variable);
