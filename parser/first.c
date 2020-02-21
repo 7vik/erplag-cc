@@ -217,6 +217,7 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
         // we start from RHS
         GRAMMAR_NODE* node = grammar->rules[i]->next;
 
+        printf("H2\n");
         while(node != NULL)
         {
             if(strcmp(token, node->variable) == 0)
@@ -225,12 +226,13 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
 
                 if (node->next != NULL)
                 {
+                    printf("H3\n");
                     node = node->next;
 
                     if (is_terminal(node->variable))
                     {
                         follow_table->fnf[string_to_enum(token)]->follow_set_array[string_to_enum(node->variable)] = 1;
-                        continue;
+                        
                     }
                     else
                     {
@@ -243,7 +245,7 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
                             populate_follow(follow_table, grammar, idx, grammar->rules[i]->variable);
                             or_and_store(follow_table->fnf[string_to_enum(token)]->follow_set_array ,follow_table->fnf[string_to_enum(grammar->rules[i]->variable)]->follow_set_array);
                         }
-                        continue;
+                        
                     }
                     
 
@@ -253,9 +255,10 @@ void populate_follow(first_follow* follow_table, GRAMMAR* grammar, int idx, char
 
                 else
                 {
+                    printf("H4\n");
                     populate_follow(follow_table, grammar, idx, grammar->rules[i]->variable);
                     or_and_store(follow_table->fnf[string_to_enum(token)]->follow_set_array ,follow_table->fnf[string_to_enum(grammar->rules[i]->variable)]->follow_set_array);
-                    continue;
+                    
                         
                 }
                 
@@ -300,17 +303,19 @@ first_follow* construct_first_follow_set(GRAMMAR* grammar, int idx)
     // start symbol must have dollar symbol
 
     first_table->fnf[program]->follow_set_array[DOLLAR] = 1;
+    
 
     for(int i = 0; i < idx; i++)
     {
         if (first_table->fnf[string_to_enum(grammar->rules[i]->variable)]->follow_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
         {
             populate_follow(first_table, grammar, idx, grammar->rules[i]->variable);
+            print_set_array(first_table->fnf[i]->follow_set_array);
             
         }
     }
     
-    print_first_follow(first_table);
+    //print_first_follow(first_table);
     return first_table;
 
     
