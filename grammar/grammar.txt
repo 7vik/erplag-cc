@@ -54,28 +54,29 @@ optional -> EPS
 idList_lr -> COMMA ID idList_lr 
 idList_lr -> EPS
 idList -> ID idList_lr 
-expression -> opt_expr opt_expr_lr
+expression -> unaryExpression
+expression -> arithmeticOrBooleanExpression
+unaryExpression -> MINUS unary_opt
+unaryExpression -> PLUS unary_opt
+unary_opt -> BO arithmeticExpr BC
+unary_opt -> var
+arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
 opt_expr_lr -> logicalOp opt_expr opt_expr_lr
 opt_expr_lr -> EPS
 opt_expr -> arithmeticExpr one_more_opt
 opt_expr -> booleanConst
-one_more_opt -> relationalOp arithmeticExpr one_more_opt
+one_more_opt -> relationalOp arithmeticExpr
 one_more_opt -> EPS
-booleanConst -> true
-booleanConst -> false
+booleanConst -> TRUE
+booleanConst -> FALSE
 arithmeticExpr_lr -> op1 term arithmeticExpr_lr 
 arithmeticExpr_lr -> EPS
 arithmeticExpr -> term arithmeticExpr_lr
 term_lr -> op2 factor term_lr 
 term_lr -> EPS
 term -> factor term_lr
-factor -> BO arithmeticExpr BC 
+factor -> BO arithmeticOrBooleanExpression BC 
 factor -> var
-factor -> op1 factor
-op -> PLUS 
-op -> MINUS 
-op -> MUL 
-op -> DIV
 op1 -> PLUS 
 op1 -> MINUS
 op2 -> MUL 
@@ -92,11 +93,12 @@ declareStmt -> DECLARE idList COLON dataType SEMICOL
 value -> NUM 
 value -> TRUE 
 value -> FALSE
-caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt 
-caseStmt -> CASE value COLON statements BREAK SEMICOL
-default_nt -> default_nt COLON statements BREAK SEMICOL 
+caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
+caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt
+caseStmt -> EPS
+default_nt -> DEFAULT COLON statements BREAK SEMICOL 
 default_nt -> EPS
-conditionalStmt -> SWITCH BO ID BC START caseStmt default_nt END
+conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
 range -> NUM RANGEOP NUM
 iterativeStmt -> FOR BO ID IN range BC START statements END 
-iterativeStmt -> WHILE BO expression BC START statements END
+iterativeStmt -> WHILE BO arithmeticOrBooleanExpression BC START statements END

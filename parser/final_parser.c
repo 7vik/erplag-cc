@@ -461,6 +461,14 @@ first_follow* get_first_follow_table(GRAMMAR* grammar)
 
 void create_parse_table(first_follow *f, TABLE *t)
 {
+
+    return;
+}
+
+void multiple_first(unsigned int rule)
+{
+    first_follow_node new;
+    // print_first_follow_node(new);
     return;
 }
 
@@ -472,6 +480,7 @@ void parse(char *filename, TABLE *table, PARSE_TREE *tree)
 int main()
 {
     GRAMMAR* grammar = generate_grammar();
-    first_follow* table = get_first_follow_table(grammar);
-    print_first_follow(table);
+    first_follow* ff = get_first_follow_table(grammar);
+    print_first_follow(ff);
+    multiple_first(102);
 }

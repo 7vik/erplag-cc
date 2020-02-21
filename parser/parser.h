@@ -3,7 +3,7 @@
 #define MAX_VAR_SIZE 50            // maximum allowed length of variable
 
 
-#define GRAMMAR_NODE_FILE_PATH "../grammar/grammar_test.txt"
+#define GRAMMAR_NODE_FILE_PATH "../grammar/grammar.txt"
 #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
@@ -131,7 +131,8 @@ typedef struct grammar
 
 typedef struct parse_table
 {
-    
+    //******************* EDIT
+    int matrix[whichStmt - arithmeticExpr + 1][WITH - AND + 1];
 }   TABLE;
 
 typedef struct stack_of_grammar_symbols
