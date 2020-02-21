@@ -1,6 +1,7 @@
-#if !defined(MAX_BOOL_ARRAY_SIZE)
+#ifndef __BOOL
+#define __BOOL
 #define MAX_BOOL_ARRAY_SIZE  150             // maximum allowed length of boolean array
-#endif
+
 
 #include <stdbool.h>
 
@@ -11,3 +12,5 @@ bool* xor(bool * arr1, bool* arr2);
 bool* not(bool * arr1);
 void print_bool(bool* arr, int size);
 void or_and_store(bool * arr1, bool* arr2);
+
+#endif

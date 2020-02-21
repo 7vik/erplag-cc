@@ -13,28 +13,8 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
     return new;
 }
 
-void push(STACK *)
+//void push(STACK *)
 
-void print_rule(GRAMMAR_NODE *rule)
-{
-    while(rule != NULL)
-    {
-        printf("%s -> ",rule->variable);
-        rule = rule->next;
-    }
-    return;
-}
-
-void print_grammar(GRAMMAR *g)
-{
-    int start = 0;
-    while(g->rules[start])
-    {
-        print_rule(g->rules[start++]);
-        putchar('\n');
-    }   
-    return;
-}
 
 // recursive
 void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
@@ -83,5 +63,8 @@ void parse(char *filename, TABLE *table, PARSE_TREE *tree)
 int main()
 {
     printf("LET THE CODE BEGIN.\n");
+    GRAMMAR* grammar = generate_grammar();
+    first_follow* table = get_first_follow_table(grammar);
+    print_first_follow(table);
     return 0;
 }

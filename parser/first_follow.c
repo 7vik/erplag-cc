@@ -36,10 +36,10 @@ void print_rule(GRAMMAR_NODE *rule)
     return;
 }
 
-void print_grammar(GRAMMAR* g, int index)
+void print_grammar(GRAMMAR* g)
 {
 
-    for (int i = 0; i < index; i++)
+    for (int i = 0; i < g->num_rules; i++)
     {
         //printf("%d\n", start);
         print_rule(g->rules[i]);
@@ -374,7 +374,8 @@ void initialize_grammar(GRAMMAR* grammar)
     }
 }
 
-int main()
+
+GRAMMAR* generate_grammar(void)
 {
     FILE *f = fopen(GRAMMAR_NODE_FILE_PATH, "r");
     if (f == NULL)
@@ -420,9 +421,22 @@ int main()
     }
 
     //print_grammar(grammar, rule_count);
-    construct_first_follow_set(grammar, rule_count);
 
     fclose(f);
-    return 0;
+    grammar->num_rules = rule_count;
+    return grammar;
+}
+first_follow* get_first_follow_table(GRAMMAR* grammar)
+{
+    
+    return construct_first_follow_set(grammar, grammar->num_rules);
 }
 
+/*
+int main()
+{
+    GRAMMAR* grammar = generate_grammar();
+    first_follow* table = get_first_follow_table(grammar);
+    print_first_follow(table);
+}
+*/

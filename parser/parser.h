@@ -1,6 +1,7 @@
-#if !defined(MAX_VAR_SIZE)
+#ifndef __PARSER
+#define __PARSER
 #define MAX_VAR_SIZE 50            // maximum allowed length of variable
-#endif
+
 
 #define GRAMMAR_NODE_FILE_PATH "../grammar/grammar_test.txt"
 #define MAX_RULE_NUM 150
@@ -8,7 +9,7 @@
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 #include "bool.h"
 
-
+/*
 enum terminals  {   
                     AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
                     CASE,COLON,COMMA,DECLARE,DEF,DEFAULT,DIV,
@@ -19,7 +20,7 @@ enum terminals  {
                     SQBC,SQBO,START,SWITCH,TAKES,TRUE,USE,WHILE,WITH
                 };
 
-char *terminals_array[]   {
+char *terminals_array[] =  {
                             "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression",
                             "assignmentStmt","booleanConst","caseStmt","caseStmts","conditionalStmt",
                             "datatype","declareStmt","default_nt","driverModule","expression",
@@ -31,7 +32,7 @@ char *terminals_array[]   {
                             "program","range","rangeArr","relationalOp","ret","simpleStmt","statement",
                             "statements","term","term_lr","type","unary_opt","unaryExpression",
                             "value","var","whichId","whichStmt"
-                        }
+                        };
 
 enum non_terminals {    
                         arithmeticExpr,arithmeticExpr_lr,arithmeticOrBooleanExpression,
@@ -55,9 +56,9 @@ char *non_terminals_array[] =   {
                                     "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
                                     "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
                                     "TRUE","USE","WHILE","WITH"
-                                }
+                                };
 
-/*
+*/
 enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
                     caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
@@ -99,7 +100,7 @@ char *variables_array[] = {
                             "TRUE","USE","WHILE","WITH"
                             
                         };
-*/
+
 
 typedef struct first_follow_node
 {
@@ -125,6 +126,7 @@ typedef struct grammar_node
 typedef struct grammar
 {
     GRAMMAR_NODE *rules[MAX_RULE_NUM];
+    int num_rules;
 }   GRAMMAR;
 
 typedef struct parse_table
@@ -157,3 +159,12 @@ typedef struct parse_tree
     int num_of_kids;
     struct parse_tree *kids[N_ARY_LIM];     // children nodes
 }   PARSE_TREE;
+
+first_follow* get_first_follow_table(GRAMMAR* grammar);
+GRAMMAR* generate_grammar(void);
+void print_grammar(GRAMMAR* g);
+int string_to_enum(char* string);
+void print_first_follow(first_follow* table);
+void print_rule(GRAMMAR_NODE *rule);
+
+#endif
