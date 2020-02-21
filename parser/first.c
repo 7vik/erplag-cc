@@ -84,8 +84,12 @@ void print_first_follow_node(first_follow_node* node)
 
 void print_first_follow(first_follow* table)
 {
+    printf("FIRST SET\n\n");
     for (int i = 0; i < MAX_NUM_NON_TERMINALS; i++)
     {
+        if (is_terminal(variables_array[i]))
+            return;
+        printf("first set of %s : ", variables_array[i]);
         print_first_follow_node(table->fnf[i]);
     }
 }
