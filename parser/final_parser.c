@@ -375,7 +375,7 @@ first_follow* construct_first_follow_set(GRAMMAR* grammar, int idx)
     
     
 
-    print_first_follow(first_table);
+    // print_first_follow(first_table);
     return first_table;
 
     
@@ -465,12 +465,59 @@ void create_parse_table(first_follow *f, TABLE *t)
     return;
 }
 
-void multiple_first(unsigned int rule)
+first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, first_follow_node *curr, first_follow *ff)
 {
-    first_follow_node new;
-    // print_first_follow_node(new);
-    return;
+    // empty case
+    if(strcmp("EPS", rulep->variable) == 0)
+    {
+        curr->first_set_array[EPS] = 1;
+        return curr;
+    }
+    // base cases
+    // if it's a terminal
+    if (is_terminal(rulep->variable))
+    {
+        curr->first_set_array[string_to_enum(rulep->variable)] = 1;
+        return curr;
+    }
+    if (rulep->next == NULL)
+    {
+        or_and_store(curr->first_set_array, ff->fnf[string_to_enum(rulep->variable)]->first_set_array);
+        // ff->fnf[string_to_enum(rulep->variable)];
+        return curr;
+    }
+    // recursive cases
+    else    // it's a non terminal
+    {
+        first_follow_node *temp1 = (first_follow_node *) malloc(sizeof(first_follow_node));
+        first_follow_node *temp2 = (first_follow_node *) malloc(sizeof(first_follow_node));
+        temp1 = ff->fnf[string_to_enum(rulep->variable)];
+        if (temp1->first_set_array[EPS] == 1)
+            temp2 = recursive_multiple_first(g, rulep->next, curr, ff);
+        else if (temp1->first_set_array[EPS] == 0)
+            temp2 = temp2;
+        temp1->first_set_array[EPS] = 0;
+        for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
+            curr->first_set_array[i] = temp1->first_set_array[i] | temp2->first_set_array[i];
+        return curr;
+    }
+    return NULL;    // hopefully never
 }
+
+
+
+first_follow_node *multiple_first(GRAMMAR *g, unsigned int rule, first_follow *ff)
+{
+    first_follow_node *new = (first_follow_node *) malloc(sizeof(first_follow_node));
+    // print_first_follow_node(new);
+    assert(rule < g->num_rules);
+    GRAMMAR_NODE *rule_head;
+    rule_head = g->rules[rule];
+    rule_head = rule_head->next;
+    new = recursive_multiple_first(g, rule_head, new, ff);
+    return new;
+}
+
 
 void parse(char *filename, TABLE *table, PARSE_TREE *tree)
 {
@@ -480,7 +527,8 @@ void parse(char *filename, TABLE *table, PARSE_TREE *tree)
 int main()
 {
     GRAMMAR* grammar = generate_grammar();
-    first_follow* ff = get_first_follow_table(grammar);
-    print_first_follow(ff);
-    multiple_first(102);
+    first_follow *ff = get_first_follow_table(grammar);
+    // print_first_follow(ff);
+    print_first_follow_node(multiple_first(grammar, 57, ff));
+    return 0;
 }
