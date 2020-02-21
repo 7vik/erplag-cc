@@ -145,7 +145,7 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
                 //printf("match: %s\n", token);
                 
                 // if token -> Terminal NT...
-                
+                int eps_flag = 0;
                 char* temp_tnt = grammar->rules[i]->next->variable;
                 GRAMMAR_NODE* temp_next = grammar->rules[i]->next;
                 if (is_terminal(temp_tnt) != 0)
@@ -155,23 +155,45 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
                 }
 
                 // means temp_tnt is a NT
+
+                
                 else 
                 {
                     populate_first(first_table, grammar, idx, temp_tnt);
                     int str_to_enum = string_to_enum(temp_tnt);
                     assert(first_table->fnf[str_to_enum]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 1);
-
                     or_and_store(first_table->fnf[string_to_enum(token)]->first_set_array, first_table->fnf[str_to_enum]->first_set_array);
+
+                    // if EPS in the first set
+
+                    while (first_table->fnf[str_to_enum]->first_set_array[EPS] == 1)
+                    {
+                        
+                        // if it is the last token, then don't do anything
+                        // else find first of following term
+
+                        if (temp_next->next != NULL)
+                        {
+                            first_table->fnf[string_to_enum(token)]->first_set_array[EPS] = 0;
+                            temp_next = temp_next->next;
+                            temp_tnt = temp_next->variable;
+
+                            if (is_terminal(temp_tnt))
+                            {
+                                first_table->fnf[string_to_enum(token)]->first_set_array[string_to_enum(temp_tnt)] = 1;
+                                break;
+                            }
+                            populate_first(first_table, grammar, idx, temp_tnt);
+                            str_to_enum = string_to_enum(temp_tnt);
+                            assert(first_table->fnf[str_to_enum]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 1);
+                            or_and_store(first_table->fnf[string_to_enum(token)]->first_set_array, first_table->fnf[str_to_enum]->first_set_array);
+                        }
+                    }
                     continue;
                 }
-                /*
-                // temp_tnt is EPS
-                else
-                {
-                    // this is of the form A -> EPS
-                    if ()
-                }
-                */
+                
+                
+                
               
 
             }

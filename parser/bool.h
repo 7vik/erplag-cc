@@ -1,5 +1,5 @@
 #if !defined(MAX_BOOL_ARRAY_SIZE)
-#define MAX_BOOL_ARRAY_SIZE  128              // maximum allowed length of boolean array
+#define MAX_BOOL_ARRAY_SIZE  150             // maximum allowed length of boolean array
 #endif
 
 #include <stdbool.h>

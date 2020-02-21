@@ -49,7 +49,7 @@ enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     END,ENDDEF, EPS, EQ,FALSE,FOR,GE,GET_VALUE,GT,ID,IN,INPUT,INTEGER,
                     LE,LT,MINUS,MODULE,MUL,NE,NUM,OF,OR,PARAMETERS,PLUS,PRINT,
                     PROGRAM,RANGEOP,REAL,RETURNS,RNUM,SEMICOL,SQBC,SQBO,START,
-                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,
+                    SWITCH,TAKES,TRUE,USE,WHILE,WITH
                     
                 };
 
@@ -71,7 +71,7 @@ char *variables_array[] = {
                             "GT", "ID","IN","INPUT","INTEGER","LE","LT","MINUS","MODULE","MUL","NE",
                             "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
                             "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
-                            "TRUE","USE","WHILE","WITH",
+                            "TRUE","USE","WHILE","WITH"
                             
                         };
 
