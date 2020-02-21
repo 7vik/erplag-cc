@@ -82,9 +82,9 @@ void print_first_follow_node(first_follow_node* node)
     print_set_array(node->first_set_array);
 }
 
-void print_first_follow(first_follow* table, int index)
+void print_first_follow(first_follow* table)
 {
-    for (int i = 0; i < index; i++)
+    for (int i = 0; i < MAX_NUM_NON_TERMINALS; i++)
     {
         print_first_follow_node(table->fnf[i]);
     }
@@ -121,9 +121,10 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
         
     }
     
-    if(first_table->fnf[string_to_enum(token)]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
+    if(first_table->fnf[string_to_enum(token)]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 1)
     {   
         printf("first already counted: %s\n", token);
+        printf("enum value: %d\n", string_to_enum(token));
         return;
     }
     if (token == NULL)
@@ -141,7 +142,7 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
 
             if(strcmp(token, grammar->rules[i]->variable) == 0)
             {
-                printf("match: %s\n", token);
+                //printf("match: %s\n", token);
                 
                 // if token -> Terminal NT...
                 
@@ -158,7 +159,7 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
                 {
                     populate_first(first_table, grammar, idx, temp_tnt);
                     int str_to_enum = string_to_enum(temp_tnt);
-                    assert(first_table->fnf[str_to_enum]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0);
+                    assert(first_table->fnf[str_to_enum]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 1);
 
                     or_and_store(first_table->fnf[string_to_enum(token)]->first_set_array, first_table->fnf[str_to_enum]->first_set_array);
                     continue;
@@ -189,29 +190,29 @@ first_follow* construct_first_follow_set(GRAMMAR* grammar, int idx)
     
     first_follow* first_table = (first_follow*) malloc (sizeof (first_follow));
     //printf("%d\n", idx);
-    for (int i = 0; i < idx; i++)
+    for (int i = 0; i < MAX_NUM_NON_TERMINALS; i++)
     {
         first_table->fnf[i] = (first_follow_node*) malloc(sizeof(first_follow_node));
 
-        initialize_bool_array(first_table->fnf[i]->first_set_array);
-        initialize_bool_array(first_table->fnf[i]->follow_set_array);
-        print_set_array((first_table->fnf[0]->first_set_array));
+        initialize_bool_array((first_table->fnf[i])->first_set_array);
+        initialize_bool_array((first_table->fnf[i])->follow_set_array);
+        //print_set_array(((first_table->fnf[0])->first_set_array));
     
     }
     //print_set_array(first_table->fnf[0]->first_set_array);
-    //print_first_follow(first_table, idx);
-            exit(0);
+    //print_first_follow(first_table);
+           
     for(int i = 0; i < idx; i++)
     {
-        if (first_table->fnf[i]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
+        if (first_table->fnf[string_to_enum(grammar->rules[i]->variable)]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
         {
             populate_first(first_table, grammar, idx, grammar->rules[i]->variable);
-            print_first_follow(first_table, idx);
-            exit(0);
+            
+            
         }
     }
     
-    print_first_follow(first_table, idx);
+    print_first_follow(first_table);
     return first_table;
 
     

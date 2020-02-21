@@ -33,13 +33,7 @@ enum non_terminals {    arithmeticExpr,arithmeticExpr_lr,arithmeticOrBooleanExpr
                     };
 */
 
-enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
-                    DECLARE,DEF,DEFAULT,DIV,DRIVER, DOLLAR,DRIVERDEF,DRIVERENDDEF,
-                    END,ENDDEF, EPS, EQ,FALSE,FOR,GE,GET_VALUE,GT,IN,INPUT,INTEGER,
-                    LE,LT,MINUS,MODULE,MUL,NE,NUM,OF,OR,PARAMETERS,PLUS,PRINT,
-                    PROGRAM,RANGEOP,REAL,RETURNS,RNUM,SEMICOL,SQBC,SQBO,START,
-                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,
-                    arithmeticExpr,arithmeticExpr_lr,
+enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
                     caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
                     expression,factor,idList,idList_lr,index_nt,input_plist,
@@ -49,16 +43,17 @@ enum variables {    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
                     opt_expr_lr,optional,otherModules,output_plist,output_plist_lr,
                     printOpt,program,range,rangeArr,relationalOp,ret,simpleStmt,
                     statement,statements,term,term_lr,type,unary_opt,
-                    unaryExpression,value,var,whichId,whichStmt
+                    unaryExpression,value,var,whichId,whichStmt,
+                    AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,CASE,COLON,COMMA,
+                    DECLARE,DEF,DEFAULT,DIV,DRIVER, DOLLAR,DRIVERDEF,DRIVERENDDEF,
+                    END,ENDDEF, EPS, EQ,FALSE,FOR,GE,GET_VALUE,GT,ID,IN,INPUT,INTEGER,
+                    LE,LT,MINUS,MODULE,MUL,NE,NUM,OF,OR,PARAMETERS,PLUS,PRINT,
+                    PROGRAM,RANGEOP,REAL,RETURNS,RNUM,SEMICOL,SQBC,SQBO,START,
+                    SWITCH,TAKES,TRUE,USE,WHILE,WITH,
+                    
                 };
 
-char *variables_array[] = {  "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
-                            "COMMA","DECLARE","DEF","DEFAULT","DIV","DRIVER","DRIVERDEF",
-                            "DRIVERENDDEF","END","ENDDEF","EQ","FALSE","FOR","GE","GET_VALUE",
-                            "GT","IN","INPUT","INTEGER","LE","LT","MINUS","MODULE","MUL","NE",
-                            "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
-                            "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
-                            "TRUE","USE","WHILE","WITH",
+char *variables_array[] = {  
                             "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression",
                             "assignmentStmt","booleanConst","caseStmt","caseStmts","conditionalStmt",
                             "datatype","declareStmt","default_nt","driverModule","expression",
@@ -69,7 +64,15 @@ char *variables_array[] = {  "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK
                             "optional","otherModules","output_plist","output_plist_lr","printOpt",
                             "program","range","rangeArr","relationalOp","ret","simpleStmt","statement",
                             "statements","term","term_lr","type","unary_opt","unaryExpression",
-                            "value","var","whichId","whichStmt"
+                            "value","var","whichId","whichStmt",
+                            "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
+                            "COMMA","DECLARE","DEF","DEFAULT", "DOLLAR", "DIV","DRIVER","DRIVERDEF",
+                            "DRIVERENDDEF","END","ENDDEF", "EPS", "EQ","FALSE","FOR","GE","GET_VALUE",
+                            "GT", "ID","IN","INPUT","INTEGER","LE","LT","MINUS","MODULE","MUL","NE",
+                            "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
+                            "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
+                            "TRUE","USE","WHILE","WITH",
+                            
                         };
 
 typedef struct first_follow_node
