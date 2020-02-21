@@ -1,3 +1,14 @@
 {
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "__cxx_version": "c",
+        "__hash_table": "c",
+        "algorithm": "c",
+        "bitset": "c",
+        "locale": "c",
+        "sstream": "c",
+        "type_traits": "c",
+        "typeinfo": "c",
+        "complex": "c"
+    }
 }
