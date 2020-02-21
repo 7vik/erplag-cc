@@ -8,6 +8,8 @@
 #include <assert.h> 
 #include <unistd.h>
 
+#define rep(i,z) for (int i=0; i<z; ++i)
+
 #define GRAMMAR_START_SYMBOL program
 
 PARSE_TREE *create_new_node (TREE_NODE *data)
@@ -459,12 +461,6 @@ first_follow* get_first_follow_table(GRAMMAR* grammar)
     return construct_first_follow_set(grammar, grammar->num_rules);
 }
 
-void create_parse_table(first_follow *f, TABLE *t)
-{
-
-    return;
-}
-
 first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, first_follow_node *curr, first_follow *ff)
 {
     // empty case
@@ -524,11 +520,65 @@ void parse(char *filename, TABLE *table, PARSE_TREE *tree)
     return;
 }
 
+TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
+{
+    int num_nt = whichStmt - arithmeticExpr + 1;
+    int num_t = WITH - AND + 1;
+    rep(i,num_nt)
+        rep(j, num_t)
+            t->matrix[i][j] = -1;
+    rep(i, g->num_rules)
+    {
+        rep(j, MAX_BOOL_ARRAY_SIZE)
+        { 
+            if (multiple_first(g,i,f)->first_set_array[num_nt+j] != false)
+                t->matrix[string_to_enum(g->rules[i]->variable)][j] = i;
+        }
+        if (multiple_first(g,i,f)->first_set_array[EPS] == 1)
+        {
+            rep(k, MAX_BOOL_ARRAY_SIZE)
+            { 
+            if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[num_nt+k] == 1)
+                t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
+            }
+            if(f->fnf[ string_to_enum("DOLLAR") ]->follow_set_array[i] == 1)
+                t->matrix[string_to_enum("DOLLAR")][i] = i;
+        }
+    }
+    return t;
+}
+
+// helper function to print a given parse table
+void print_parse_table(TABLE *t, GRAMMAR *g)
+{
+    int num_nt = whichStmt - arithmeticExpr + 1;
+    int num_t = WITH - AND + 1;
+    printf("%30s", "TABLE");
+    rep(k,num_t)
+        printf("%15s", variables_array[k+num_nt]);
+    putchar('\n');
+    putchar('\n');
+    rep(i,num_nt)
+    {   
+        printf("%30s", variables_array[i]);
+        rep(j,num_t)
+        {
+            // printf("%35s", g->rules[t->matrix[i][j]]->variable);
+            printf("%15d", t->matrix[i][j]);
+        }
+        putchar('\n');
+    }   
+    return;
+}
+
 int main()
 {
     GRAMMAR* grammar = generate_grammar();
     first_follow *ff = get_first_follow_table(grammar);
     // print_first_follow(ff);
-    print_first_follow_node(multiple_first(grammar, 57, ff));
+    // print_first_follow_node(multiple_first(grammar, 57, ff));
+    TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+    // printf("%d\n", WITH - AND + 1);
+    print_parse_table(create_parse_table(ff, parse_table, grammar), grammar);
     return 0;
 }
