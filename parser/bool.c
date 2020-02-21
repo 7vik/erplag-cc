@@ -70,10 +70,12 @@ void print_bool(bool* arr, int size)
     printf("\n");
 }
 
+
 /*
 int main()
 {
-    bool arr1[1] = {0};
+    bool arr1[MAX_BOOL_ARRAY_SIZE];
+    
     bool arr2[1] = {1};
 
     bool* arr;
@@ -84,8 +86,11 @@ int main()
     print_bool(arr, 1);
     arr = xor(arr1, arr2);
     print_bool(arr, 1);
-    initialize_bool_array(arr2);
-    print_bool(arr2, 1);
+    
+    print_bool(arr1, MAX_BOOL_ARRAY_SIZE);
+    printf("\n\n");
+    initialize_bool_array(arr1);
+    print_bool(arr1, MAX_BOOL_ARRAY_SIZE);
     //printf("%d\n", sizeof(long double));
 }
 */

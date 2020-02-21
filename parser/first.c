@@ -5,7 +5,7 @@
 #include<math.h>
 #include "bool.h"
 #include "parser.h"
-
+#include <assert.h> 
 
 // returns 0 if the token is non-terminal
 int is_terminal(char* variable)
@@ -33,13 +33,13 @@ void print_rule(GRAMMAR_NODE *rule)
     return;
 }
 
-void print_grammar(GRAMMAR g, int index)
+void print_grammar(GRAMMAR* g, int index)
 {
 
     for (int i = 0; i < index; i++)
     {
         //printf("%d\n", start);
-        print_rule(g.rules[i]);
+        print_rule(g->rules[i]);
         putchar('\n');
     }
     //printf("%d\n", start - 1);   
@@ -61,6 +61,34 @@ int string_to_enum(char* string)
     return -1;
 }
 
+void print_set_array(bool* set_array)
+{
+    int flag = 0;
+    for (int i = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
+    {
+        if(set_array[i] == 1)
+        {
+            printf("%s ", variables_array[i]);
+            flag = 1;
+        }
+    }
+
+    if (flag)
+        printf("\n");
+}
+
+void print_first_follow_node(first_follow_node* node)
+{
+    print_set_array(node->first_set_array);
+}
+
+void print_first_follow(first_follow* table, int index)
+{
+    for (int i = 0; i < index; i++)
+    {
+        print_first_follow_node(table->fnf[i]);
+    }
+}
 
 /*
 GRAMMAR_NODE* exist_first(GRAMMAR_NODE* first_set[], char* search_token)
@@ -81,7 +109,7 @@ GRAMMAR_NODE* exist_first(GRAMMAR_NODE* first_set[], char* search_token)
 }
 */
 
-void populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* token)
+void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* token)
 {   
     //printf("inside return first: %s\n", token);
 
@@ -93,7 +121,7 @@ void populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* t
         
     }
     
-    if(first_table[token]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
+    if(first_table->fnf[string_to_enum(token)]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
     {   
         printf("first already counted: %s\n", token);
         return;
@@ -111,17 +139,17 @@ void populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* t
         for (int i = 0; i < idx; i++)
         {
 
-            if(strcmp(token, grammar.rules[i]->variable) == 0)
+            if(strcmp(token, grammar->rules[i]->variable) == 0)
             {
                 printf("match: %s\n", token);
                 
                 // if token -> Terminal NT...
                 
-                char* temp_tnt = grammar.rules[i]->next->variable;
-                GRAMMAR_NODE* temp_next = grammar.rules[i]->next;
+                char* temp_tnt = grammar->rules[i]->next->variable;
+                GRAMMAR_NODE* temp_next = grammar->rules[i]->next;
                 if (is_terminal(temp_tnt) != 0)
                 {
-                    first_table->fnf[string_to_enum(token)].first_set_array[string_to_enum(temp_tnt)] = 1;
+                    first_table->fnf[string_to_enum(token)]->first_set_array[string_to_enum(temp_tnt)] = 1;
                     continue;
                 }
 
@@ -130,51 +158,60 @@ void populate_first(first_follow* first_table, GRAMMAR grammar, int idx, char* t
                 {
                     populate_first(first_table, grammar, idx, temp_tnt);
                     int str_to_enum = string_to_enum(temp_tnt);
-                    assert(first_table->fnf[str_to_enum].first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0);
+                    assert(first_table->fnf[str_to_enum]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0);
 
-                    or_and_store(first_table->fnf[string_to_enum(token)].first_set_array, first_table->fnf[str_to_enum].first_set_array);
+                    or_and_store(first_table->fnf[string_to_enum(token)]->first_set_array, first_table->fnf[str_to_enum]->first_set_array);
                     continue;
                 }
-
+                /*
                 // temp_tnt is EPS
                 else
                 {
                     // this is of the form A -> EPS
                     if ()
                 }
+                */
               
 
             }
 
         }
+
+        first_table->fnf[string_to_enum(token)]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] = 1;
     }
     
-    return first_set;
+    return;
 
 }
 
-first_follow* construct_first_follow_set(GRAMMAR grammar, int idx)
+first_follow* construct_first_follow_set(GRAMMAR* grammar, int idx)
 {
     
     first_follow* first_table = (first_follow*) malloc (sizeof (first_follow));
-    int count = 0;
+    //printf("%d\n", idx);
     for (int i = 0; i < idx; i++)
     {
-        first_table[i] = (first_follow_node*) malloc(sizeof(first_follow_node));
+        first_table->fnf[i] = (first_follow_node*) malloc(sizeof(first_follow_node));
 
-        initialize_bool_array(first_table[i]->first_set_array);
-        initialize_bool_array(first_table[i]->follow_set_array);
+        initialize_bool_array(first_table->fnf[i]->first_set_array);
+        initialize_bool_array(first_table->fnf[i]->follow_set_array);
+        print_set_array((first_table->fnf[0]->first_set_array));
     
     }
-    
+    //print_set_array(first_table->fnf[0]->first_set_array);
+    //print_first_follow(first_table, idx);
+            exit(0);
     for(int i = 0; i < idx; i++)
     {
-        if (first_table[i]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
-
-            populate_first(first_table, grammar, idx, grammar->rules[i]);
+        if (first_table->fnf[i]->first_set_array[MAX_BOOL_ARRAY_SIZE - 1] == 0)
+        {
+            populate_first(first_table, grammar, idx, grammar->rules[i]->variable);
+            print_first_follow(first_table, idx);
+            exit(0);
+        }
     }
-    printf("%d", count);
-    print_grammar(first_table, count);
+    
+    print_first_follow(first_table, idx);
     return first_table;
 
     
@@ -188,14 +225,14 @@ void print_non_terminals(GRAMMAR_NODE* grammar[], int idx)
     }   
 }
 
-void initialize_grammar(GRAMMAR grammar)
+void initialize_grammar(GRAMMAR* grammar)
 {
     int i; 
     for ( i = 0; i < MAX_RULE_NUM; i++)
     {
-        grammar.rules[i] = NULL;
+        grammar->rules[i] = NULL;
 
-        if (grammar.rules[i] != NULL)
+        if (grammar->rules[i] != NULL)
             printf("error\n");
     }
 }
@@ -209,41 +246,29 @@ int main()
         exit(1);
     }
     char line[200];
-    GRAMMAR grammar;
-    //initialize_grammar(grammar);
+    GRAMMAR* grammar = (GRAMMAR*) malloc (sizeof(GRAMMAR));
 
     int rule_count = 0;
 
     while (EOF != fscanf(f, "%[^\n]\n", line))
     {
-        //printf("%s\n", line);
-        //exit(0);
-        char* token = strtok(line, " ");
-        //printf("%s", token);
-        //exit(1);
-        // add non terminal as head
         
-        grammar.rules[rule_count] = (GRAMMAR_NODE*)malloc(sizeof(GRAMMAR_NODE));
-        GRAMMAR_NODE* cur_pointer = grammar.rules[rule_count];
-        strcpy(grammar.rules[rule_count]->variable, token);
-        grammar.rules[rule_count]->is_terminal_flag = 0;
-        grammar.rules[rule_count]->next = NULL;
+        char* token = strtok(line, " ");
+        grammar->rules[rule_count] = (GRAMMAR_NODE*)malloc(sizeof(GRAMMAR_NODE));
+        GRAMMAR_NODE* cur_pointer = grammar->rules[rule_count];
+        strcpy(grammar->rules[rule_count]->variable, token);
+        grammar->rules[rule_count]->is_terminal_flag = 0;
+        grammar->rules[rule_count]->next = NULL;
 
     
-        //printf("%s\n", grammar.rules[rule_count]->variable);
-        //exit(0);
         token = strtok(NULL, " ");
-        //printf("here\n");
         while(token != NULL)
         {
-            //printf("%s %d\n", token, is_terminal(token));
             if (strcmp(token, "->") == 0)
             {
                 token = strtok(NULL, " ");
                 continue;
             }
-            // print_rule(grammar.rules[0]);
-            // putchar('\n');
             GRAMMAR_NODE* node = (GRAMMAR_NODE*) malloc(sizeof(GRAMMAR_NODE));
             strcpy(node->variable, token);
             node->is_terminal_flag = is_terminal(token);
@@ -253,16 +278,13 @@ int main()
             token = strtok(NULL, " ");
         }
     
-        //printf("here\n");
         rule_count++;
         
     }
-    //printf("%d", rule_count);
 
-    print_grammar(grammar, rule_count);
-    //print_non_terminals(grammar, rule_count-1);
+    //print_grammar(grammar, rule_count);
+    construct_first_follow_set(grammar, rule_count);
 
-    //construct_first_set(grammar, rule_count - 1);
     fclose(f);
     return 0;
 }
