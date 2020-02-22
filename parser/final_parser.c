@@ -564,8 +564,8 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
             if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[num_nt+k] == 1)
                 t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
             }
-            if(f->fnf[ string_to_enum("DOLLAR") ]->follow_set_array[i] == 1)
-                t->matrix[string_to_enum("DOLLAR")][i] = i;
+            if(f->fnf[string_to_enum(g->rules[i]->variable)]->follow_set_array[DOLLAR] == 1)
+                t->matrix[string_to_enum(g->rules[i]->variable)][DOLLAR - num_nt] = i;
         }
     }
     for(int i = 0; i < g->num_rules; ++i)
