@@ -1,15 +1,16 @@
 #ifndef __PARSER
 #define __PARSER
-#define MAX_VAR_SIZE 50            // maximum allowed length of variable
+// #define MAX_VAR_SIZE 50            // maximum allowed length of variable
 
 
-#define GRAMMAR_NODE_FILE_PATH "../grammar/grammar.txt"
-#define MAX_RULE_NUM 150
+// #define GRAMMAR_NODE_FILE_PATH "../grammar/grammar.txt"
+// #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
-#define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
+// #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 #include "bool.h"
-#include "enum.h"
-
+//#include "enum.h"
+#include "grammar.h"
+#include "../lexer/lexer.h"
 /*
 enum terminals  {   
                     AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
@@ -61,32 +62,32 @@ char *non_terminals_array[] =   {
 
 */
 
-typedef struct first_follow_node
-{
-    bool first_set_array[MAX_BOOL_ARRAY_SIZE];
-    bool follow_set_array[MAX_BOOL_ARRAY_SIZE];
-}first_follow_node;
+// typedef struct first_follow_node
+// {
+//     bool first_set_array[MAX_BOOL_ARRAY_SIZE];
+//     bool follow_set_array[MAX_BOOL_ARRAY_SIZE];
+// }first_follow_node;
 
 
-typedef struct first_follow
-{
-    first_follow_node* fnf[MAX_NUM_NON_TERMINALS];
-}first_follow;
+// typedef struct first_follow
+// {
+//     first_follow_node* fnf[MAX_NUM_NON_TERMINALS];
+// }first_follow;
 
 
-typedef struct grammar_node
-{
-    // a single node of a grammar rule. If rule is A->FOO BAR, then FOO is a node
-    char variable[MAX_VAR_SIZE];
-    int is_terminal_flag;
-    struct grammar_node *next;
-} GRAMMAR_NODE;
+// typedef struct grammar_node
+// {
+//     // a single node of a grammar rule. If rule is A->FOO BAR, then FOO is a node
+//     char variable[MAX_VAR_SIZE];
+//     int is_terminal_flag;
+//     struct grammar_node *next;
+// } GRAMMAR_NODE;
 
-typedef struct grammar
-{
-    GRAMMAR_NODE *rules[MAX_RULE_NUM];
-    int num_rules;
-}   GRAMMAR;
+// typedef struct grammar
+// {
+//     GRAMMAR_NODE *rules[MAX_RULE_NUM];
+//     int num_rules;
+// }   GRAMMAR;
 
 typedef struct parse_table
 {
@@ -120,11 +121,11 @@ typedef struct parse_tree
     struct parse_tree *kids[N_ARY_LIM];     // children nodes
 }   PARSE_TREE;
 
-first_follow* get_first_follow_table(GRAMMAR* grammar);
-GRAMMAR* generate_grammar(void);
-void print_grammar(GRAMMAR* g);
-int string_to_enum(char* string);
-void print_first_follow(first_follow* table);
-void print_rule(GRAMMAR_NODE *rule);
-
+// first_follow* get_first_follow_table(GRAMMAR* grammar);
+// GRAMMAR* generate_grammar(void);
+// void print_grammar(GRAMMAR* g);
+// int string_to_enum(char* string);
+// void print_first_follow(first_follow* table);
+// void print_rule(GRAMMAR_NODE *rule);
+PARSE_TREE *create_new_node (TREE_NODE *data);
 #endif

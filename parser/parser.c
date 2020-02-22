@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include "parser.h"
-#include<stdlib.h>              // malloc()
+#include <stdlib.h>              // malloc()
 
 PARSE_TREE *create_new_node (TREE_NODE *data)
 {
