@@ -464,9 +464,11 @@ first_follow* get_first_follow_table(GRAMMAR* grammar)
 first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, first_follow_node *curr, first_follow *ff)
 {
     // empty case
+    // printf("EEE\n");
     if(strcmp("EPS", rulep->variable) == 0)
     {
         curr->first_set_array[EPS] = 1;
+        // printf("A1\n");
         return curr;
     }
     // base cases
@@ -474,12 +476,14 @@ first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, fir
     if (is_terminal(rulep->variable))
     {
         curr->first_set_array[string_to_enum(rulep->variable)] = 1;
+        // printf("A2\n");
         return curr;
     }
     if (rulep->next == NULL)
     {
         or_and_store(curr->first_set_array, ff->fnf[string_to_enum(rulep->variable)]->first_set_array);
         // ff->fnf[string_to_enum(rulep->variable)];
+        // printf("A3\n");
         return curr;
     }
     // recursive cases
@@ -487,14 +491,29 @@ first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, fir
     {
         first_follow_node *temp1 = (first_follow_node *) malloc(sizeof(first_follow_node));
         first_follow_node *temp2 = (first_follow_node *) malloc(sizeof(first_follow_node));
-        temp1 = ff->fnf[string_to_enum(rulep->variable)];
+        // first_follow_node *temp1;
+        // first_follow_node *temp2;
+        // temp1 = ff->fnf[string_to_enum(rulep->variable)];
+        for (int r=0; r<MAX_BOOL_ARRAY_SIZE; ++r)
+        {
+            temp1->first_set_array[r] = ff->fnf[string_to_enum(rulep->variable)]->first_set_array[r];
+            temp1->follow_set_array[r] = ff->fnf[string_to_enum(rulep->variable)]->follow_set_array[r];
+        }
+        // printf("LOL%s: ", rulep->variable);
+        // print_first_follow_node(temp1);
+        // putchar('\n');
         if (temp1->first_set_array[EPS] == 1)
+        {
+            // printf("%s\n", rulep->variable);
             temp2 = recursive_multiple_first(g, rulep->next, curr, ff);
-        else if (temp1->first_set_array[EPS] == 0)
-            temp2 = temp2;
+            // printf("TTT\n");
+        }
+        // else if (temp1->first_set_array[EPS] == 0)
+        //     temp2 = temp2;
         temp1->first_set_array[EPS] = 0;
         for (int i  = 0; i < MAX_BOOL_ARRAY_SIZE - 1; i++)
             curr->first_set_array[i] = temp1->first_set_array[i] | temp2->first_set_array[i];
+        // printf("A4\n");
         return curr;
     }
     return NULL;    // hopefully never
@@ -505,12 +524,13 @@ first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, fir
 first_follow_node *multiple_first(GRAMMAR *g, unsigned int rule, first_follow *ff)
 {
     first_follow_node *new = (first_follow_node *) malloc(sizeof(first_follow_node));
-    // print_first_follow_node(new);
     assert(rule < g->num_rules);
     GRAMMAR_NODE *rule_head;
     rule_head = g->rules[rule];
     rule_head = rule_head->next;
+    // printf("%s\n", rule_head->variable);
     new = recursive_multiple_first(g, rule_head, new, ff);
+    // print_first_follow_node(new);
     return new;
 }
 
@@ -524,19 +544,22 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
 {
     int num_nt = whichStmt - arithmeticExpr + 1;
     int num_t = WITH - AND + 1;
-    rep(i,num_nt)
-        rep(j, num_t)
+    for (int i=0; i<num_nt; ++i)
+        for (int j=0; j<num_t; ++j)
             t->matrix[i][j] = -1;
-    rep(i, g->num_rules)
+    for (int i = 0; i < g->num_rules; ++i)
     {
-        rep(j, MAX_BOOL_ARRAY_SIZE)
+        for( int j = 0; j < MAX_BOOL_ARRAY_SIZE; ++j)
         { 
-            if (multiple_first(g,i,f)->first_set_array[num_nt+j] != false)
+            if (multiple_first(g,i,f)->first_set_array[num_nt+j] == true)
+            {
                 t->matrix[string_to_enum(g->rules[i]->variable)][j] = i;
+                // if (i == 0) {printf("RRRRRRR\n"); print_first_follow_node(multiple_first(g,i,f));}
+            }
         }
         if (multiple_first(g,i,f)->first_set_array[EPS] == 1)
         {
-            rep(k, MAX_BOOL_ARRAY_SIZE)
+            for( int k = 0; k < MAX_BOOL_ARRAY_SIZE; ++k)
             { 
             if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[num_nt+k] == 1)
                 t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
@@ -545,6 +568,8 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
                 t->matrix[string_to_enum("DOLLAR")][i] = i;
         }
     }
+    for(int i = 0; i < g->num_rules; ++i)
+        t->matrix[string_to_enum(g->rules[i]->variable)][EPS - num_nt] = -1;
     return t;
 }
 
@@ -576,7 +601,10 @@ int main()
     GRAMMAR* grammar = generate_grammar();
     first_follow *ff = get_first_follow_table(grammar);
     // print_first_follow(ff);
-    // print_first_follow_node(multiple_first(grammar, 57, ff));
+    // for(int i=0;i<104;i++)
+    //     print_first_follow_node(multiple_first(grammar, i, ff));
+    
+    // print_first_follow_node(multiple_first(grammar, 0, ff));
     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
     // printf("%d\n", WITH - AND + 1);
     print_parse_table(create_parse_table(ff, parse_table, grammar), grammar);
