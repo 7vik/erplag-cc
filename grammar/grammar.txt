@@ -8,9 +8,9 @@ driverModule -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef
 module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
 ret -> RETURNS SQBO output_plist SQBC SEMICOL 
 ret -> EPS
-input_plist_lr -> COMMA ID COLON dataType input_plist_lr 
+input_plist_lr -> COMMA ID COLON datatype input_plist_lr 
 input_plist_lr -> EPS
-input_plist -> ID COLON dataType input_plist_lr
+input_plist -> ID COLON datatype input_plist_lr
 output_plist_lr -> COMMA ID COLON type output_plist_lr 
 output_plist_lr -> EPS
 output_plist -> ID COLON type output_plist_lr
@@ -89,7 +89,7 @@ relationalOp -> GT
 relationalOp -> GE 
 relationalOp -> EQ 
 relationalOp -> NE
-declareStmt -> DECLARE idList COLON dataType SEMICOL
+declareStmt -> DECLARE idList COLON datatype SEMICOL
 value -> NUM 
 value -> TRUE 
 value -> FALSE
