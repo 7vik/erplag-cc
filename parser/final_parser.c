@@ -553,7 +553,8 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
         { 
             if (multiple_first(g,i,f)->first_set_array[num_nt+j] == true)
             {
-                t->matrix[string_to_enum(g->rules[i]->variable)][j] = i;
+                t->matrix[string_to_enum(g->rules[i]->variable)][j] = i; 
+                if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
                 // if (i == 0) {printf("RRRRRRR\n"); print_first_follow_node(multiple_first(g,i,f));}
             }
         }
@@ -561,11 +562,17 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
         {
             for( int k = 0; k < MAX_BOOL_ARRAY_SIZE; ++k)
             { 
-            if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[num_nt+k] == 1)
-                t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
+                if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[k] == 1)
+                {
+                    t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
+                    if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
+                }
             }
             if(f->fnf[string_to_enum(g->rules[i]->variable)]->follow_set_array[DOLLAR] == 1)
+            {        
                 t->matrix[string_to_enum(g->rules[i]->variable)][DOLLAR - num_nt] = i;
+                if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
+            }
         }
     }
     for(int i = 0; i < g->num_rules; ++i)
