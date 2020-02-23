@@ -3,6 +3,16 @@
 #define max_num_len 100         // maximum allowed length of any number (this has been defined by us)
 #endif
 
+#define TOKEN_SIZE 22
+#define SOURCE_CODE_FILE "../lexer/t1.txt"/*"./test.erplag"*/
+
+#include "hash.h"           
+
+#define not !
+#define and &&
+
+enum active_buffer {Steve, Mark};
+
 #define TWIN_BUFFER_SIZE 16
 
 typedef struct lexeme_tuple
@@ -24,3 +34,7 @@ typedef struct twin_buffer
     int read;
 }   TWIN_BUFFER;
 
+void init_buffer(FILE *f, TWIN_BUFFER *buff);
+char get_stream(FILE *f, TWIN_BUFFER *buff);
+LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count);
+void print_lexeme(LEXEME *l);

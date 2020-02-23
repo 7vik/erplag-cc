@@ -10,7 +10,7 @@
 #include "bool.h"
 //#include "enum.h"
 //  #include "grammar.h"
-#include "../lexer/lexer.h"
+// #include "../lexer/lexer.h"
 /*
 enum terminals  {   
                     AND,ARRAY,ASSIGNOP,BC,BO,BOOLEAN,BREAK,
@@ -138,9 +138,11 @@ typedef struct parse_table
 
 typedef struct stack_of_grammar_symbols
 {
-    char *symbol;
+    int symbol;                 // enum, maybe a terminal or a non-terminal
     struct stack_of_grammar_symbols *next;
 } STACK;
+
+
 
 typedef struct parse_tree_node_data
 {

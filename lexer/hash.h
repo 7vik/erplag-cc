@@ -1,5 +1,5 @@
 #if !defined(KEYWORDS_FILE)
-#define KEYWORDS_FILE "./keywords.txt"
+#define KEYWORDS_FILE "../lexer/keywords.txt"
 #endif
 
 #define SIZE 64
@@ -17,7 +17,7 @@ ENTRY *hash_table[SIZE];
 void initialize(ENTRY **hash_table);
 int hash(char *str);
 void insert(char *value, ENTRY **hash_table);
-int delete(char *value, ENTRY **hash_table);
+// int delete(char *value, ENTRY **hash_table);
 void print(ENTRY **hash_table);
 void populate_ht(ENTRY **hash_table, char *file_path);
 int search(char *value, ENTRY **hash_table);

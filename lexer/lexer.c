@@ -1,18 +1,9 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include "hash.h"      // malloc()
+#include<stdlib.h>       // malloc()
 #include "lexer.h"
 #include<ctype.h>       // isalpha(), isalnum(), isnumber()
 #include<string.h>      // strlen(), strcpy(), memset()
 
-#define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "./t1.txt"/*"./test.erplag"*/
-
-#define not !
-#define and &&
-
-char get_stream(FILE *f, TWIN_BUFFER *buff);
-enum active_buffer {Steve, Mark};
 
 void print_lexeme(LEXEME *l)
 {
@@ -685,16 +676,16 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff)
     return;
 }
 
-int main()
-{
-    populate_ht(hash_table, KEYWORDS_FILE);
-    FILE *f = fopen(SOURCE_CODE_FILE, "r");
-    int line_count = 1;
-    TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-    init_buffer(f, twin_buff);
-    //printf("%s\n", twin_buff->steve);
-    LEXEME *temp;
-    while((temp = get_token(f, twin_buff, &line_count)))
-        print_lexeme(temp);
-    return 0;
-}
+// int main()
+// {
+//     populate_ht(hash_table, KEYWORDS_FILE);
+//     FILE *f = fopen(SOURCE_CODE_FILE, "r");
+//     int line_count = 1;
+//     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+//     init_buffer(f, twin_buff);
+//     //printf("%s\n", twin_buff->steve);
+//     LEXEME *temp;
+//     while((temp = get_token(f, twin_buff, &line_count)))
+//         print_lexeme(temp);
+//     return 0;
+// }
