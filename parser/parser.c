@@ -70,17 +70,19 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
 }
 
 // recursive
-void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
+void print_parse_tree(PARSE_TREE *tree, FILE* f)
 {
     // prints the given parse tree in an output file in inorder traversal
     // for an n-ary tree, inorder traversal means:
     //          leftmost kid, then pop, then other kids
-    FILE *f = fopen(out_file_name, "w");
+    
     if (tree == NULL)   
         return;         // print nothing
     else
     {
-        print_parse_tree(tree->kids[0], out_file_name);
+        printf("dhbdb %d\n", tree->num_of_kids);
+        print_parse_tree(tree->kids[0], f);
+        printf("sdfe\n");
         fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15d\t%15s\n",
                     tree->data->lexeme,
                     tree->data->line,
@@ -91,8 +93,9 @@ void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
                     tree->data->node_symbol
                     );
         int temp = tree->num_of_kids;
-        while (--temp)
-            print_parse_tree(tree->kids[temp], out_file_name);
+        printf("%d\n", temp);
+        for (int i = 1; i < temp; i++)
+            print_parse_tree(tree->kids[i], f);
     }
     return;
 }
@@ -625,10 +628,25 @@ void print_parse_table(TABLE *t, GRAMMAR *g)
     return;
 }
 
-void pushr(STACK **st, GRAMMAR_NODE *rule)
+void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
 {
-    if (rule == NULL) return;
-    pushr(st, rule->next);
+        print_rule(rule);
+    if (rule == NULL)
+    {
+        return; exit(0);
+    }
+    // active->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
+    active->kids[active->num_of_kids] = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
+    active->kids[active->num_of_kids]->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
+    active->kids[active->num_of_kids]->data->is_leaf_node = 0; 
+    active->kids[active->num_of_kids]->data->lexeme = NULL;
+    active->kids[active->num_of_kids]->data->line = 0;
+    active->kids[active->num_of_kids]->data->node_symbol = rule->variable;
+    active->kids[active->num_of_kids]->data->parent_node_pointer = active;
+    active->kids[active->num_of_kids]->data->token_name = NULL;
+    active->kids[active->num_of_kids]->data->value_if_number = NULL;
+    active->num_of_kids++;
+    pushr(active, st, rule->next);
     push(st, string_to_enum(rule->variable));
 }
 
@@ -647,31 +665,17 @@ void fill_tree()
     return;
 }
 
-void insert_parse_tree(PARSE_TREE *root, PARSE_TREE **active, int is_term, LEXEME *lex_tup, int nont, PARSE_TREE *parent)
+void insert_parse_tree(PARSE_TREE **active, LEXEME *lex_tup)
 {
-    (*active)->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
-    if (is_term)
-    {
-        (*active)->data->is_leaf_node = 1;
-        (*active)->data->line = lex_tup->line;
-        (*active)->data->lexeme = lex_tup->value;
-        (*active)->data->token_name = lex_tup->token;
-        if((strcmp(lex_tup->token, "NUM")  == 0) || (strcmp(lex_tup->token, "RNUM")  == 0))
-            (*active)->data->value_if_number = lex_tup->value;
-        (*active)->data->node_symbol = lex_tup->token;
-        (*active)->data->parent_node_pointer = parent;
-    }
-    
-    else /*it is a non-terminal*/
-    {
-        (*active)->data->is_leaf_node = 0;
-        (*active)->data->line = -1; //just an indicator of the fact that it is a NT
-        (*active)->data->lexeme = NULL;
-        (*active)->data->token_name = NULL;
-        (*active)->data->value_if_number = NULL;
-        (*active)->data->node_symbol = variables_array[nont];
-        (*active)->data->parent_node_pointer = parent;
-    }
+    //(*active)->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
+    (*active)->data->is_leaf_node = 1;
+    (*active)->data->line = lex_tup->line;
+    (*active)->data->lexeme = lex_tup->value;
+    (*active)->data->token_name = lex_tup->token;
+    if((strcmp(lex_tup->token, "NUM")  == 0) || (strcmp(lex_tup->token, "RNUM")  == 0))
+        (*active)->data->value_if_number = lex_tup->value;
+    (*active)->data->node_symbol = lex_tup->token;
+    // (*active)->data->parent_node_pointer = *active;
     (*active)->num_of_kids = 0;
     for (int i=0; i<N_ARY_LIM; ++i) (*active)->kids[i] = NULL;
     return;
@@ -681,23 +685,47 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
 {
     if ((*active) == tree) 
         return;
+    printf("sakdbghvefb\n");
+    // printf("%s\n", (*active)->data->node_symbol);
     PARSE_TREE *parent = (*active)->data->parent_node_pointer;
+    printf("sakdbghvefb\n");
     int index_of_active = 0;
-    while(parent->kids[index_of_active] != (*active)) ++index_of_active;
+    printf("LOLOL++_+_ %s\n", (*active)->data->node_symbol);
+
+    while(parent->kids[index_of_active] != (*active))
+    {
+        index_of_active++;
+        printf("%d\n", index_of_active);
+    }
+    printf("sakdbghvefb\n");
     *active = parent;
+    printf("sakdbghvefb\n");
     if (index_of_active < (parent->num_of_kids)-1)  
         *active = parent->kids[index_of_active + 1];
     else 
         return next_active(tree, active);
 }
 
+
+
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
 {
+    FILE *fp = fopen("bakchod.txt", "w");
     push(&st, DOLLAR);      // initially, the parser is in a config with w$ in input buffer and 
     push(&st, program);     // the start symbol above $ in the stack
     tree = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
     PARSE_TREE *active = tree;
-    insert_parse_tree(tree, &active, is_terminal(variables_array[program]), NULL, program, NULL);
+    active->num_of_kids = 0;
+    for(int i=0; i<N_ARY_LIM; ++i)
+        active->kids[i] = NULL;
+    active->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
+    active->data->parent_node_pointer = NULL;
+    active->data->is_leaf_node = 0;
+    active->data->lexeme = NULL;
+    active->data->line = 0;
+    active->data->node_symbol = "program";
+    active->data->token_name = NULL;
+    active->data->value_if_number = NULL;
     LEXEME *a = get_token(f, twin_buff, line_no);           // let a be the first symbol of w
     int X = top(st);                                        // let X be the top stack symbol
     int num_nt = whichStmt - arithmeticExpr + 1;
@@ -710,9 +738,10 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
         {
             // printf("G2\n");
             pop(&st);            // pop the stack, and
-            
+            insert_parse_tree(&active, a);
+            printf("H1\n");
             next_active(tree, &active);       //deal with the segmentation fault here, and remove this comment.
-            
+            printf("H1]2\n");
             a = get_token(f, twin_buff, line_no);   // let a be the next symbol of w
         }
         else if (is_terminal(variables_array[X]))       // else if X is a terminal,
@@ -727,12 +756,24 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             print_rule(g->rules[rule_id]);
             fill_tree();
             pop(&st);
+            printf("vkmkbhd:::  %s\n", active->data->node_symbol);
             if (string_to_enum(g->rules[rule_id]->next->variable) != EPS)
-                pushr(&st, g->rules[rule_id]->next);
+            {
+                pushr(active, &st, g->rules[rule_id]->next);
+                printf("%d\n", active->num_of_kids);
+                printf("vandanac %d\n", active->num_of_kids);
+                
+                //pushr(active, &st, g->rules[rule_id]->next);
+                active = active->kids[0];
+                printf("hbsdvvsb\n");
+            }
         }
         X = top(st);
+
     }
     printf("HO GAYA PARSE\n");
+    putchar('\n');
+    print_parse_tree(tree, fp);
 }
 
 int main()
