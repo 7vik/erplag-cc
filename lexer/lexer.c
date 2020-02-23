@@ -105,8 +105,11 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             strcpy(detected_id, buff);
             new->token = (char *) malloc (sizeof(char) * TOKEN_SIZE);
         
-            if (search(detected_id, hash_table) == 1){
-                strcpy(new->token, "KEYWORD");
+            if (search(detected_id, hash_table) == 1)
+            {
+                char *temp = (char *) malloc(strlen(buff));
+                for (int yu=0; yu < strlen(buff); ++yu) temp[yu] = toupper(buff[yu]);
+                strcpy(new->token, temp);
             }
             else
                 strcpy(new->token,"ID");
@@ -625,7 +628,8 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             }
         } 
     }
-    return NULL;
+    new->token = "DOLLAR";
+    return new;
 }
 
 char get_stream(FILE *f, TWIN_BUFFER *buff)

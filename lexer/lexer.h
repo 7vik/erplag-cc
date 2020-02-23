@@ -4,7 +4,7 @@
 #endif
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "../lexer/t1.txt"/*"./test.erplag"*/
+#define SOURCE_CODE_FILE "../testcases-1/t2.txt"/*"./test.erplag"*/
 
 #include "hash.h"           
 

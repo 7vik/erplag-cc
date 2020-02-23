@@ -120,6 +120,7 @@ void print_rule(GRAMMAR_NODE *rule)
         printf("%s -> ",rule->variable);
         rule = rule->next;
     }
+    putchar('\n');
     return;
 }
 
@@ -624,31 +625,83 @@ void print_parse_table(TABLE *t, GRAMMAR *g)
     return;
 }
 
-void parse(char *filename, TABLE *table, PARSE_TREE *tree, STACK *st)
+void pushr(STACK **st, GRAMMAR_NODE *rule)
+{
+    if (rule == NULL) return;
+    pushr(st, rule->next);
+    push(st, string_to_enum(rule->variable));
+}
+
+void error()
 {
     return;
 }
 
+void fill_tree()
+{
+    return;
+}
+
+void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
+{
+    push(&st, DOLLAR);      // initially, the parser is in a config with w$ in input buffer and 
+    push(&st, program);     // the start symbol above $ in the stack
+    LEXEME *a = get_token(f, twin_buff, line_no);           // let a be the first symbol of w
+    int X = top(st);                                        // let X be the top stack symbol
+    int num_nt = whichStmt - arithmeticExpr + 1;
+    while(X != DOLLAR)              // stack is not empty
+    {
+        // printf("INPUTLEX:      %s\n", a->token);
+        // printf("TOP::          %s\n", variables_array[X]);
+        int rule_id = table->matrix[X][string_to_enum(a->token) - num_nt];
+        if (X == string_to_enum(a->token))      // if X = a, then
+        {
+            // printf("G2\n");
+            pop(&st);            // pop the stack, and
+            a = get_token(f, twin_buff, line_no);   // let a be the next symbol of w
+        }
+        else if (is_terminal(variables_array[X]))       // else if X is a terminal,
+            error();
+            // printf("H!\n");
+        else if (table->matrix[X][string_to_enum(a->token) - num_nt] == -1)  // else if M[X,a] is an error entry, 
+            error();
+            // printf("H2\n");
+        else if (rule_id != -1)
+        {
+            // printf("%d\n", rule_id);
+            print_rule(g->rules[rule_id]);
+            fill_tree();
+            pop(&st);
+            if (string_to_enum(g->rules[rule_id]->next->variable) != EPS)
+                pushr(&st, g->rules[rule_id]->next);
+        }
+
+        // else
+        // {
+        //     printf("%d\n", rule_id);
+        //     printf("fbb");
+        //     exit(0);
+        // }
+        
+        X = top(st);
+    }
+    printf("HO GAYA PARSE\n");
+}
+
 int main()
 {
-    // from lexer
     populate_ht(hash_table, KEYWORDS_FILE);
     FILE *f = fopen(SOURCE_CODE_FILE, "r");
     int line_count = 1;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
     init_buffer(f, twin_buff);
-    //printf("%s\n", twin_buff->steve);
-    LEXEME *temp;
-    // while((temp = get_token(f, twin_buff, &line_count)))
-    //     print_lexeme(temp);
-
     GRAMMAR* grammar = generate_grammar();
     first_follow *ff = get_first_follow_table(grammar);
     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
     create_parse_table(ff, parse_table, grammar);
-    // // print_parse_table(parse_table, grammar);
+    // print_parse_table(parse_table, grammar);
     STACK *stack = NULL;
     PARSE_TREE *tree;
-    
+    parse(grammar, f, parse_table, tree, stack, twin_buff, &line_count);
     return 0;
 }

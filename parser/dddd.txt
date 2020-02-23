@@ -1,0 +1,16 @@
+program -> moduleDeclarations -> otherModules -> driverModule -> otherModules -> 
+moduleDeclarations -> EPS -> 
+otherModules -> EPS -> 
+driverModule -> DRIVERDEF -> DRIVER -> PROGRAM -> DRIVERENDDEF -> moduleDef -> 
+moduleDef -> START -> statements -> END -> 
+statements -> EPS -> 
+otherModules -> module -> otherModules -> 
+module -> DEF -> MODULE -> ID -> ENDDEF -> TAKES -> INPUT -> SQBO -> input_plist -> SQBC -> SEMICOL -> ret -> moduleDef -> 
+input_plist -> ID -> COLON -> datatype -> input_plist_lr -> 
+datatype -> BOOLEAN -> 
+input_plist_lr -> EPS -> 
+ret -> EPS -> 
+moduleDef -> START -> statements -> END -> 
+statements -> EPS -> 
+otherModules -> EPS -> 
+HO GAYA PARSE
