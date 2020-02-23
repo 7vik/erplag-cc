@@ -8,9 +8,9 @@
 #include <assert.h> 
 #include <unistd.h>
 
-#define rep(i,z) for (int i=0; i<z; ++i)
-
 #define GRAMMAR_START_SYMBOL program
+
+void print_parse_table(TABLE *t, GRAMMAR *g);
 
 PARSE_TREE *create_new_node (TREE_NODE *data)
 {
@@ -547,36 +547,17 @@ TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g)
     for (int i=0; i<num_nt; ++i)
         for (int j=0; j<num_t; ++j)
             t->matrix[i][j] = -1;
-    for (int i = 0; i < g->num_rules; ++i)
+    for (int i = 0; i < g->num_rules; ++i)                      // for each production A->B of the grammar:
     {
-        for( int j = 0; j < MAX_BOOL_ARRAY_SIZE; ++j)
-        { 
-            if (multiple_first(g,i,f)->first_set_array[num_nt+j] == true)
-            {
-                t->matrix[string_to_enum(g->rules[i]->variable)][j] = i; 
-                if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
-                // if (i == 0) {printf("RRRRRRR\n"); print_first_follow_node(multiple_first(g,i,f));}
-            }
-        }
-        if (multiple_first(g,i,f)->first_set_array[EPS] == 1)
-        {
-            for( int k = 0; k < MAX_BOOL_ARRAY_SIZE; ++k)
-            { 
-                if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[k] == 1)
-                {
-                    t->matrix[string_to_enum(g->rules[i]->variable)][k] = i;    //check for a instead of b
-                    if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
-                }
-            }
-            if(f->fnf[string_to_enum(g->rules[i]->variable)]->follow_set_array[DOLLAR] == 1)
-            {        
-                t->matrix[string_to_enum(g->rules[i]->variable)][DOLLAR - num_nt] = i;
-                if (i==52) printf("\nFFFF %d\n", string_to_enum(g->rules[i]->variable));
-            }
-        }
+        for( int j = AND; j <= WITH; ++j)                       // for each terminal a 
+            if (multiple_first(g,i,f)->first_set_array[j] == true)           // in first(B), 
+                t->matrix[string_to_enum(g->rules[i]->variable)][j - num_nt] = i;                        // add A->B to M[A,a]
+        if (multiple_first(g,i,f)->first_set_array[EPS] == 1)               // if EPS is in first(B), then
+            for( int k = AND; k <= WITH; ++k)                      // for each terminal b 
+                if (f->fnf[ string_to_enum(g->rules[i]->variable) ]->follow_set_array[k] == 1)  // in follow(A)
+                    t->matrix[string_to_enum(g->rules[i]->variable)][k - num_nt] = i;        // add A->B to M[A,b]
+        t->matrix[string_to_enum(g->rules[i]->variable)][EPS - num_nt] = -1;            
     }
-    for(int i = 0; i < g->num_rules; ++i)
-        t->matrix[string_to_enum(g->rules[i]->variable)][EPS - num_nt] = -1;
     return t;
 }
 
@@ -586,16 +567,15 @@ void print_parse_table(TABLE *t, GRAMMAR *g)
     int num_nt = whichStmt - arithmeticExpr + 1;
     int num_t = WITH - AND + 1;
     printf("%30s", "TABLE");
-    rep(k,num_t)
+    for (int k = 0; k < num_t; ++k)
         printf("%15s", variables_array[k+num_nt]);
     putchar('\n');
     putchar('\n');
-    rep(i,num_nt)
+    for (int i = 0; i < num_nt; ++i)
     {   
         printf("%30s", variables_array[i]);
-        rep(j,num_t)
+        for (int j = 0; j < num_t; ++j)
         {
-            // printf("%35s", g->rules[t->matrix[i][j]]->variable);
             printf("%15d", t->matrix[i][j]);
         }
         putchar('\n');
@@ -607,13 +587,8 @@ int main()
 {
     GRAMMAR* grammar = generate_grammar();
     first_follow *ff = get_first_follow_table(grammar);
-    // print_first_follow(ff);
-    // for(int i=0;i<104;i++)
-    //     print_first_follow_node(multiple_first(grammar, i, ff));
-    
-    // print_first_follow_node(multiple_first(grammar, 0, ff));
     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
-    // printf("%d\n", WITH - AND + 1);
-    print_parse_table(create_parse_table(ff, parse_table, grammar), grammar);
+    create_parse_table(ff, parse_table, grammar);
+    print_parse_table(parse_table, grammar);
     return 0;
 }
