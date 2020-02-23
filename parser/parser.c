@@ -81,12 +81,12 @@ void print_parse_tree(PARSE_TREE *tree, char *out_file_name)
     else
     {
         print_parse_tree(tree->kids[0], out_file_name);
-        fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15s\t%15d\t%15s\n",
+        fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15d\t%15s\n",
                     tree->data->lexeme,
                     tree->data->line,
                     tree->data->token_name,
                     tree->data->value_if_number,
-                    tree->data->parent_node_symbol,
+                    //tree->data->parent_node_pointer,
                     tree->data->is_leaf_node,
                     tree->data->node_symbol
                     );
@@ -632,20 +632,72 @@ void pushr(STACK **st, GRAMMAR_NODE *rule)
     push(st, string_to_enum(rule->variable));
 }
 
-void error()
+
+void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
+{
+    
+    // printf("Lo, ho gayi parsing error at line %d\n", *line_no);
+    // LEXEME *lex = get_token(f, twin_buff, line_no);
+    // while(strcmp(lex->token,"SEMICOL") != 0)
+    //     lex = get_token(f, twin_buff, line_no);
+    return;
+}
+void fill_tree()
 {
     return;
 }
 
-void fill_tree()
+void insert_parse_tree(PARSE_TREE *root, PARSE_TREE **active, int is_term, LEXEME *lex_tup, int nont, PARSE_TREE *parent)
 {
+    (*active)->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
+    if (is_term)
+    {
+        (*active)->data->is_leaf_node = 1;
+        (*active)->data->line = lex_tup->line;
+        (*active)->data->lexeme = lex_tup->value;
+        (*active)->data->token_name = lex_tup->token;
+        if((strcmp(lex_tup->token, "NUM")  == 0) || (strcmp(lex_tup->token, "RNUM")  == 0))
+            (*active)->data->value_if_number = lex_tup->value;
+        (*active)->data->node_symbol = lex_tup->token;
+        (*active)->data->parent_node_pointer = parent;
+    }
+    
+    else /*it is a non-terminal*/
+    {
+        (*active)->data->is_leaf_node = 0;
+        (*active)->data->line = -1; //just an indicator of the fact that it is a NT
+        (*active)->data->lexeme = NULL;
+        (*active)->data->token_name = NULL;
+        (*active)->data->value_if_number = NULL;
+        (*active)->data->node_symbol = variables_array[nont];
+        (*active)->data->parent_node_pointer = parent;
+    }
+    (*active)->num_of_kids = 0;
+    for (int i=0; i<N_ARY_LIM; ++i) (*active)->kids[i] = NULL;
     return;
+}
+
+void next_active(PARSE_TREE *tree, PARSE_TREE **active)
+{
+    if ((*active) == tree) 
+        return;
+    PARSE_TREE *parent = (*active)->data->parent_node_pointer;
+    int index_of_active = 0;
+    while(parent->kids[index_of_active] != (*active)) ++index_of_active;
+    *active = parent;
+    if (index_of_active < (parent->num_of_kids)-1)  
+        *active = parent->kids[index_of_active + 1];
+    else 
+        return next_active(tree, active);
 }
 
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
 {
     push(&st, DOLLAR);      // initially, the parser is in a config with w$ in input buffer and 
     push(&st, program);     // the start symbol above $ in the stack
+    tree = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
+    PARSE_TREE *active = tree;
+    insert_parse_tree(tree, &active, is_terminal(variables_array[program]), NULL, program, NULL);
     LEXEME *a = get_token(f, twin_buff, line_no);           // let a be the first symbol of w
     int X = top(st);                                        // let X be the top stack symbol
     int num_nt = whichStmt - arithmeticExpr + 1;
@@ -658,13 +710,16 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
         {
             // printf("G2\n");
             pop(&st);            // pop the stack, and
+            
+            next_active(tree, &active);       //deal with the segmentation fault here, and remove this comment.
+            
             a = get_token(f, twin_buff, line_no);   // let a be the next symbol of w
         }
         else if (is_terminal(variables_array[X]))       // else if X is a terminal,
-            error();
+            error(f, twin_buff, line_no);
             // printf("H!\n");
         else if (table->matrix[X][string_to_enum(a->token) - num_nt] == -1)  // else if M[X,a] is an error entry, 
-            error();
+            error(f, twin_buff, line_no);
             // printf("H2\n");
         else if (rule_id != -1)
         {
@@ -675,14 +730,6 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             if (string_to_enum(g->rules[rule_id]->next->variable) != EPS)
                 pushr(&st, g->rules[rule_id]->next);
         }
-
-        // else
-        // {
-        //     printf("%d\n", rule_id);
-        //     printf("fbb");
-        //     exit(0);
-        // }
-        
         X = top(st);
     }
     printf("HO GAYA PARSE\n");

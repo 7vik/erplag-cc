@@ -143,7 +143,7 @@ typedef struct stack_of_grammar_symbols
 } STACK;
 
 
-
+typedef struct parse_tree PARSE_TREE;
 typedef struct parse_tree_node_data
 {
     // data for printing and storing the parse tree effectively ftw
@@ -151,18 +151,18 @@ typedef struct parse_tree_node_data
     unsigned int line;           // line in our passed lexeme
     char *token_name;   // token in our passed lexeme    
     char *value_if_number;
-    char *parent_node_symbol;             
+    PARSE_TREE *parent_node_pointer;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
 } TREE_NODE;
 
-typedef struct parse_tree
+struct parse_tree
 {
     // n-ary tree structure
     TREE_NODE *data;
     int num_of_kids;
     struct parse_tree *kids[N_ARY_LIM];     // children nodes
-}   PARSE_TREE;
+} ;
 
 first_follow* get_first_follow_table(GRAMMAR* grammar);
 GRAMMAR* generate_grammar(void);
