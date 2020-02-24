@@ -80,9 +80,9 @@ void print_parse_tree(PARSE_TREE *tree, FILE* f)
         return;         // print nothing
     else
     {
-        printf("dhbdb %d\n", tree->num_of_kids);
+        // printf("dhbdb %d\n", tree->num_of_kids);
         print_parse_tree(tree->kids[0], f);
-        printf("sdfe\n");
+        // printf("sdfe\n");
         fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15d\t%15s\n",
                     tree->data->lexeme,
                     tree->data->line,
@@ -93,7 +93,7 @@ void print_parse_tree(PARSE_TREE *tree, FILE* f)
                     tree->data->node_symbol
                     );
         int temp = tree->num_of_kids;
-        printf("%d\n", temp);
+        // printf("%d\n", temp);
         for (int i = 1; i < temp; i++)
             print_parse_tree(tree->kids[i], f);
     }
@@ -630,10 +630,10 @@ void print_parse_table(TABLE *t, GRAMMAR *g)
 
 void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
 {
-        print_rule(rule);
+        // print_rule(rule);
     if (rule == NULL)
     {
-        return; exit(0);
+        return; 
     }
     // active->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
     active->kids[active->num_of_kids] = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
@@ -642,11 +642,15 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
     active->kids[active->num_of_kids]->data->lexeme = NULL;
     active->kids[active->num_of_kids]->data->line = 0;
     active->kids[active->num_of_kids]->data->node_symbol = rule->variable;
+    // if (string_to_enum(rule->variable) == EPS) { printf("asdf   \n"); exit(21);}
     active->kids[active->num_of_kids]->data->parent_node_pointer = active;
     active->kids[active->num_of_kids]->data->token_name = NULL;
     active->kids[active->num_of_kids]->data->value_if_number = NULL;
     active->num_of_kids++;
+
+    printf("%s \n", active->data->node_symbol);
     pushr(active, st, rule->next);
+    //if (string_to_enum(rule->variable) != EPS) 
     push(st, string_to_enum(rule->variable));
 }
 
@@ -654,7 +658,7 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
 void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
 {
     
-    // printf("Lo, ho gayi parsing error at line %d\n", *line_no);
+    printf("Lo, ho gayi parsing error at line %d\n", *line_no);
     // LEXEME *lex = get_token(f, twin_buff, line_no);
     // while(strcmp(lex->token,"SEMICOL") != 0)
     //     lex = get_token(f, twin_buff, line_no);
@@ -685,32 +689,38 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
 {
     if ((*active) == tree) 
         return;
-    printf("sakdbghvefb\n");
     // printf("%s\n", (*active)->data->node_symbol);
     PARSE_TREE *parent = (*active)->data->parent_node_pointer;
-    printf("sakdbghvefb\n");
     int index_of_active = 0;
-    printf("LOLOL++_+_ %s\n", (*active)->data->node_symbol);
 
     while(parent->kids[index_of_active] != (*active))
     {
         index_of_active++;
-        printf("%d\n", index_of_active);
+        // printf("%d\n", index_of_active);
     }
-    printf("sakdbghvefb\n");
+    printf("%s \n", (*active)->data->node_symbol);
     *active = parent;
-    printf("sakdbghvefb\n");
+    printf("%s \n", (*active)->data->node_symbol);
     if (index_of_active < (parent->num_of_kids)-1)  
+    {
         *active = parent->kids[index_of_active + 1];
+        printf("%s \n", (*active)->data->node_symbol);
+        // printf("LOLOL++_+_ %s\n", (*active)->data->node_symbol);
+    }
     else 
-        return next_active(tree, active);
+    {
+        next_active(tree, active);
+        printf("%s \n", (*active)->data->node_symbol);
+        // printf("IN IELSW+_ %s\n", (*active)->data->node_symbol);
+        return;
+    }
 }
 
 
 
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
 {
-    FILE *fp = fopen("bakchod.txt", "w");
+    FILE *fp = fopen("betichod.txt", "w");
     push(&st, DOLLAR);      // initially, the parser is in a config with w$ in input buffer and 
     push(&st, program);     // the start symbol above $ in the stack
     tree = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
@@ -739,10 +749,22 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             // printf("G2\n");
             pop(&st);            // pop the stack, and
             insert_parse_tree(&active, a);
-            printf("H1\n");
+            // printf("H1\n");
             next_active(tree, &active);       //deal with the segmentation fault here, and remove this comment.
-            printf("H1]2\n");
+            // printf("H1]2\n");
             a = get_token(f, twin_buff, line_no);   // let a be the next symbol of w
+        }
+        else if(X == EPS)
+        {
+            pop(&st);            // pop the stack, and
+            LEXEME *eps_lex= (LEXEME *)malloc(sizeof(LEXEME));
+            eps_lex->token = "EPS";
+            eps_lex->value = "EPS";
+            eps_lex->line = 0;
+
+            insert_parse_tree(&active, eps_lex);
+            // printf("H1\n");
+            next_active(tree, &active);
         }
         else if (is_terminal(variables_array[X]))       // else if X is a terminal,
             error(f, twin_buff, line_no);
@@ -753,22 +775,39 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
         else if (rule_id != -1)
         {
             // printf("%d\n", rule_id);
-            print_rule(g->rules[rule_id]);
-            fill_tree();
+            // print_rule(g->rules[rule_id]);
+            // fill_tree();
             pop(&st);
-            printf("vkmkbhd:::  %s\n", active->data->node_symbol);
-            if (string_to_enum(g->rules[rule_id]->next->variable) != EPS)
+            // printf("vkmkbhd:::  %s\n", active->data->node_symbol);
+            //if (string_to_enum(g->rules[rule_id]->next->variable) != EPS)
+            pushr(active, &st, g->rules[rule_id]->next);
+            // printf("%d\n", active->num_of_kids);
+            
+            //pushr(active, &st, g->rules[rule_id]->next);
+            active = active->kids[0];
+            printf("%s \n", (active)->data->node_symbol);
+            // if (string_to_enum(active->data->node_symbol) == EPS) { printf("BACKLOL>...\n "); exit(55);}
+            // printf("hbsdvvsb\n");
+            /*
+            else
             {
-                pushr(active, &st, g->rules[rule_id]->next);
-                printf("%d\n", active->num_of_kids);
-                printf("vandanac %d\n", active->num_of_kids);
                 
-                //pushr(active, &st, g->rules[rule_id]->next);
-                active = active->kids[0];
-                printf("hbsdvvsb\n");
+                TREE_NODE *ptr = (TREE_NODE *)malloc(sizeof(TREE_NODE));
+                ptr->is_leaf_node = 1;
+                ptr->lexeme = "EPS";
+                ptr->line = *line_no;
+                ptr->node_symbol = "EPS";
+                ptr->parent_node_pointer = active;
+                ptr->token_name = "EPS";
+                ptr->value_if_number = NULL; 
+                active->kids[++active->num_of_kids] = ptr;
             }
+            */
         }
+        printf("up: %s\n", variables_array[X]);
         X = top(st);
+        printf("down: %s\n", variables_array[X]);
+        
 
     }
     printf("HO GAYA PARSE\n");
