@@ -12,6 +12,8 @@
 #include "../lexer/lexer.h"
 
 #define not !
+#define or ||
+#define and &&
 #define GRAMMAR_START_SYMBOL program
 
 // push data on top of stack (passing pointer to stack)
@@ -648,7 +650,7 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
     active->kids[active->num_of_kids]->data->value_if_number = NULL;
     active->num_of_kids++;
 
-    printf("%s \n", active->data->node_symbol);
+    // printf("%s \n", active->data->node_symbol);
     pushr(active, st, rule->next);
     //if (string_to_enum(rule->variable) != EPS) 
     push(st, string_to_enum(rule->variable));
@@ -662,7 +664,7 @@ void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
     // LEXEME *lex = get_token(f, twin_buff, line_no);
     // while(strcmp(lex->token,"SEMICOL") != 0)
     //     lex = get_token(f, twin_buff, line_no);
-    
+
     return;
 }
 void fill_tree()
@@ -699,19 +701,19 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
         index_of_active++;
         // printf("%d\n", index_of_active);
     }
-    printf("%s \n", (*active)->data->node_symbol);
+    // printf("%s \n", (*active)->data->node_symbol);
     *active = parent;
-    printf("%s \n", (*active)->data->node_symbol);
+    // printf("%s \n", (*active)->data->node_symbol);
     if (index_of_active < (parent->num_of_kids)-1)  
     {
         *active = parent->kids[index_of_active + 1];
-        printf("%s \n", (*active)->data->node_symbol);
+        // printf("%s \n", (*active)->data->node_symbol);
         // printf("LOLOL++_+_ %s\n", (*active)->data->node_symbol);
     }
     else 
     {
         next_active(tree, active);
-        printf("%s \n", (*active)->data->node_symbol);
+        // printf("%s \n", (*active)->data->node_symbol);
         // printf("IN IELSW+_ %s\n", (*active)->data->node_symbol);
         return;
     }
@@ -719,13 +721,14 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
 
 
 
-void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
+void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
 {
-    FILE *fp = fopen("betichod.txt", "w");
+    unsigned int num_errors = 0;                // number of parse errors
+    unsigned int newest_line = 0;
     push(&st, DOLLAR);      // initially, the parser is in a config with w$ in input buffer and 
     push(&st, program);     // the start symbol above $ in the stack
-    tree = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
-    PARSE_TREE *active = tree;
+    (*tree) = (PARSE_TREE *) malloc(sizeof(PARSE_TREE));
+    PARSE_TREE *active = (*tree);
     active->num_of_kids = 0;
     for(int i=0; i<N_ARY_LIM; ++i)
         active->kids[i] = NULL;
@@ -751,7 +754,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             pop(&st);            // pop the stack, and
             insert_parse_tree(&active, a);
             // printf("H1\n");
-            next_active(tree, &active);       //deal with the segmentation fault here, and remove this comment.
+            next_active((*tree), &active);      
             // printf("H1]2\n");
             a = get_token(f, twin_buff, line_no);   // let a be the next symbol of w
         }
@@ -765,14 +768,53 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
 
             insert_parse_tree(&active, eps_lex);
             // printf("H1\n");
-            next_active(tree, &active);
+            next_active((*tree), &active);
         }
         else if (is_terminal(variables_array[X]))       // else if X is a terminal,
-            {printf("ist\n"); exit(0); }//error(f, twin_buff, line_no);
-            // printf("H!\n");
+        {       ///////////////////////////////////////////////////////////////////////////
+                /////////////           PANIC MODE  ONE                 //////////////////
+                ////////////            FOR EROR RECOVERY              //////////////////
+                ////////////////////////////////////////////////////////////////////////
+                if ((a->line) > newest_line) {++num_errors; newest_line = (a->line); 
+                printf  ("Syntax Error #%u at line #%u. Expected token is '%s', but got '%s'.\n",
+                            num_errors, 
+                            a->line, 
+                            variables_array[X],
+                            a->value
+                        );  }
+                int temp1 = 0;
+                a = get_token(f, twin_buff, line_no);
+                while (((temp1 = string_to_enum(a->token)) != X))
+                {
+                    if (temp1 == DOLLAR)
+                        break; break;
+
+                    continue;
+                }
+                continue;
+        }
         else if (table->matrix[X][string_to_enum(a->token) - num_nt] == -1)  // else if M[X,a] is an error entry, 
-            {printf("table\n"); exit(0);} //error(f, twin_buff, line_no);
-            // printf("H2\n");
+        {       ///////////////////////////////////////////////////////////////////////////
+                /////////////           PANIC MODE  TWOO                //////////////////
+                ////////////            FOR EROR RECOVERY              //////////////////
+                ////////////////////////////////////////////////////////////////////////
+                if ((a->line) > newest_line) {++num_errors; newest_line = (a->line); 
+                printf  ("OPM: Syntax Error #%u at line #%u. Expected token is '%s', but got '%s'.\n",
+                            num_errors, 
+                            a->line, 
+                            variables_array[X],
+                            a->token
+                        );  }
+                int temp1 = 0;
+                a = get_token(f, twin_buff, line_no);
+                while (table->matrix[X][(temp1 = string_to_enum(a->token)) - num_nt] == -1)
+                {
+                    if (temp1 == DOLLAR)
+                        break; break;
+                    continue;
+                }
+                continue;
+        }
         else if (rule_id != -1)
         {
             // printf("%d\n", rule_id);
@@ -786,7 +828,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             
             //pushr(active, &st, g->rules[rule_id]->next);
             active = active->kids[0];
-            printf("%s \n", (active)->data->node_symbol);
+            // printf("%s \n", (active)->data->node_symbol);
             // if (string_to_enum(active->data->node_symbol) == EPS) { printf("BACKLOL>...\n "); exit(55);}
             // printf("hbsdvvsb\n");
             /*
@@ -805,19 +847,30 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             }
             */
         }
-        printf("up: %s\n", variables_array[X]);
+        // printf("up: %s\n", variables_array[X]);
         X = top(st);
-        printf("down: %s\n", variables_array[X]);
+        // printf("down: %s\n", variables_array[X]);
         
 
     }
-    printf("HO GAYA PARSE\n");
-    putchar('\n');
-    print_parse_tree(tree, fp);
+    if (num_errors == 0)
+    {
+        printf("Input source code is syntactically correct..........");
+        putchar('\n');
+    }
+    else 
+    {
+        printf("Encountered %d syntax errors.\n", num_errors);
+    }
+
+    
 }
 
 int main()
 {
+    
+    FILE *fp = fopen(PARSE_TREE_FILE_NAME, "w");
+
     populate_ht(hash_table, KEYWORDS_FILE);
     FILE *f = fopen(SOURCE_CODE_FILE, "r");
     int line_count = 1;
@@ -830,6 +883,8 @@ int main()
     // print_parse_table(parse_table, grammar);
     STACK *stack = NULL;
     PARSE_TREE *tree;
-    parse(grammar, f, parse_table, tree, stack, twin_buff, &line_count);
+    parse(grammar, f, parse_table, &tree, stack, twin_buff, &line_count);
+    print_parse_tree(tree, fp);
+    printf("Printed parse tree in file %s\n", PARSE_TREE_FILE_NAME);
     return 0;
 }

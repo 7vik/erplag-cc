@@ -8,6 +8,7 @@
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 #include "bool.h"
+#define PARSE_TREE_FILE_NAME "betichod.txt"
 //#include "enum.h"
 //  #include "grammar.h"
 // #include "../lexer/lexer.h"
