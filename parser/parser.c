@@ -776,11 +776,11 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
                 ////////////            FOR EROR RECOVERY              //////////////////
                 ////////////////////////////////////////////////////////////////////////
                 if ((a->line) > newest_line) {++num_errors; newest_line = (a->line); 
-                printf  ("Syntax Error #%u at line #%u. Expected token is '%s', but got '%s'.\n",
+                printf  ("Syntax Error #%u at line #%u. Expected token is '%s', but got token '%s'.\n",
                             num_errors, 
                             a->line, 
                             variables_array[X],
-                            a->value
+                            a->token
                         );  }
                 int temp1 = 0;
                 a = get_token(f, twin_buff, line_no);
@@ -799,7 +799,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
                 ////////////            FOR EROR RECOVERY              //////////////////
                 ////////////////////////////////////////////////////////////////////////
                 if ((a->line) > newest_line) {++num_errors; newest_line = (a->line); 
-                printf  ("OPM: Syntax Error #%u at line #%u. Expected token is '%s', but got '%s'.\n",
+                printf  ("OPM: Syntax Error #%u at line #%u. Expected non-terminal type '%s', but got token '%s'.\n",
                             num_errors, 
                             a->line, 
                             variables_array[X],
