@@ -5,17 +5,13 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PARSER
-#define __PARSER
-#define MAX_VAR_SIZE 50            // maximum allowed length of variable
-//#include "enum.h"
+#include <stdbool.h>
+#define MAX_BOOL_ARRAY_SIZE  150             // maximum allowed length of boolean array
 
-#define GRAMMAR_NODE_FILE_PATH "./grammar.txt"
-#define MAX_RULE_NUM 150
-#define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
-#define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
-#include "bool.h"
-#define PARSE_TREE_FILE_NAME "parse_tree.txt"
+#if !defined(max_id_len)
+#define max_id_len 20           // maximum allowed length of identifier
+#define max_num_len 100         // maximum allowed length of any number (this has been defined by us)
+#endif
 
 enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
@@ -58,72 +54,69 @@ char *variables_array[] = {
                             "TRUE","USE","WHILE","WITH"
                             
                         };
-typedef struct first_follow_node
+
+#define TOKEN_SIZE 22
+#define SOURCE_CODE_FILE "./t2.txt"
+
+enum active_buffer {Steve, Mark};
+
+#define TWIN_BUFFER_SIZE 512
+
+typedef struct lexeme_tuple
 {
-    bool first_set_array[MAX_BOOL_ARRAY_SIZE];
-    bool follow_set_array[MAX_BOOL_ARRAY_SIZE];
-}first_follow_node;
+    // lexeme (tuple of (TOKEN, VALUE, LINE))
+    char *token;
+    char *value;
+    unsigned int line;
+} LEXEME;
 
-
-typedef struct first_follow
+typedef struct twin_buffer
 {
-    first_follow_node* fnf[MAX_NUM_NON_TERMINALS];
-}first_follow;
+    // steve and mark are our twin buffers
+    char steve[TWIN_BUFFER_SIZE];
+    char mark[TWIN_BUFFER_SIZE];
+    int bp;     // base pointer
+    int fp;     // forward pointer
+    int active;          // active buffer for the forward pointer (don't need one for base p)
+    int read;
+}   TWIN_BUFFER;
 
 
-typedef struct grammar_node
-{
-    // a single node of a grammar rule. If rule is A->FOO BAR, then FOO is a node
-    char variable[MAX_VAR_SIZE];
-    int is_terminal_flag;
-    struct grammar_node *next;
-} GRAMMAR_NODE;
-
-typedef struct grammar
-{
-    GRAMMAR_NODE *rules[MAX_RULE_NUM];
-    int num_rules;
-}   GRAMMAR;
-
-typedef struct parse_table
-{
-    //******************* EDIT
-    int matrix[whichStmt - arithmeticExpr + 1][WITH - AND + 1];
-}   TABLE;
-
-typedef struct stack_of_grammar_symbols
-{
-    int symbol;                 // enum, maybe a terminal or a non-terminal
-    struct stack_of_grammar_symbols *next;
-} STACK;
-
-
-typedef struct parse_tree PARSE_TREE;
-typedef struct parse_tree_node_data
-{
-    // data for printing and storing the parse tree effectively ftw
-    char *lexeme;       // value in our passed lexeme tuple 
-    unsigned int line;           // line in our passed lexeme
-    char *token_name;   // token in our passed lexeme    
-    char *value_if_number;
-    PARSE_TREE *parent_node_pointer;             
-    int is_leaf_node;               // 1 for yes       
-    char *node_symbol;
-} TREE_NODE;
-
-struct parse_tree
-{
-    // n-ary tree structure
-    TREE_NODE *data;
-    int num_of_kids;
-    struct parse_tree *kids[N_ARY_LIM];     // children nodes
-} ;
-
-first_follow* get_first_follow_table(GRAMMAR* grammar);
-GRAMMAR* generate_grammar(void);
-void print_grammar(GRAMMAR* g);
-int string_to_enum(char* string);
-void print_first_follow(first_follow* table);
-void print_rule(GRAMMAR_NODE *rule);
-PARSE_TREE *create_new_node (TREE_NODE *data);
+#if !defined(KEYWORDS_FILE)
+#define KEYWORDS_FILE "./keywords.txt"
 #endif
+
+#define SIZE 64
+#define MAXLEN 25                           // length of identifier can't be > 20
+#define ABS(N) ((N<0)?(-N):(N))           
+
+typedef struct hash_table_entry_list_node
+{
+    char *data;
+    struct hash_table_entry_list_node *next;            //  chaining for collisions
+} ENTRY;
+
+
+void init_buffer(FILE *f, TWIN_BUFFER *buff);
+char get_stream(FILE *f, TWIN_BUFFER *buff);
+LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count);
+void print_lexeme(LEXEME *l);
+
+ENTRY *hash_table[SIZE];                                // only global variable in the whole code
+
+void initialize(ENTRY **hash_table);
+int hash(char *str);
+void insert(char *value, ENTRY **hash_table);
+// int delete(char *value, ENTRY **hash_table);
+void print(ENTRY **hash_table);
+void populate_ht(ENTRY **hash_table, char *file_path);
+int search(char *value, ENTRY **hash_table);
+
+void initialize_bool_array(bool* arr);
+bool* or(bool * arr1, bool* arr2);
+bool* and(bool * arr1, bool* arr2);
+bool* xor(bool * arr1, bool* arr2);
+bool* not(bool * arr1);
+void print_bool(bool* arr, int size);
+void or_and_store(bool * arr1, bool* arr2);
+
