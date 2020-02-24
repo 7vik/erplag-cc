@@ -1,0 +1,10 @@
+<<<driver program>>>
+start
+	declare A:array[1..15] of real;
+	declare k:integer;
+	declare s:real;
+	get_value(k);
+	use module readArr with parameters A,k;
+	[s]:= use module arraySum with parameters A,k;
+	print(s);
+end

@@ -4,8 +4,8 @@
 #endif
 
 #define TOKEN_SIZE 22
-#define SOURCE_CODE_FILE "../testcases-1/t2.txt"/*"./test.erplag"*/
-
+//#define SOURCE_CODE_FILE "../testcases-1/testcase-bt.txt"/*"./test.erplag"*/
+#define SOURCE_CODE_FILE "../testcases-1/t5.txt"/*"./test.erplag"*/
 #include "hash.h"           
 
 #define not !

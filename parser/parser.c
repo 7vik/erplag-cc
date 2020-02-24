@@ -662,6 +662,7 @@ void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
     // LEXEME *lex = get_token(f, twin_buff, line_no);
     // while(strcmp(lex->token,"SEMICOL") != 0)
     //     lex = get_token(f, twin_buff, line_no);
+    
     return;
 }
 void fill_tree()
@@ -767,10 +768,10 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE *tree, STACK *st, TWIN_
             next_active(tree, &active);
         }
         else if (is_terminal(variables_array[X]))       // else if X is a terminal,
-            error(f, twin_buff, line_no);
+            {printf("ist\n"); exit(0); }//error(f, twin_buff, line_no);
             // printf("H!\n");
         else if (table->matrix[X][string_to_enum(a->token) - num_nt] == -1)  // else if M[X,a] is an error entry, 
-            error(f, twin_buff, line_no);
+            {printf("table\n"); exit(0);} //error(f, twin_buff, line_no);
             // printf("H2\n");
         else if (rule_id != -1)
         {

@@ -107,8 +107,10 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
         
             if (search(detected_id, hash_table) == 1)
             {
-                char *temp = (char *) malloc(strlen(buff));
-                for (int yu=0; yu < strlen(buff); ++yu) temp[yu] = toupper(buff[yu]);
+                char *temp = (char *) malloc(strlen(buff) + 1);
+                for (int yu=0; yu <= strlen(buff); ++yu)
+                    temp[yu] = toupper(buff[yu]);
+                //printf("token: %s\n", buff);
                 strcpy(new->token, temp);
             }
             else
@@ -658,9 +660,13 @@ char get_stream(FILE *f, TWIN_BUFFER *buff)
     }
     else if (buff->read == 0)
     {
-        buff->fp = -1;
-        buff->active = 1 - buff->active;
-        buff->read = 1;
+        if (buff->fp == TWIN_BUFFER_SIZE - 1)
+        {
+            buff->fp = -1;
+            buff->active = 1 - buff->active;
+            buff->read = 1;
+        }
+        //buff->read = 1;
     }
     buff->fp++;
     return c;
@@ -690,6 +696,11 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff)
 //     //printf("%s\n", twin_buff->steve);
 //     LEXEME *temp;
 //     while((temp = get_token(f, twin_buff, &line_count)))
+//     {
+//         if (strcmp(temp->token, "DOLLAR") == 0)
+//             break;
 //         print_lexeme(temp);
+//     }
 //     return 0;
+    
 // }
