@@ -168,7 +168,7 @@ void print_parse_tree(PARSE_TREE *tree, FILE* f)
     else
     {
         print_parse_tree(tree->kids[0], f);
-        printf("HIHIH\n");
+        // printf("HIHIH\n");
         fprintf(f, "%20s\t%15u\t%20s\t%20s\t%20s\t%20s\t%20s\n",
                     stylish_print_charstar(tree->data->lexeme),
                     tree->data->line,

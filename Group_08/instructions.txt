@@ -1,5 +1,0 @@
-Please run like this. Some issues with makefile. Will fix it soon. Sorry and thank you.
-
-gcc parser.c lexer.c bool.c hash.c
-
-./a.out t2.txt parse_output.txt
