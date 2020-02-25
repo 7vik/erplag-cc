@@ -15,6 +15,7 @@
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
 #include "bool.h"
+#include "lexer.h"
 #define PARSE_TREE_FILE_NAME "parse_tree.txt"
 
 enum variables {    arithmeticExpr,arithmeticExpr_lr,
@@ -126,4 +127,6 @@ int string_to_enum(char* string);
 void print_first_follow(first_follow* table);
 void print_rule(GRAMMAR_NODE *rule);
 PARSE_TREE *create_new_node (TREE_NODE *data);
+TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g);
+void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no);
 #endif
