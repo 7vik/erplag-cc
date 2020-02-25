@@ -5,14 +5,16 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !defined(max_id_len)
+#ifndef __LEXER
+#define __LEXER
 #define max_id_len 20           // maximum allowed length of identifier
 #define max_num_len 100         // maximum allowed length of any number (this has been defined by us)
-#endif
+
 
 #define TOKEN_SIZE 22
 //#define SOURCE_CODE_FILE "../testcases-1/testcase-bt.txt"/*"./test.erplag"*/
-#define SOURCE_CODE_FILE "./t2.txt"/*"./test.erplag"*/
+#define SOURCE_CODE_FILE "./t2.txt" //"./t6.txt"
+/*"./test.erplag"*/
 #include "hash.h"           
 
 #define not !
@@ -45,3 +47,5 @@ void init_buffer(FILE *f, TWIN_BUFFER *buff);
 char get_stream(FILE *f, TWIN_BUFFER *buff);
 LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count);
 void print_lexeme(LEXEME *l);
+
+#endif
