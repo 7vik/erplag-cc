@@ -136,6 +136,26 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
     return new;
 }
 
+char *stylish_print_charstar(char *input)
+{
+    if (input == NULL)  return "----";
+    return input;
+    
+}
+
+char *stylish_pr_intttttttt(int x)
+{   
+    if (x==1) return "YES"; 
+    return "NOPE";
+}
+
+char *super_stylish_print_charstar(PARSE_TREE *b)
+{
+    if (b == NULL || b->data == NULL)
+        return "----";
+    return b->data->node_symbol;
+}
+
 // recursive
 void print_parse_tree(PARSE_TREE *tree, FILE* f)
 {
@@ -147,17 +167,16 @@ void print_parse_tree(PARSE_TREE *tree, FILE* f)
         return;         // print nothing
     else
     {
-        // printf("dhbdb %d\n", tree->num_of_kids);
         print_parse_tree(tree->kids[0], f);
-        // printf("sdfe\n");
-        fprintf(f, "%15s\t%15u\t%15s\t%15s\t%15d\t%15s\n",
-                    tree->data->lexeme,
+        printf("HIHIH\n");
+        fprintf(f, "%20s\t%15u\t%20s\t%20s\t%20s\t%20s\t%20s\n",
+                    stylish_print_charstar(tree->data->lexeme),
                     tree->data->line,
-                    tree->data->token_name,
-                    tree->data->value_if_number,
-                    //tree->data->parent_node_pointer,
-                    tree->data->is_leaf_node,
-                    tree->data->node_symbol
+                    stylish_print_charstar(tree->data->value_if_number),
+                    stylish_print_charstar(tree->data->token_name),
+                    super_stylish_print_charstar(tree->data->parent_node_pointer),
+                    stylish_pr_intttttttt(tree->data->is_leaf_node),
+                    stylish_print_charstar(tree->data->node_symbol)
                     );
         int temp = tree->num_of_kids;
         // printf("%d\n", temp);
@@ -864,7 +883,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
                 ////////////            FOR EROR RECOVERY              //////////////////
                 ////////////////////////////////////////////////////////////////////////
                 if ((a->line) > newest_line) {++num_errors; newest_line = (a->line); 
-                printf  ("OPM: Syntax Error #%u at line #%u. Expected non-terminal type '%s', but got token '%s'.\n",
+                printf  ("Syntax Error #%u at line #%u. Expected non-terminal type '%s', but got token '%s'.\n",
                             num_errors, 
                             a->line, 
                             variables_array[X],
@@ -1027,6 +1046,7 @@ int main(int argc, char* argv[])
             STACK *stack = NULL;
             PARSE_TREE *tree;
             parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL");
             print_parse_tree(tree, test_parse_fp);
             printf("Printed Parse Tree in file '%s'.\n", argv[2]);
             fclose(test_fp);
@@ -1053,6 +1073,7 @@ int main(int argc, char* argv[])
             end_time = clock();
             total_CPU_time  =  (double) (end_time - start_time);
             total_CPU_time_in_seconds =   total_CPU_time / CLOCKS_PER_SEC;
+            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s\n\n", "LEXEME", "LINE_NO", "TOKENAME", "VALUE (if num)", "PARENT", "IS LEAF?", "NODE SYMBOL");
             print_parse_tree(tree, test_parse_fp);
             printf("Printed Parse Tree in file '%s'.\n", argv[2]);
             printf("CPU Time: %lf, CPU time(in seconds): %lf\n", total_CPU_time, total_CPU_time_in_seconds);

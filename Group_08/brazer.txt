@@ -1,0 +1,2 @@
+         LEXEME	        LINE_NO	       TOKENAME	 VALUE (if num)	         PARENT	       IS LEAF?	    NODE SYMBOL
+
