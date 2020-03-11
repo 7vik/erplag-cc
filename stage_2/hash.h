@@ -5,9 +5,8 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !defined(KEYWORDS_FILE)
+#ifndef KEYWORDS_FILE
 #define KEYWORDS_FILE "./keywords.txt"
-#endif
 
 #define SIZE 64
 #define MAXLEN 25                           // length of identifier can't be > 20
@@ -28,3 +27,5 @@ void insert(char *value, ENTRY **hash_table);
 void print(ENTRY **hash_table);
 void populate_ht(ENTRY **hash_table, char *file_path);
 int search(char *value, ENTRY **hash_table);
+
+#endif

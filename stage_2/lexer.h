@@ -5,6 +5,8 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "hash.h"           
+
 #ifndef __LEXER
 #define __LEXER
 #define max_id_len 20           // maximum allowed length of identifier
@@ -15,7 +17,6 @@
 //#define SOURCE_CODE_FILE "../testcases-1/testcase-bt.txt"/*"./test.erplag"*/
 #define SOURCE_CODE_FILE "./t2.txt" //"./t6.txt"
 /*"./test.erplag"*/
-#include "hash.h"           
 
 #define not !
 #define and &&

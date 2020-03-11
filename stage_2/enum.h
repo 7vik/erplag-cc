@@ -5,9 +5,7 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ENUM
-#define __ENUM
-
+#ifndef variables
 enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
                     caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
@@ -27,7 +25,11 @@ enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     SWITCH,TAKES,TRUE,USE,WHILE,WITH
                     
                 };
+#define variables
+#endif
 
+
+#ifndef variables_array
 char *variables_array[] = {  
                             "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression",
                             "assignmentStmt","booleanConst","caseStmt","caseStmts","conditionalStmt",
@@ -49,5 +51,4 @@ char *variables_array[] = {
                             "TRUE","USE","WHILE","WITH"
                             
                         };
-
 #endif

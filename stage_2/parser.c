@@ -24,6 +24,27 @@
 
 // push data on top of stack (passing pointer to stack)
 
+char *variables_array[] =  {  
+                            "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression",
+                            "assignmentStmt","booleanConst","caseStmt","caseStmts","conditionalStmt",
+                            "datatype","declareStmt","default_nt","driverModule","expression",
+                            "factor","idList","idList_lr","index_nt","input_plist","input_plist_lr",
+                            "ioStmt","iterativeStmt","logicalOp","lvalueARRStmt","lvalueIDStmt",
+                            "module","moduleDeclaration","moduleDeclarations","moduleDef",
+                            "moduleReuseStmt","one_more_opt","op1","op2","opt_expr","opt_expr_lr",
+                            "optional","otherModules","output_plist","output_plist_lr","printOpt",
+                            "program","range","rangeArr","relationalOp","ret","simpleStmt","statement",
+                            "statements","term","term_lr","type","unary_opt","unaryExpression",
+                            "value","var","whichId","whichStmt",
+                            "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
+                            "COMMA","DECLARE","DEF","DEFAULT", "DIV", "DOLLAR", "DRIVER","DRIVERDEF",
+                            "DRIVERENDDEF","END","ENDDEF", "EPS", "EQ","FALSE","FOR","GE","GET_VALUE",
+                            "GT", "ID","IN","INPUT","INTEGER","LE","LT","MINUS","MODULE","MUL","NE",
+                            "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
+                            "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
+                            "TRUE","USE","WHILE","WITH"     
+                        };
+
 void remove_comments(FILE* f1)
 {
 
@@ -312,7 +333,7 @@ void populate_first(first_follow* first_table, GRAMMAR* grammar, int idx, char* 
                 //printf("match: %s\n", token);
                 
                 // if token -> Terminal NT...
-                int eps_flag = 0;
+                //int eps_flag = 0;
                 char* temp_tnt = grammar->rules[i]->next->variable;
                 GRAMMAR_NODE* temp_next = grammar->rules[i]->next;
                 if (is_terminal(temp_tnt) != 0)
@@ -660,7 +681,7 @@ first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, fir
 first_follow_node *multiple_first(GRAMMAR *g, unsigned int rule, first_follow *ff)
 {
     first_follow_node *new = (first_follow_node *) malloc(sizeof(first_follow_node));
-    assert(rule < g->num_rules);
+    assert((int) rule < (int) g->num_rules);
     GRAMMAR_NODE *rule_head;
     rule_head = g->rules[rule];
     rule_head = rule_head->next;
@@ -974,7 +995,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
 // }
 
 
-
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -1087,4 +1108,4 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-
+*/

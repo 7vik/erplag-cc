@@ -14,10 +14,16 @@
 #define MAX_RULE_NUM 150
 #define N_ARY_LIM 15            // max size from current grammar is 12. Increase it if required.
 #define MAX_NUM_NON_TERMINALS 100  // number of non-terminals
+
 #include "bool.h"
 #include "lexer.h"
-#define PARSE_TREE_FILE_NAME "parse_tree.txt"
 
+//#include "enum.h"
+#define PARSE_TREE_FILE_NAME "parse_tree.txt"
+#endif
+
+#ifndef __VARIABLES
+#define __VARIABLES
 enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     arithmeticOrBooleanExpression,assignmentStmt,booleanConst,caseStmt,
                     caseStmts,conditionalStmt,datatype,declareStmt,default_nt,driverModule,
@@ -37,28 +43,12 @@ enum variables {    arithmeticExpr,arithmeticExpr_lr,
                     SWITCH,TAKES,TRUE,USE,WHILE,WITH
                     
                 };
+#endif
 
-char *variables_array[] = {  
-                            "arithmeticExpr","arithmeticExpr_lr","arithmeticOrBooleanExpression",
-                            "assignmentStmt","booleanConst","caseStmt","caseStmts","conditionalStmt",
-                            "datatype","declareStmt","default_nt","driverModule","expression",
-                            "factor","idList","idList_lr","index_nt","input_plist","input_plist_lr",
-                            "ioStmt","iterativeStmt","logicalOp","lvalueARRStmt","lvalueIDStmt",
-                            "module","moduleDeclaration","moduleDeclarations","moduleDef",
-                            "moduleReuseStmt","one_more_opt","op1","op2","opt_expr","opt_expr_lr",
-                            "optional","otherModules","output_plist","output_plist_lr","printOpt",
-                            "program","range","rangeArr","relationalOp","ret","simpleStmt","statement",
-                            "statements","term","term_lr","type","unary_opt","unaryExpression",
-                            "value","var","whichId","whichStmt",
-                            "AND","ARRAY","ASSIGNOP","BC","BO","BOOLEAN","BREAK","CASE","COLON",
-                            "COMMA","DECLARE","DEF","DEFAULT", "DIV", "DOLLAR", "DRIVER","DRIVERDEF",
-                            "DRIVERENDDEF","END","ENDDEF", "EPS", "EQ","FALSE","FOR","GE","GET_VALUE",
-                            "GT", "ID","IN","INPUT","INTEGER","LE","LT","MINUS","MODULE","MUL","NE",
-                            "NUM","OF","OR","PARAMETERS","PLUS","PRINT","PROGRAM","RANGEOP","REAL",
-                            "RETURNS","RNUM","SEMICOL","SQBC","SQBO","START","SWITCH","TAKES",
-                            "TRUE","USE","WHILE","WITH"
-                            
-                        };
+#ifndef __VARIABLES_ARRAY
+#define __VARIABLES_ARRAY
+extern char *variables_array[114];
+
 typedef struct first_follow_node
 {
     bool first_set_array[MAX_BOOL_ARRAY_SIZE];
@@ -129,4 +119,6 @@ void print_rule(GRAMMAR_NODE *rule);
 PARSE_TREE *create_new_node (TREE_NODE *data);
 TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g);
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no);
+void print_parse_tree(PARSE_TREE *tree, FILE* f);
+void remove_comments_driver(FILE* fp);
 #endif

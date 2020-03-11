@@ -5,12 +5,11 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <stdbool.h>
+
 #ifndef __BOOL
 #define __BOOL
 #define MAX_BOOL_ARRAY_SIZE  150             // maximum allowed length of boolean array
-
-
-#include <stdbool.h>
 
 void initialize_bool_array(bool* arr);
 bool* or(bool * arr1, bool* arr2);

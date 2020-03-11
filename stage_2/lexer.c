@@ -115,7 +115,7 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
             if (search(detected_id, hash_table) == 1)
             {
                 char *temp = (char *) malloc(strlen(buff) + 1);
-                for (int yu=0; yu <= strlen(buff); ++yu)
+                for (int yu=0; yu <= (int) strlen(buff); ++yu)
                     temp[yu] = toupper(buff[yu]);
                 //printf("token: %s\n", buff);
                 strcpy(new->token, temp);
@@ -633,7 +633,12 @@ LEXEME *get_token(FILE *f, TWIN_BUFFER *twin_buff, int *line_count)
                     }
                     break;
                 }
-                default: break;
+                case '\t':
+                case '\r':
+                case ' ':
+                    break; 
+                default: 
+                    printf("Lexical Error at line #%d: unidentifiable character: %c.\n", *line_count, lookahead);
             }
         } 
     }
