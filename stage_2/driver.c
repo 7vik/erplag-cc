@@ -88,7 +88,7 @@ int main(int argc, char* argv[])            // main for driver
             STACK *stack = NULL;
             PARSE_TREE *tree;
             parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
-            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL");
+            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
             print_parse_tree(tree, test_parse_fp);
             printf("Printed Parse Tree in file '%s'.\n", argv[2]);
             fclose(test_fp);

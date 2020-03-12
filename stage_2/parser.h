@@ -100,6 +100,7 @@ typedef struct parse_tree_node_data
     PARSE_TREE *parent_node_pointer;             
     int is_leaf_node;               // 1 for yes       
     char *node_symbol;
+    unsigned int rule_number;       // rule number used to expand this node (0 in case of leaf node)
 } TREE_NODE;
 
 struct parse_tree
