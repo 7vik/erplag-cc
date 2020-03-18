@@ -676,8 +676,6 @@ first_follow_node *recursive_multiple_first(GRAMMAR *g, GRAMMAR_NODE *rulep, fir
     return NULL;    // hopefully never
 }
 
-
-
 first_follow_node *multiple_first(GRAMMAR *g, unsigned int rule, first_follow *ff)
 {
     first_follow_node *new = (first_follow_node *) malloc(sizeof(first_follow_node));
@@ -756,7 +754,6 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
     push(st, string_to_enum(rule->variable));
 }
 
-
 void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
 {
     
@@ -767,14 +764,9 @@ void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
 
     return;
 }
-void fill_tree()
-{
-    return;
-}
 
 void insert_parse_tree(PARSE_TREE **active, LEXEME *lex_tup)
 {
-    //(*active)->data = (TREE_NODE *) malloc(sizeof(TREE_NODE));
     (*active)->data->is_leaf_node = 1;
     (*active)->data->rule_number = 0; // no rule doth define leaves
     (*active)->data->line = lex_tup->line;
@@ -783,7 +775,6 @@ void insert_parse_tree(PARSE_TREE **active, LEXEME *lex_tup)
     if((strcmp(lex_tup->token, "NUM")  == 0) || (strcmp(lex_tup->token, "RNUM")  == 0))
         (*active)->data->value_if_number = lex_tup->value;
     (*active)->data->node_symbol = lex_tup->token;
-    // (*active)->data->parent_node_pointer = *active;
     (*active)->num_of_kids = 0;
     for (int i=0; i<N_ARY_LIM; ++i) (*active)->kids[i] = NULL;
     return;
@@ -819,8 +810,6 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
         return;
     }
 }
-
-
 
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no)
 {
@@ -913,159 +902,14 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
         else if (rule_id != -1)
         {
             pop(&st);
+            active->data->rule_number = rule_id;                // this is the rule used to open active
             pushr(active, &st, g->rules[rule_id]->next);
             active = active->kids[0];
         }
         X = top(st);        
     }
     if (num_errors == 0)
-    {
-        printf("Input source code is syntactically correct..........");
-        putchar('\n');
-    }
+        printf("Input source code is syntactically correct..........\n");
     else 
-    {
         printf("Encountered %d syntax errors.\n", num_errors);
-    }
-
-    
 }
-
-// int main()
-// {
-    
-//     FILE *fp = fopen(PARSE_TREE_FILE_NAME, "w");
-
-//     populate_ht(hash_table, KEYWORDS_FILE);
-//     FILE *f = fopen(SOURCE_CODE_FILE, "r");
-//     int line_count = 1;
-//     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-//     init_buffer(f, twin_buff);
-//     GRAMMAR* grammar = generate_grammar();
-//     first_follow *ff = get_first_follow_table(grammar);
-//     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
-//     create_parse_table(ff, parse_table, grammar);
-//     // print_parse_table(parse_table, grammar);
-//     STACK *stack = NULL;
-//     PARSE_TREE *tree;
-//     parse(grammar, f, parse_table, &tree, stack, twin_buff, &line_count);
-//     print_parse_tree(tree, fp);
-//     printf("Printed parse tree in file %s\n", PARSE_TREE_FILE_NAME);
-//     return 0;
-// }
-
-
-/*
-int main(int argc, char* argv[])
-{
-    if(argc != 3)
-    {
-        printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
-        printf("\nAborting Execution!!\n");
-        exit(2);
-    }
-    clock_t start_time, end_time;
-    double total_CPU_time, total_CPU_time_in_seconds;
-    printf("\n\n****\tExecution details\t******\n\n");
-    printf("====\t\tImplementation Details\t\t====\n");
-	printf("1. First and Follow Set Calculation Automated.\n");
-	printf("2. Both Lexical and Syntax Analysis Modules Implemented.\n");
-	printf("3. Parse Tree Construction Completed.\n");
-    printf("4. All testcases (t1-t6) working successfully.\n");
-    while(1)
-    {
-		printf("\n\nPlease choose from following options:\n");
-		printf("0 -> Exit\n");
-		printf("1 : Remove Comments\n");
-		printf("2 : Invoke Lexical Analysis\n");
-		printf("3 : Parse and Print Parse Tree\n");
-		printf("4 : Time for Lexical and Syntactic Analysis\n");
-		printf("\nEnter Option [0-4]\t");
-        int option = 0;
-        scanf("%d", &option);
-        if(option == 0)
-        { 
-            printf("Exiting. Bye bye.\n");
-            exit(0);
-        }
-        else if (option == 1)
-        {
-            FILE* test_fp = fopen(argv[1], "r");
-            remove_comments_driver(test_fp);
-            printf("\n\nComments removed. SUCCESS.\n");
-            fclose(test_fp);
-        }
-        else if (option == 2)
-        {
-            FILE* test_fp = fopen(argv[1], "r");
-            populate_ht(hash_table, KEYWORDS_FILE);
-            int line_count = 1;
-            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-            init_buffer(test_fp, twin_buff);
-            LEXEME *temp = get_token(test_fp, twin_buff, &line_count);
-            while (string_to_enum(temp->token) != DOLLAR )
-            {
-                print_lexeme(temp);
-                temp = get_token(test_fp, twin_buff, &line_count);
-            }
-            printf("\n\n Lexing done. SUCCESS.\n");
-            fclose(test_fp);
-            free(twin_buff);
-        }
-        else if (option == 3)
-        { 
-            FILE* test_fp = fopen(argv[1], "r");
-            FILE* test_parse_fp = fopen(argv[2], "w");
-            populate_ht(hash_table, KEYWORDS_FILE);
-            int line_count = 1;
-            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-            init_buffer(test_fp, twin_buff);
-            GRAMMAR* grammar = generate_grammar();
-            first_follow *ff = get_first_follow_table(grammar);
-            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
-            create_parse_table(ff, parse_table, grammar);
-            STACK *stack = NULL;
-            PARSE_TREE *tree;
-            parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
-            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL");
-            print_parse_tree(tree, test_parse_fp);
-            printf("Printed Parse Tree in file '%s'.\n", argv[2]);
-            fclose(test_fp);
-            fclose(test_parse_fp);
-            free(twin_buff);
-            free(parse_table);
-        }
-        else if(option == 4)
-        { 
-            FILE* test_fp = fopen(argv[1], "r");
-            FILE* test_parse_fp = fopen(argv[2], "w");
-            populate_ht(hash_table, KEYWORDS_FILE);
-            int line_count = 1;
-            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-            init_buffer(test_fp, twin_buff);
-            GRAMMAR* grammar = generate_grammar();
-            first_follow *ff = get_first_follow_table(grammar);
-            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
-            create_parse_table(ff, parse_table, grammar);
-            STACK *stack = NULL;
-            PARSE_TREE *tree;
-            start_time = clock();
-            parse (grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
-            end_time = clock();
-            total_CPU_time  =  (double) (end_time - start_time);
-            total_CPU_time_in_seconds =   total_CPU_time / CLOCKS_PER_SEC;
-            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s\n\n", "LEXEME", "LINE_NO", "TOKENAME", "VALUE (if num)", "PARENT", "IS LEAF?", "NODE SYMBOL");
-            print_parse_tree(tree, test_parse_fp);
-            printf("Printed Parse Tree in file '%s'.\n", argv[2]);
-            printf("CPU Time: %lf, CPU time(in seconds): %lf\n", total_CPU_time, total_CPU_time_in_seconds);
-            fclose(test_fp);
-            fclose(test_parse_fp);
-            free(twin_buff);
-            free(parse_table);
-        }
-        else
-            printf("Please enter a number from [0-4].");
-    }
-    return 0;
-}
-*/
