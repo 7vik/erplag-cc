@@ -9,10 +9,12 @@ d)
 
 [2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
 
-    moduleDeclarations1.inh = moduleDeclaration.syn
-    
+    Top-down: moduleDeclarations1.inh = insert_at_end(moduleDeclarations.inh, moduleDeclaration.syn)  //insert_at_end(head, node)
+    Bottom-up: moduleDeclarations.syn = moduleDeclarations1.syn ; freenodes(moduleDeclarations1, moduleDeclaration)   
 
 [3] moduleDeclarations -> EPS
+
+    moduleDeclarations.syn = moduleDeclarations.inh
 
 [4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
 
@@ -27,11 +29,25 @@ d)
 
 [8] module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
 
-[9] ret -> RETURNS SQBO output_plist SQBC SEMICOL 
+    module.addr = make_node(ID.addr, input_plist.addr, ret.addr, moduleDef.addr)
+    /* 
+    make_node() will create an array of a fixed number of pointers.
+    Here, addr attribute of module will point to this array of pointers.
+    */
+    freenodes(DEF, MODULE, ENDDEF, TAKES, INPUT, SQBO, SQBC, SEMICOL)
+
+[9] ret -> RETURNS SQBO output_plist SQBC SEMICOL
+
+    ret.addr = output_plist.addr
+    freenodes(RETURNS, SQBO, SQBC, SEMICOL)
 
 [10] ret -> EPS
 
-[11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr 
+    ret.addr = NULL
+
+[11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr
+
+
 
 [12] input_plist_lr -> EPS
 
@@ -57,95 +73,176 @@ d)
 
 [20] datatype -> ARRAY SQBO rangeArr SQBC OF type
 
-[21] rangeArr -> index_nt RANGEOP index_nt
+[21] rangeArr -> index_nt1 RANGEOP index_nt2
 
 [22] type -> INTEGER
 
-    type.syn = INTEGER.addr
+    type.addr = INTEGER.addr
 
 [23] type -> REAL
 
-    type.syn = REAL.addr
+    type.addr = REAL.addr
 
 [24] type -> BOOLEAN
 
-    type.syn = BOOLEAN.addr
+    type.addr = BOOLEAN.addr
 
 [25] moduleDef -> START statements END
+
+    moduleDef.addr = statements.addr
+    freenodes(START, END)
 
 [26] statements -> statement statements 
 
 [27] statements -> EPS
 
-[28] statement -> ioStmt 
+[28] statement -> ioStmt
 
-[29] statement -> simpleStmt 
+    statement.addr = iostmt.addr
+    freenodes(iostmt)
 
-[30] statement -> declareStmt 
+[29] statement -> simpleStmt
 
-[31] statement -> conditionalStmt 
+    statement.addr = simpleStmt.addr
+    freenodes(simpleStmt)
+
+[30] statement -> declareStmt
+
+    statement.addr = declareStmt.addr
+    freenodes(declareStmt)
+
+[31] statement -> conditionalStmt
+    
+    statement.addr = conditionalStmt.addr
+    freenodes(conditionalStmt)
 
 [32] statement -> iterativeStmt
 
-[33] ioStmt -> GET_VALUE BO ID BC SEMICOL 
+    statement.addr = iterativeStmt.addr
+    freenodes(iterativeStmt)
+
+[33] ioStmt -> GET_VALUE BO ID BC SEMICOL
+
+    iostmt.addr = ID.addr
+    freenodes(GET_VALUE, BO, BC, SEMICOL)
 
 [34] ioStmt -> PRINT BO printOpt BC SEMICOL
 
-[35] var -> ID whichId 
+    iostmt.addr = printOpt.addr
+    freenodes(PRINT, BO, BC, SEMICOL)
+
+[35] var -> ID whichId
+
+    var.addr = make_node(ID.addr, whichId.addr)
+    freenodes(whichId)
 
 [36] var -> NUM
 
-    var.syn = NUM.addr
+    var.addr = NUM.addr // This rule is actually involving creation of a new AST node and removal of the parse tree node
 
 [37] var -> RNUM
 
-    var.syn = RNUM.addr
+    var.addr = RNUM.addr
 
-[38] whichId -> SQBO index_nt SQBC 
+[38] whichId -> SQBO index_nt SQBC
+
+    whichId.addr = index_nt.addr
+    freenodes(SQBO, index_nt, SQBC)
 
 [39] whichId -> EPS
 
+    whichId.addr = NULL;
+
 [40] printOpt -> booleanConst
+
+    printOpt.addr = booleanConst.addr
+    freenodes(booleanConst)
 
 [41] printOpt -> var
 
-[42] simpleStmt -> assignmentStmt 
+    printOpt.addr = var.addr
+    freenodes(var)
+
+[42] simpleStmt -> assignmentStmt
+
+    simpleStmt.addr = assignmentStmt.addr
+    freenodes(assignmentStmt)
 
 [43] simpleStmt -> moduleReuseStmt
 
+    simpleStmt.addr = moduleReuseStmt.addr
+    freenodes(moduleReuseStmt)
+
 [44] assignmentStmt -> ID whichStmt
 
-[45] whichStmt -> lvalueIDStmt 
+    assignmentStmt.addr = make_node(ID.addr, whichStmt.addr)
+    freenodes(whichStmt)
+
+[45] whichStmt -> lvalueIDStmt
+
+    whichStmt.addr = lvalueIDStmt.addr
+    freenodes(lvalueIDStmt)
 
 [46] whichStmt -> lvalueARRStmt
 
+    whichStmt.addr = lvalueARRStmt.addr
+    freenodes(lvalueARRStmt)
+
 [47] lvalueIDStmt -> ASSIGNOP expression SEMICOL
+
+    lvalueIDStmt.addr = expression.addr
+    freenodes(ASSIGNOP, expression, SEMICOL)
 
 [48] lvalueARRStmt -> SQBO index_nt SQBC ASSIGNOP expression SEMICOL
 
+    lvalueARRStmt.addr = make_node(index_nt.addr, expression.addr)
+    freenodes(SQBO, index_nt, SQBC, ASSIGNOP, expression, SEMICOL)
+
 [49] index_nt -> NUM 
 
-    index_nt.syn = NUM.addr
+    index_nt.addr = NUM.addr
 
 [50] index_nt -> ID
 
-    index_nt.syn = ID.addr
+    index_nt.addr = ID.addr
 
 [51] moduleReuseStmt -> optional USE MODULE ID WITH PARAMETERS idList SEMICOL
 
-[52] optional -> SQBO idList SQBC ASSIGNOP 
+    moduleReuseStmt.addr = make_node(optional.addr, ID.addr, idList.addr)
+    freenodes(optional, USE, MODULE, WITH, PARAMETERS, idList, SEMICOL)
+
+[52] optional -> SQBO idList SQBC ASSIGNOP
+
+    optional.addr = idList.addr //to be implemented as make_node(idList.addr) while coding - a mere suggestion, though
+    freenodes(SQBO, idList, SQBC, ASSIGNOP)
 
 [53] optional -> EPS
 
-[54] idList_lr -> COMMA ID idList_lr 
+    optional.addr = NULL
+
+[54] idList_lr -> COMMA ID idList_lr1
+
+    idList_lr.addr = make_node(ID.addr, idList_lr1.addr)
+    freenodes(COMMA, idList_lr1)
 
 [55] idList_lr -> EPS
 
-[56] idList -> ID idList_lr 
+    idList_lr.addr = NULL
+
+[56] idList -> ID idList_lr
+
+    idList.addr = make_node(ID.addr, idList_lr.addr)
+    freenodes(idList_lr)
 
 [57] expression -> unaryExpression
 
+    expression.addr = unaryExpression.addr
+    freenodes(unaryExpression)
+
 [58] expression -> arithmeticOrBooleanExpression
+
+    expression.addr = arithmeticOrBooleanExpression.addr
+    freenodes(arithmeticOrBooleanExpression)
 
 [59] unaryExpression -> MINUS unary_opt
 
@@ -171,11 +268,11 @@ d)
 
 [70] booleanConst -> TRUE
 
-    booleanConst.syn = TRUE
+    booleanConst.addr = TRUE
 
 [71] booleanConst -> FALSE
 
-    booleanConst.syn = FALSE
+    booleanConst.addr = FALSE
 
 [72] arithmeticExpr_lr -> op1 term arithmeticExpr_lr 
 
@@ -195,65 +292,65 @@ d)
 
 [80] op1 -> PLUS
     
-    op1.syn = PLUS.addr
+    op1.addr = PLUS.addr
 
 [81] op1 -> MINUS
 
-    op1.syn = MINUS.addr
+    op1.addr = MINUS.addr
 
 [82] op2 -> MUL
 
-    op2.syn = MUL.addr
+    op2.addr = MUL.addr
 
 [83] op2 -> DIV
 
-    op2.syn = DIV.addr
+    op2.addr = DIV.addr
 
 [84] logicalOp -> AND
 
-    logicalOp.syn = AND.addr
+    logicalOp.addr = AND.addr
 
 [85] logicalOp -> OR
 
-    logicalOp.syn = OR.addr
+    logicalOp.addr = OR.addr
 
 [86] relationalOp -> LT
 
-    logicalOp.syn = LT.addr
+    relationalOp.addr = LT.addr
 
 [87] relationalOp -> LE
 
-    logicalOp.syn = LE.addr
+    relationalOp.addr = LE.addr
 
 [88] relationalOp -> GT
 
-    logicalOp.syn = GT.addr
+     relationalOp.addr = GT.addr
 
 [89] relationalOp -> GE
 
-    logicalOp.syn = GE.addr
+    relationalOp.addr = GE.addr
 
 [90] relationalOp -> EQ
 
-    logicalOp.syn = EQ.addr
+    relationalOp.addr = EQ.addr
 
 [91] relationalOp -> NE
 
-    relationalOp = NE.addr
+    relationalOp.addr = NE.addr
 
 [92] declareStmt -> DECLARE idList COLON datatype SEMICOL
 
 [93] value -> NUM
 
-    value.syn = NUM.addr
+    value.addr = NUM.addr
 
 [94] value -> TRUE
 
-    value.syn = TRUE.addr
+    value.addr = TRUE.addr
 
 [95] value -> FALSE
 
-    value.syn = FALSE.addr
+    value.addr = FALSE.addr
 
 [96] caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
 
@@ -267,7 +364,10 @@ d)
 
 [101] conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
 
-[102] range -> NUM RANGEOP NUM
+[102] range -> NUM1 RANGEOP NUM2
+
+    range.addr = make_node(NUM1.addr, NUM2.addr)
+    freenodes(RANGEOP)
 
 [103] iterativeStmt -> FOR BO ID IN range BC START statements END 
 
