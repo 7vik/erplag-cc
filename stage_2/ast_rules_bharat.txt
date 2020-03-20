@@ -1,11 +1,9 @@
 Following are the attributes used:
-a) //syn - for synthesized attributes
-b) //inh - for inherited attributes
-c) addr - to denote address of terminal nodes
-d)  
+a) addr - to denote address of terminal nodes
 
-Each AST node is supposed to have a link to the leftmost child and a link to its immediate sibling
-****************************************************************************************************************
+Each AST node is supposed to have a link to the leftmost child, which in turn will have a link to its immediate sibling,
+barring the exception of the use of arithmetic, logical and relational operators.
+***************************************************************************************************************************
 [1] program -> moduleDeclarations otherModules driverModule otherModules
 
     program.addr = make_node("program", moduleDeclarations.addr, otherModules.addr, driverModule.addr, otherModules.addr)
@@ -13,16 +11,22 @@ Each AST node is supposed to have a link to the leftmost child and a link to its
 
 [2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
 
-    //Top-down: moduleDeclarations1.inh = insert_at_end(moduleDeclarations.inh, moduleDeclaration.syn)  //insert_at_end(head, node)
-    //Bottom-up: moduleDeclarations.syn = moduleDeclarations1.syn ; freenodes(moduleDeclarations1, moduleDeclaration)
-
+    /*
+    Aliter:
+    Top-down: moduleDeclarations1.inh = insert_at_end(moduleDeclarations.inh, moduleDeclaration.syn)  //insert_at_end(head, node)
+    Bottom-up: moduleDeclarations.syn = moduleDeclarations1.syn ; freenodes(moduleDeclarations1, moduleDeclaration)
+    We only have one attribute, addr, in our implementation
+    */
     moduleDeclarations.addr = make_node("moduleDeclarations", moduleDeclaration.addr, moduleDeclarations1.addr)
     // need to extract the children of the nodes and then create a linked list of statement AST nodes
     freenodes(moduleDeclaration, moduleDeclarations1)   
 
 [3] moduleDeclarations -> EPS
 
-    //moduleDeclarations.syn = moduleDeclarations.inh
+    /*
+    Aliter:
+    moduleDeclarations.syn = moduleDeclarations.inh
+    */
     moduleDeclarations.addr = NULL /* return statement, base case of recursion */
 
 [4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
@@ -48,7 +52,7 @@ Each AST node is supposed to have a link to the leftmost child and a link to its
 
     module.addr = make_node("module", ID.addr, input_plist.addr, ret.addr, moduleDef.addr)
     /* 
-    make_node() will point to ID.addr, its "about-to-be" leftmost child.
+    IMPLEMENTATION: Here, make_node() will point to ID.addr, its "about-to-be" leftmost child.
     The AST node corresponding to ID will store, in its sibling field, address of the AST node corresponding to input_plist, and so on.
     Details will be shared later.
     */
@@ -66,7 +70,7 @@ Each AST node is supposed to have a link to the leftmost child and a link to its
 [11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr1
 
     input_plist_lr.addr = make_node(ID.addr, datatype.addr, input_plist_lr1.addr)
-    //name not required, for we eventually need not have this node
+    /* name not required, for we eventually need not have this node */
     freenodes(COMMA, COLON, datatype, input_plist_lr1)
 
 [12] input_plist_lr -> EPS
@@ -134,7 +138,7 @@ Each AST node is supposed to have a link to the leftmost child and a link to its
 [26] statements -> statement statements1
 
     statements.addr = make_node("statements", statement.addr, statements1.addr)
-    // need to extract the children of the nodes and then create a linked list of statement AST nodes
+    /* need to extract the children of the nodes and then create a linked list of statement AST nodes */
     freenodes(statement, statements1)
 
 [27] statements -> EPS
@@ -311,39 +315,130 @@ Each AST node is supposed to have a link to the leftmost child and a link to its
 
 [63] arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
 
-    
+    if opt_expr_lr.addr = NULL
+    {
+        arithmeticOrBooleanExpression.addr = opt_expr.addr    
+    }
 
-[64] opt_expr_lr -> logicalOp opt_expr opt_expr_lr
+    else
+    {
+        arithmeticOrBooleanExpression.addr = traverse_and_add_left(opt_expr_lr.addr, opt_expr.addr)
+    }
+
+    freenodes(opt_expr, opt_expr_lr)
+    
+    /*
+    IMPLEMENTATION: traverse_and_add_left(arg1, arg2) will traverse the tree with arg1 pointing
+    to its root, and reach the node which is accessed first in the preorder traversal.
+    Thereafter, it will add the subtree with root's address stored in arg2, as the left child of
+    the aforesaid node.
+    */
+
+[64] opt_expr_lr -> logicalOp opt_expr opt_expr_lr1
+
+    if opt_expr_lr1.addr = NULL
+    {
+        opt_expr_lr.addr = set_as_right_child(logicalOp.addr, opt_expr.addr)
+    }
+
+    else
+    {
+        temp = set_as_right_child(logicalOp.addr, opt_expr.addr)
+        opt_expr_lr.addr = traverse_and_add_left(opt_expr_lr1.addr, temp)
+    }
+
+    freenodes(logicalOp, opt_expr, opt_expr_lr1)
+
+    /* 
+    IMPLEMENTATION: set_as_right_child(arg1, arg2) sets subtree with arg2 pointing to the root
+    of the subtree as the right child of the tree with arg1 pointing to the root of this tree.
+    */ 
 
 [65] opt_expr_lr -> EPS
 
+    opt_expr_lr.addr = NULL
+
 [66] opt_expr -> arithmeticExpr one_more_opt
+
+    if one_more_opt.addr = NULL
+    {
+        opt_expr.addr = arithmeticExpr.addr
+    }
+
+    else
+    {
+        opt_expr.addr = traverse_and_add_left(one_more_opt.addr, arithmeticExpr.addr)
+    }
+
+    freenodes(arithmeticExpr, one_more_opt)
 
 [67] opt_expr -> booleanConst
 
+    opt_expr.addr = booleanConst.addr
+    freenodes(booleanConst)
+
 [68] one_more_opt -> relationalOp arithmeticExpr
+
+    one_more_opt.addr = set_as_right_child(relationalOp.addr, arithmeticExpr.addr)
+    freenodes(relationalOp, arithmeticExpr) 
 
 [69] one_more_opt -> EPS
 
+    one_more_opt.addr = NULL
+
 [70] booleanConst -> TRUE
 
-    booleanConst.addr = TRUE
+    booleanConst.addr = TRUE.addr
 
 [71] booleanConst -> FALSE
 
-    booleanConst.addr = FALSE
+    booleanConst.addr = FALSE.addr
 
-[72] arithmeticExpr_lr -> op1 term arithmeticExpr_lr 
+[72] arithmeticExpr_lr -> op1 term arithmeticExpr_lr1
+
+    if arithmeticExpr_lr1.addr = NULL
+    {
+        arithmeticExpr_lr.addr = set_as_right_child(op1.addr, term.addr)
+    }
+
+    else
+    {
+        temp = set_as_right_child(op1.addr, term.addr)
+        arithmeticExpr_lr.addr = traverse_and_add_left(arithmeticExpr_lr1.addr, temp)
+    }
+    freenodes(op1, term, arithmeticExpr_lr1)
 
 [73] arithmeticExpr_lr -> EPS
 
+    arithmeticExpr_lr.addr = NULL
+
 [74] arithmeticExpr -> term arithmeticExpr_lr
 
-[75] term_lr -> op2 factor term_lr 
+    arithmeticExpr.addr = traverse_and_add_left(arithmeticExpr_lr.addr, term.addr)
+    freenodes(term, arithmeticExpr_lr)
+
+[75] term_lr -> op2 factor term_lr1
+
+    if term_lr1.addr = NULL
+    {
+        term_lr.addr = set_as_right_child(op2.addr, factor.addr)
+    }
+
+    else
+    {
+        temp = set_as_right_child(op2.addr, factor.addr)
+        term_lr.addr = traverse_and_add_left(term_lr1.addr, temp)
+    }
+    freenodes(op2, factor, term_lr1)
 
 [76] term_lr -> EPS
 
+    term_lr.addr = NULL
+
 [77] term -> factor term_lr
+
+    term.addr = traverse_and_add_left(term_lr.addr, factor.addr)
+    freenodes(factor, term_lr)
 
 [78] factor -> BO arithmeticOrBooleanExpression BC
 
