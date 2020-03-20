@@ -1,79 +1,118 @@
 Following are the attributes used:
-a) syn - for synthesized attributes
-b) inh - for inherited attributes
+a) //syn - for synthesized attributes
+b) //inh - for inherited attributes
 c) addr - to denote address of terminal nodes
 d)  
 
+Each AST node is supposed to have a link to the leftmost child and a link to its immediate sibling
 ****************************************************************************************************************
 [1] program -> moduleDeclarations otherModules driverModule otherModules
 
+    program.addr = make_node("program", moduleDeclarations.addr, otherModules.addr, driverModule.addr, otherModules.addr)
+    freenodes(moduleDeclarations, otherModules, driverModule, otherModules)
+
 [2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
 
-    Top-down: moduleDeclarations1.inh = insert_at_end(moduleDeclarations.inh, moduleDeclaration.syn)  //insert_at_end(head, node)
-    Bottom-up: moduleDeclarations.syn = moduleDeclarations1.syn ; freenodes(moduleDeclarations1, moduleDeclaration)   
+    //Top-down: moduleDeclarations1.inh = insert_at_end(moduleDeclarations.inh, moduleDeclaration.syn)  //insert_at_end(head, node)
+    //Bottom-up: moduleDeclarations.syn = moduleDeclarations1.syn ; freenodes(moduleDeclarations1, moduleDeclaration)
+
+    moduleDeclarations.addr = make_node("moduleDeclarations", moduleDeclaration.addr, moduleDeclarations1.addr)
+    // need to extract the children of the nodes and then create a linked list of statement AST nodes
+    freenodes(moduleDeclaration, moduleDeclarations1)   
 
 [3] moduleDeclarations -> EPS
 
-    moduleDeclarations.syn = moduleDeclarations.inh
+    //moduleDeclarations.syn = moduleDeclarations.inh
+    moduleDeclarations.addr = NULL /* return statement, base case of recursion */
 
 [4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
 
-    moduleDeclaration.syn = ID.addr
+    moduleDeclaration.addr = ID.addr
     freenodes(DECLARE, MODULE, SEMICOL)
 
-[5] otherModules -> module otherModules 
+[5] otherModules -> module otherModules
+
+    otherModules.addr = make_node("otherModules", module.addr, otherModules.addr)
+    freenodes(module, otherModules)
 
 [6] otherModules -> EPS
 
+    otherModules.addr = NULL
+
 [7] driverModule -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef
+
+    driverModule.addr = moduleDef.addr
+    freenodes(DRIVERDEF, DRIVER, PROGRAM, DRIVERENDDEF, moduleDef)
 
 [8] module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
 
-    module.addr = make_node(ID.addr, input_plist.addr, ret.addr, moduleDef.addr)
+    module.addr = make_node("module", ID.addr, input_plist.addr, ret.addr, moduleDef.addr)
     /* 
-    make_node() will create an array of a fixed number of pointers.
-    Here, addr attribute of module will point to this array of pointers.
+    make_node() will point to ID.addr, its "about-to-be" leftmost child.
+    The AST node corresponding to ID will store, in its sibling field, address of the AST node corresponding to input_plist, and so on.
+    Details will be shared later.
     */
-    freenodes(DEF, MODULE, ENDDEF, TAKES, INPUT, SQBO, SQBC, SEMICOL)
+    freenodes(DEF, MODULE, ENDDEF, TAKES, INPUT, SQBO, input_plist, SQBC, SEMICOL, ret, moduleDef)
 
 [9] ret -> RETURNS SQBO output_plist SQBC SEMICOL
 
     ret.addr = output_plist.addr
-    freenodes(RETURNS, SQBO, SQBC, SEMICOL)
+    freenodes(RETURNS, SQBO, output_plist, SQBC, SEMICOL)
 
 [10] ret -> EPS
 
     ret.addr = NULL
 
-[11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr
+[11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr1
 
-
+    input_plist_lr.addr = make_node(ID.addr, datatype.addr, input_plist_lr1.addr)
+    //name not required, for we eventually need not have this node
+    freenodes(COMMA, COLON, datatype, input_plist_lr1)
 
 [12] input_plist_lr -> EPS
 
+    input_plist_lr.addr = NULL /* return statement */ 
+
 [13] input_plist -> ID COLON datatype input_plist_lr
 
-[14] output_plist_lr -> COMMA ID COLON type output_plist_lr 
+    input_plist.addr = make_node("input_plist", ID.addr, datatype.addr, input_plist_lr.addr)
+    freenodes(COLON, datatype, input_plist_lr)
+
+[14] output_plist_lr -> COMMA ID COLON type output_plist_lr1
+
+    output_plist_lr.addr = make_node(ID.addr, type.addr, output_plist_lr1.addr)
+    freenodes(COMMA, COLON, type, output_plist_lr1)
 
 [15] output_plist_lr -> EPS
 
+    output_plist_lr.addr = NULL
+
 [16] output_plist -> ID COLON type output_plist_lr
+
+    output_plist.addr = make_node("output_plist", ID.addr, type.addr, output_plist_lr.addr)
+    freenodes(COLON, type, output_plist_lr)
 
 [17] datatype -> INTEGER
 
-    datatype.syn = INTEGER.addr
+    datatype.addr = INTEGER.addr
 
 [18] datatype -> REAL
     
-    datatype.syn = REAL.addr
+    datatype.addr = REAL.addr
 
 [19] datatype -> BOOLEAN
 
-    datatype.syn = BOOLEAN.addr
+    datatype.addr = BOOLEAN.addr
 
 [20] datatype -> ARRAY SQBO rangeArr SQBC OF type
 
+    datatype.addr = make_node("datatype", type.addr, rangeArr.addr)
+    freenodes(ARRAY, SQBO, rangeArr, SQBC, OF, type)
+
 [21] rangeArr -> index_nt1 RANGEOP index_nt2
+
+    rangeArr.addr = make_node("rangeArr", index_nt1.addr, index_nt2.addr)
+    freenodes(index_nt1, RANGEOP, index_nt2)
 
 [22] type -> INTEGER
 
@@ -90,11 +129,17 @@ d)
 [25] moduleDef -> START statements END
 
     moduleDef.addr = statements.addr
-    freenodes(START, END)
+    freenodes(START, statements, END)
 
-[26] statements -> statement statements 
+[26] statements -> statement statements1
+
+    statements.addr = make_node("statements", statement.addr, statements1.addr)
+    // need to extract the children of the nodes and then create a linked list of statement AST nodes
+    freenodes(statement, statements1)
 
 [27] statements -> EPS
+
+    statements.addr = NULL  /* return -> base case of recursion */
 
 [28] statement -> ioStmt
 
@@ -133,7 +178,7 @@ d)
 
 [35] var -> ID whichId
 
-    var.addr = make_node(ID.addr, whichId.addr)
+    var.addr = make_node("var", ID.addr, whichId.addr)
     freenodes(whichId)
 
 [36] var -> NUM
@@ -175,7 +220,7 @@ d)
 
 [44] assignmentStmt -> ID whichStmt
 
-    assignmentStmt.addr = make_node(ID.addr, whichStmt.addr)
+    assignmentStmt.addr = make_node("assignmentStmt", ID.addr, whichStmt.addr)
     freenodes(whichStmt)
 
 [45] whichStmt -> lvalueIDStmt
@@ -190,12 +235,12 @@ d)
 
 [47] lvalueIDStmt -> ASSIGNOP expression SEMICOL
 
-    lvalueIDStmt.addr = expression.addr
+    lvalueIDStmt.addr = make_node("=", ASSIGNOP.addr, expression.addr)
     freenodes(ASSIGNOP, expression, SEMICOL)
 
 [48] lvalueARRStmt -> SQBO index_nt SQBC ASSIGNOP expression SEMICOL
 
-    lvalueARRStmt.addr = make_node(index_nt.addr, expression.addr)
+    lvalueARRStmt.addr = make_node("lvalueARRStmt", index_nt.addr, expression.addr)
     freenodes(SQBO, index_nt, SQBC, ASSIGNOP, expression, SEMICOL)
 
 [49] index_nt -> NUM 
@@ -208,7 +253,7 @@ d)
 
 [51] moduleReuseStmt -> optional USE MODULE ID WITH PARAMETERS idList SEMICOL
 
-    moduleReuseStmt.addr = make_node(optional.addr, ID.addr, idList.addr)
+    moduleReuseStmt.addr = make_node("moduleReuseStmt", optional.addr, ID.addr, idList.addr)
     freenodes(optional, USE, MODULE, WITH, PARAMETERS, idList, SEMICOL)
 
 [52] optional -> SQBO idList SQBC ASSIGNOP
@@ -231,7 +276,7 @@ d)
 
 [56] idList -> ID idList_lr
 
-    idList.addr = make_node(ID.addr, idList_lr.addr)
+    idList.addr = make_node("idList", ID.addr, idList_lr.addr)
     freenodes(idList_lr)
 
 [57] expression -> unaryExpression
@@ -246,13 +291,27 @@ d)
 
 [59] unaryExpression -> MINUS unary_opt
 
+    unaryExpression.addr = make_node("unaryExpression", MINUS.addr, unary_opt.addr)
+    freenodes(unary_opt)
+
 [60] unaryExpression -> PLUS unary_opt
+
+    unaryExpression.addr = make_node("unaryExpression", PLUS.addr, unary_opt.addr)
+    freenodes(unary_opt)
 
 [61] unary_opt -> BO arithmeticExpr BC
 
+    unary_opt.addr = arithmeticExpr.addr
+    freenodes(BO, arithmeticExpr, BC)
+
 [62] unary_opt -> var
 
+    unary_opt.addr = var.addr
+    freenodes(var)
+
 [63] arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
+
+    
 
 [64] opt_expr_lr -> logicalOp opt_expr opt_expr_lr
 
@@ -286,9 +345,15 @@ d)
 
 [77] term -> factor term_lr
 
-[78] factor -> BO arithmeticOrBooleanExpression BC 
+[78] factor -> BO arithmeticOrBooleanExpression BC
+
+    factor.addr = arithmeticOrBooleanExpression.addr
+    freenodes(arithmeticOrBooleanExpression)
 
 [79] factor -> var
+
+    factor.addr = var.addr
+    freenodes(var)
 
 [80] op1 -> PLUS
     
@@ -340,6 +405,9 @@ d)
 
 [92] declareStmt -> DECLARE idList COLON datatype SEMICOL
 
+    declareStmt.addr = make_node("declareStmt", idList.addr, datatype.addr)
+    freenodes(DECLARE, idList, COLON, datatype, SEMICOL)
+
 [93] value -> NUM
 
     value.addr = NUM.addr
@@ -354,21 +422,43 @@ d)
 
 [96] caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
 
-[97] caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt
+    caseStmts.addr = make_node("caseStmts", value.addr, statements.addr, caseStmt.addr)
+    freenodes(CASE, value, COLON, statements, BREAK, SEMICOL, caseStmt)
+
+[97] caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt1
+
+    caseStmt.addr = make_node(value.addr, statements.addr, caseStmt1.addr)
+    freenodes(CASE, value, COLON, statements, BREAK, SEMICOL, caseStmt1)
 
 [98] caseStmt -> EPS
 
-[99] default_nt -> DEFAULT COLON statements BREAK SEMICOL 
+    caseStmt.addr = NULL
+
+[99] default_nt -> DEFAULT COLON statements BREAK SEMICOL
+
+    default_nt.addr = statements.addr
+    freenodes(DEFAULT, COLON, statements, BREAK, SEMICOL)
 
 [100] default_nt -> EPS
 
+    default_nt.addr = NULL
+
 [101] conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
+
+    conditionalStmt.addr = make_node("conditionalStmt", ID.addr, caseStmts.addr, default_nt.addr)
+    freenodes(SWITCH, BO, BC, START, caseStmts, default_nt, END)
 
 [102] range -> NUM1 RANGEOP NUM2
 
-    range.addr = make_node(NUM1.addr, NUM2.addr)
+    range.addr = make_node("range", NUM1.addr, NUM2.addr)
     freenodes(RANGEOP)
 
-[103] iterativeStmt -> FOR BO ID IN range BC START statements END 
+[103] iterativeStmt -> FOR BO ID IN range BC START statements END
+
+    iterativeStmt.addr = make_node("iterativeStmt", FOR.addr, ID.addr, range.addr, statements.addr)
+    freenodes(BO, IN, range, BC, START, statements, END)
 
 [104] iterativeStmt -> WHILE BO arithmeticOrBooleanExpression BC START statements END
+
+    iterativeStmt.addr = make_node("iterativeStmt", WHILE.addr, arithmeticOrBooleanExpression.addr, statements.addr)
+    freenodes(BO, arithmeticOrBooleanExpression, BC, START, statements, END)
