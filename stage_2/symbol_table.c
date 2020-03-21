@@ -294,12 +294,14 @@ int main()
     st_initialize(symbol_table, "global", NULL);
     st_initialize(inner_table, "for_loop", symbol_table);
 
-    st_insert_symbol(create_symbol("age", 1, "global"), symbol_table);
-    st_insert_symbol(create_symbol("height", 1, "global"), symbol_table);
+    st_insert_symbol(create_symbol("age", 1, "global1"), symbol_table);
+    st_insert_symbol(create_symbol("height", 1, "global2"), symbol_table);
     st_insert_symbol(create_symbol("weight", 1, "for1"), inner_table);
     st_insert_symbol(create_symbol("frac31", 2, "for2"), inner_table);
-    st_insert_symbol(create_symbol("married", 3, "global"), symbol_table);
+    st_insert_symbol(create_symbol("married", 3, "global3"), symbol_table);
 
-    st_print(symbol_table);
+    // st_print(symbol_table);
+    if (st_lookup("married", symbol_table))  printf("%s\n", st_lookup("married", symbol_table)->scope->scope); else printf("NOT FOUND.\n");
+    if (st_lookup("married", inner_table)) printf("%s\n", st_lookup("married", inner_table)->scope->scope); else printf("NOT FOUND.\n");
     return 0;
 }
