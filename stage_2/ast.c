@@ -116,10 +116,88 @@ astNode* buildAST(PARSE_TREE* root)
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
+                child0->parent = root;
+                child1->parent = root;
 
+                child0->sibling = child1;
+                return child0;
 
                 break;
             }
+            
+            // moduleDeclarations -> EPS
+            case(3):
+            {
+                int certificate = string_to_enum(root->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                return node; // Child value already NULL, so lite
+            }
+
+            // moduleDeclaration -> DECLARE MODULE ID SEMICOL
+            case(4):
+            {
+                int certificate = string_to_enum(root->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
+                free(root->kids[0]);
+                free(root->kids[1]);
+                free(root->kids[3]);
+                node->child = root->kids[0];
+                node->is_leaf = 1;
+                return node;
+                break;  
+            }
+
+            // otherModules -> module otherModules1
+
+            case(5):
+            {
+                int certificate = string_to_enum(root->data->lexeme);
+
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                child0->sibling = child1->sibling;
+                return child0;
+
+                break;
+            }
+            
+            // otherModules -> EPS
+            case(6):
+            {
+                int certificate = string_to_enum(root->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                return node;
+            }
+
+
+            // driverModule -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef
+            case(7):
+            {
+                int certificate = string_to_enum(root->data->lexeme);
+                free(root->kids[0]);
+                free(root->kids[1]);
+                free(root->kids[2]);
+                free(root->kids[3]);
+                astNode* child4 = buildAST(root->kids[4]);
+                return child4;
+
+                break;
+            }
+
+            // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
+
+            case(8):
+            {
+                // note to continuer
+
+                //module->child hoga ID node
+                //Id vaali node ka sibling hoga input_plist waala AST, make sure you do make_node in input_plist rule
+                //uska sibling hoga ret ka ASt, uska sibling moduleDef ka AST, again iss rule mein make_node hoga
+                //you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
+                // run ./make 7 10 11 and answer 1
+            }
+
 
             default:
             {

@@ -28,8 +28,8 @@ enum active_buffer {Steve, Mark};
 typedef struct lexeme_tuple
 {
     // lexeme (tuple of (TOKEN, VALUE, LINE))
-    char *token;
-    char *value;
+    char *token;   // ID
+    char *value;   // a, b
     unsigned int line;
 } LEXEME;
 
