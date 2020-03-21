@@ -4,12 +4,12 @@ a) addr - to denote address of terminal nodes
 Each AST node is supposed to have a link to the leftmost child, which in turn will have a link to its immediate sibling,
 barring the exception of the use of arithmetic, logical and relational operators.
 ***************************************************************************************************************************
-[1] program -> moduleDeclarations otherModules driverModule otherModules
+-[1] program -> moduleDeclarations otherModules driverModule otherModules
 
     program.addr = make_node("program", moduleDeclarations.addr, otherModules.addr, driverModule.addr, otherModules.addr)
     freenodes(moduleDeclarations, otherModules, driverModule, otherModules)
 
-[2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
+-[2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
 
     /*
     Aliter:
@@ -21,7 +21,22 @@ barring the exception of the use of arithmetic, logical and relational operators
     // need to extract the children of the nodes and then create a linked list of statement AST nodes
     freenodes(moduleDeclaration, moduleDeclarations1)   
 
-[3] moduleDeclarations -> EPS
+    /*
+    #Ayush
+    Ayush, I'm writing a pseudocode to possibly help you.
+    You can create additional functions depending upon modularity concerns.
+    !.... Assume function to be generate_AST() -> here, input will be moduleDeclarations non-terminal
+    !.... Beginning of code ....
+    moduleDeclaration_node = generate_AST(moduleDeclaration)
+    moduleDeclarations1_node = generate_AST(moduleDeclarations1)
+    moduleDeclarations_node = make_node("moduleDeclarations") //initialize everything else appropriately
+    moduleDeclarations_node.addr = moduleDeclaration_node //Attribute name addr can be replaced by name child
+    moduleDeclaration_node.sibling = moduleDeclarations1_node.addr
+
+    return moduleDeclaration_node
+    */
+
+-[3] moduleDeclarations -> EPS
 
     /*
     Aliter:
@@ -29,15 +44,27 @@ barring the exception of the use of arithmetic, logical and relational operators
     */
     moduleDeclarations.addr = NULL /* return statement, base case of recursion */
 
-[4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
+    /*
+    #Ayush
+    return NULL
+    */
+
+-[4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
 
     moduleDeclaration.addr = ID.addr
     freenodes(DECLARE, MODULE, SEMICOL)
 
-[5] otherModules -> module otherModules
+    /*#Ayush
+    moduleDeclaration_node = make_node("ID")
+    //code to copy contents of the terminal node ID in moduleDeclaration_node
 
-    otherModules.addr = make_node("otherModules", module.addr, otherModules.addr)
-    freenodes(module, otherModules)
+    return moduleDeclaration_node
+    */
+
+[5] otherModules -> module otherModules1
+
+    otherModules.addr = make_node("otherModules", module.addr, otherModules1.addr)
+    freenodes(module, otherModules1)
 
 [6] otherModules -> EPS
 
