@@ -78,7 +78,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 //moduleDeclarations and otherModules can be NULL :(
             
-                if(child0->child == NULL && child1->child == NULL) //both are EPS
+                if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
                 {
                     node->child = child2;
                     free(child0);
@@ -86,7 +86,7 @@ astNode* buildAST(PARSE_TREE* root)
                     child2->sibling = child3;
                 }
 
-                else if(child0->child == NULL)
+                else if(child0->node_marker == EPS)
                 {
                     free(child0);
                     node->child = child1;
@@ -116,9 +116,6 @@ astNode* buildAST(PARSE_TREE* root)
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->parent = root;
-                child1->parent = root;
-
                 child0->sibling = child1;
                 return child0;
 
@@ -142,7 +139,7 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[3]);
-                node->child = root->kids[0];
+                node->tree_node = root->kids[2]->data;
                 node->is_leaf = 1;
                 return node;
                 break;  
