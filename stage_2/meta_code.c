@@ -6,6 +6,9 @@
  * It asks whether you are calling make_node in your code
  * if yes press 1, else 0
  * This will generate some of the boring code
+ * 
+ * For generating case statements the format is ./meta start_val end_val
+ * For eg: ./meta 12 14 will generate case stmts 12, 13, 14.
  */
 
 #include<stdio.h>
@@ -14,11 +17,31 @@
 int main(int argc, char* argv[])
 {
 
-    printf("Press -1 if A -> EPS kind of rule, Press 1 if you want astnode, 0 otherwise: ");
+    printf("Press -1 if A -> EPS kind of rule\n \
+            Press 1 if you want astnode\n \
+            0 if no astNode\n \
+            Press 2 for constructing case stmts\n \
+            Press 3 for constructing case Non-Terminal -> Terminal\n\n ");
     int choice;
     scanf("%d", &choice);
 
+    if(choice == 3)
+    {
+        printf("int certificate = string_to_enum(root->kids[0]->data->lexeme);\nastNode* node = make_ASTnode(certificate);\nnode->tree_node = root->kids[0]->data;\nnode->is_leaf = 1;\nreturn node;\n");
+        return 0;
+    }
+
     printf("int certificate = string_to_enum(root->data->lexeme);\n\n");
+
+    if (choice == 2)
+    {
+        for(int i = atoi(argv[1]); i <= atoi(argv[2]); i++)
+        {
+            printf("case(%d):\n{\n\t//To do\n}\n\n", i);
+        }
+
+        return 0;
+    }
 
     if (choice == -1)
     {
@@ -26,6 +49,8 @@ int main(int argc, char* argv[])
         printf("return node;\n");
         return 0;
     }
+
+    
 
     for(int i = 0; i < argc - 1; i++)
     {
@@ -60,3 +85,4 @@ int main(int argc, char* argv[])
     
     printf("\nbreak;\n");
 }
+

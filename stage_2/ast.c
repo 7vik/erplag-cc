@@ -162,8 +162,10 @@ astNode* buildAST(PARSE_TREE* root)
             // otherModules -> EPS
             case(6):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
                 astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
                 return node;
             }
 
@@ -195,7 +197,219 @@ astNode* buildAST(PARSE_TREE* root)
                 // run ./make 7 10 11 and answer 1
             }
 
+            // op1 -> PLUS
+            case(80):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
 
+            // op1 -> MINUS
+            case(81):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // op2 -> MUL
+            case(82):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // op2 -> DIV
+            case(83):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            
+            // logicalOp -> AND
+            case(84):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            // logicalOp -> OR
+            case(85):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            // relationalOp -> LT
+            case(86):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            // relationalOp -> LE
+            case(87):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            // relationalOp -> GT
+            case(88):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // relationalOp -> GE
+            case(89):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // relationalOp -> EQ
+            case(90):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // relationalOp -> NE
+            case(91):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // declareStmt -> DECLARE idList COLON datatype SEMICOL
+            case(92):
+            {
+                    //To do
+            }
+
+            // value -> NUM
+            case(93):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // value -> TRUE
+            case(94):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // value -> FALSE
+            case(95):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+
+            // caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
+            case(96):
+            {
+                    //To do
+            }
+            
+            // caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt1
+            case(97):
+            {
+                    //To do
+            }
+
+            // caseStmt -> EPS
+            case(98):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            
+            // default_nt -> DEFAULT COLON statements BREAK SEMICOL
+            case(99):
+            {
+                    //To do
+            }
+
+            // default_nt -> EPS
+            case(100):
+            {
+                int certificate = string_to_enum(root->kids[0]->data->lexeme);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+                node->is_leaf = 1;
+                return node;
+            }
+            
+            // conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
+            case(101):
+            {
+                    //To do
+            }
+
+            // range -> NUM1 RANGEOP NUM2
+            case(102):
+            {
+                    //To do
+            }
+
+            // iterativeStmt -> FOR BO ID IN range BC START statements END
+            case(103):
+            {
+                    //To do
+            }
+
+            // iterativeStmt -> WHILE BO arithmeticOrBooleanExpression BC START statements END
+            case(104):
+            {
+                    //To do
+            }
             default:
             {
                 printf("No rule number matching, rule number: %d", rule_num);
