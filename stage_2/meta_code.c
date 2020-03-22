@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
     if(choice == 3)
     {
-        printf("int certificate = string_to_enum(root->kids[0]->data->lexeme);\nastNode* node = make_ASTnode(certificate);\nnode->tree_node = root->kids[0]->data;\nnode->is_leaf = 1;\nreturn node;\n");
+        printf("return buildLeafAST(root->kids[0]);\n");
         return 0;
     }
 
@@ -51,18 +51,29 @@ int main(int argc, char* argv[])
     }
 
     
-    // known bug: Case: moduleDeclaration -> DECLARE MODULE ID SEMICOL
-    // ID will be also freed which we have to tackle manually.
-    int j = 0;
-    for(int i = 0; i <= atoi(argv[argc - 1]); i++)
+    if (argc > 1)
     {
-        if (i == atoi(argv[j + 1]))
+        // known bug: Case: moduleDeclaration -> DECLARE MODULE ID SEMICOL
+        // ID will be also freed which we have to tackle manually.
+        int j = 0;
+        for(int i = 0; i <= atoi(argv[argc - 1]); i++)
         {
-            j++;
-            printf("astNode* child%d = buildAST(root->kids[%d]);\n", atoi(argv[i + 1]), atoi(argv[i + 1]));
+            if (i == atoi(argv[j + 1]))
+            {
+                j++;
+                printf("astNode* child%d = buildAST(root->kids[%d]);\n", i, i);
+            }
+            else
+                printf("free(root->kids[%d]);\n", i);
         }
-        else
-            printf("free(root->kids[%d])\n", i);
+
+        // connects siblings
+
+        for (int i = 0; i < argc - 2; i++)
+        {
+            printf("child%d->sibling = child%d;\n", atoi(argv[i + 1]), atoi(argv[i + 2]));
+        }
+
     }
 
     
@@ -74,9 +85,9 @@ int main(int argc, char* argv[])
 
         for(int i = 0; i < argc - 1; i++)
         {
-            printf("child%d->parent = root;\n", atoi(argv[i + 1]));
+            printf("child%d->parent = node\n", atoi(argv[i + 1]));
         }
-
+        printf("node->child = child%d;\n", atoi(argv[1]));
         printf("return node;\n");
         
     }

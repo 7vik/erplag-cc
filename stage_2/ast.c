@@ -46,6 +46,15 @@ astNode* make_ASTnode(int certificate)
     return node;
 }
 
+astNode* buildLeafAST(PARSE_TREE* t)
+{
+    int certificate = string_to_enum(t->data->lexeme);
+    astNode* node = make_ASTnode(certificate);
+    node->tree_node = t->data;
+    node->is_leaf = 1;
+    return node;
+}
+
 // Takes a node and Returns its astTree's root node
 
 astNode* buildAST(PARSE_TREE* root)
@@ -125,9 +134,7 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleDeclarations -> EPS
             case(3):
             {
-                int certificate = string_to_enum(root->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                return node; // Child value already NULL, so lite
+                return buildLeafAST(root->kids[0]);
             }
 
             // moduleDeclaration -> DECLARE MODULE ID SEMICOL
@@ -314,9 +321,27 @@ astNode* buildAST(PARSE_TREE* root)
             }
 
             // declareStmt -> DECLARE idList COLON datatype SEMICOL
+            // ./meta 1 3
+            // add free of remaining kids
             case(92):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                free(root->kids[2]);
+                astNode* child3 = buildAST(root->kids[3]);
+                free(root->kids[4]);
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child1->parent = node;
+                child3->parent = node;
+                child1->sibling = child3;
+                node->child = child1;
+                return node;
+
+                break;
             }
 
             // value -> NUM
@@ -350,15 +375,59 @@ astNode* buildAST(PARSE_TREE* root)
             }
 
             // caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
+            // ./meta 1 3 6; generates this code automatically !!
             case(96):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                free(root->kids[2]);
+                astNode* child3 = buildAST(root->kids[3]);
+                free(root->kids[4]);
+                free(root->kids[5]);
+                astNode* child6 = buildAST(root->kids[6]);
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child1->parent = node;
+                child3->parent = node;
+                child6->parent = node;
+                child1->sibling = child3;
+                child3->sibling = child6;
+                node->child = child1;
+                return node;
+
+                break;
             }
             
             // caseStmt -> CASE value COLON statements BREAK SEMICOL caseStmt1
+            // ./meta 1 3 6
             case(97):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                free(root->kids[2]);
+                astNode* child3 = buildAST(root->kids[3]);
+                free(root->kids[4]);
+                free(root->kids[5]);
+                astNode* child6 = buildAST(root->kids[6]);
+                child1->sibling = child3;
+                child3->sibling = child6;
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child1->parent = node;
+                child3->parent = node;
+                child6->parent = node;
+                node->child = child1;
+                return node;
+
+                break;
             }
 
             // caseStmt -> EPS
@@ -372,9 +441,23 @@ astNode* buildAST(PARSE_TREE* root)
             }
             
             // default_nt -> DEFAULT COLON statements BREAK SEMICOL
+            // ./meta 2
             case(99):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child2->parent = root;
+                node->child = child2;
+                return node;
+
+                break;
             }
 
             // default_nt -> EPS
@@ -388,27 +471,105 @@ astNode* buildAST(PARSE_TREE* root)
             }
             
             // conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
+            // ./meta 2 5 6
+            // need to handle ID case
             case(101):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildLeafAST(root->kids[2]); //handle ID here, change to buildLeafAST
+                free(root->kids[3]);
+                free(root->kids[4]);
+                astNode* child5 = buildAST(root->kids[5]);
+                astNode* child6 = buildAST(root->kids[6]);
+                child2->sibling = child5;
+                child5->sibling = child6;
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child2->parent = node;
+                child5->parent = node;
+                child6->parent = node;
+                node->child = child2;
+                return node;
+
+                break;
             }
 
             // range -> NUM1 RANGEOP NUM2
+            // ./meta 0 1 2; doesn't help much in this case
             case(102):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                astNode* child0 = buildLeafAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child2 = buildLeafAST(root->kids[2]);
+                child0->sibling = child2;
+
+                child0->parent = child1;
+                child2->parent = child1;
+                child0->sibling = child2->sibling;
+                return child1;
+
+                break;
             }
 
             // iterativeStmt -> FOR BO ID IN range BC START statements END
+            // ./meta 2 4 7; No change required, generates perfect code!!
             case(103):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildLeafAST(root->kids[2]);
+                free(root->kids[3]);
+                astNode* child4 = buildAST(root->kids[4]);
+                free(root->kids[5]);
+                free(root->kids[6]);
+                astNode* child7 = buildAST(root->kids[7]);
+                child2->sibling = child4;
+                child4->sibling = child7;
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child2->parent = node;
+                child4->parent = node;
+                child7->parent = node;
+                node->child = child2;
+                return node;
+
+                break;
             }
 
             // iterativeStmt -> WHILE BO arithmeticOrBooleanExpression BC START statements END
+            // ./meta 2 5; perfect again!!
             case(104):
             {
-                    //To do
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+                free(root->kids[3]);
+                free(root->kids[4]);
+                astNode* child5 = buildAST(root->kids[5]);
+                child2->sibling = child5;
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child2->parent = node;
+                child5->parent = node;
+                node->child = child2;
+                return node;
+
+                break;
             }
             default:
             {
