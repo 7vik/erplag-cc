@@ -51,10 +51,18 @@ int main(int argc, char* argv[])
     }
 
     
-
-    for(int i = 0; i < argc - 1; i++)
+    // known bug: Case: moduleDeclaration -> DECLARE MODULE ID SEMICOL
+    // ID will be also freed which we have to tackle manually.
+    int j = 0;
+    for(int i = 0; i <= atoi(argv[argc - 1]); i++)
     {
-        printf("astNode* child%d = buildAST(root->kids[%d]);\n", atoi(argv[i + 1]), atoi(argv[i + 1]));
+        if (i == atoi(argv[j + 1]))
+        {
+            j++;
+            printf("astNode* child%d = buildAST(root->kids[%d]);\n", atoi(argv[i + 1]), atoi(argv[i + 1]));
+        }
+        else
+            printf("free(root->kids[%d])\n", i);
     }
 
     
@@ -82,6 +90,7 @@ int main(int argc, char* argv[])
 
         printf("return child%d;\n", atoi(argv[1]));
     }
+
     
     printf("\nbreak;\n");
 }
