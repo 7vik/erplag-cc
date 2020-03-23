@@ -1,0 +1,214 @@
+int string_to_enum(char *str)
+{
+    int value;
+    if(strcmp(str,"AND")==0)
+		value = AND;
+	else if(strcmp(str,"ARRAY")==0)
+		value = ARRAY;
+	else if(strcmp(str,"ASSIGNOP")==0)
+		value = ASSIGNOP;
+	else if(strcmp(str,"BC")==0)
+		value = BC;
+	else if(strcmp(str,"BO")==0)
+		value = BO;
+	else if(strcmp(str,"BOOLEAN")==0)
+		value = BOOLEAN;
+	else if(strcmp(str,"BREAK")==0)
+		value = BREAK;
+	else if(strcmp(str,"CASE")==0)
+		value = CASE;
+	else if(strcmp(str,"COLON")==0)
+		value = COLON;
+	else if(strcmp(str,"COMMA")==0)
+		value = COMMA;
+	else if(strcmp(str,"DECLARE")==0)
+		value = DECLARE;
+	else if(strcmp(str,"DEF")==0)
+		value = DEF;
+	else if(strcmp(str,"DEFAULT")==0)
+		value = DEFAULT;
+	else if(strcmp(str,"DIV")==0)
+		value = DIV;
+	else if(strcmp(str,"DRIVER")==0)
+		value = DRIVER;
+	else if(strcmp(str,"DRIVERDEF")==0)
+		value = DRIVERDEF;
+	else if(strcmp(str,"END")==0)
+		value = END;
+	else if(strcmp(str,"ENDDEF")==0)
+		value = ENDDEF;
+	else if(strcmp(str,"EQ")==0)
+		value = EQ;
+	else if(strcmp(str,"FALSE")==0)
+		value = FALSE;
+	else if(strcmp(str,"FOR")==0)
+		value = FOR;
+	else if(strcmp(str,"GE")==0)
+		value = GE;
+	else if(strcmp(str,"GET_VALUE")==0)
+		value = GET_VALUE;
+	else if(strcmp(str,"GT")==0)
+		value = GT;
+	else if(strcmp(str,"IN")==0)
+		value = IN;
+	else if(strcmp(str,"INPUT")==0)
+		value = INPUT;
+	else if(strcmp(str,"INTEGER")==0)
+		value = INTEGER;
+	else if(strcmp(str,"LE")==0)
+		value = LE;
+	else if(strcmp(str,"LT")==0)
+		value = LT;
+	else if(strcmp(str,"MINUS")==0)
+		value = MINUS;
+	else if(strcmp(str,"MODULE")==0)
+		value = MODULE;
+	else if(strcmp(str,"MUL")==0)
+		value = MUL;
+	else if(strcmp(str,"NE")==0)
+		value = NE;
+	else if(strcmp(str,"allVarTemp")==0)
+		value = allVarTemp;
+	else if(strcmp(str,"arithmeticExpression")==0)
+		value = arithmeticExpression;
+	else if(strcmp(str,"expPrime")==0)
+		value = expPrime;
+	else if(strcmp(str,"term")==0)
+		value = term;
+	else if(strcmp(str,"termPrime")==0)
+		value = termPrime;
+	else if(strcmp(str,"factor")==0)
+		value = factor;
+	else if(strcmp(str,"highPrecedenceOperators")==0)
+		value = highPrecedenceOperators;
+	else if(strcmp(str,"lowPrecedenceOperators")==0)
+		value = lowPrecedenceOperators;
+	else if(strcmp(str,"all")==0)
+		value = all;
+	else if(strcmp(str,"temp")==0)
+		value = temp;
+	else if(strcmp(str,"booleanExpression")==0)
+		value = booleanExpression;
+	else if(strcmp(str,"var")==0)
+		value = var;
+	else if(strcmp(str,"logicalOp")==0)
+		value = logicalOp;
+	else if(strcmp(str,"relationalOp")==0)
+		value = relationalOp;
+	else if(strcmp(str,"value =Stmt")==0)
+		value = value =Stmt;
+	else if(strcmp(str,"optionalvalue =")==0)
+		value = optionalvalue =;
+	else if(strcmp(str,"idList")==0)
+		value = idList;
+	else if(strcmp(str,"more_ids")==0)
+		value = more_ids;
+	else if(strcmp(str,"eps")==0)
+		value = eps;
+	else if(strcmp(str,"TK_ASSIGNOP")==0)
+		value = TK_ASSIGNOP;
+	else if(strcmp(str,"TK_COMMENT")==0)
+		value = TK_COMMENT;
+	else if(strcmp(str,"TK_FIELDID")==0)
+		value = TK_FIELDID;
+	else if(strcmp(str,"TK_ID")==0)
+		value = TK_ID;
+	else if(strcmp(str,"TK_NUM")==0)
+		value = TK_NUM;
+	else if(strcmp(str,"TK_RNUM")==0)
+		value = TK_RNUM;
+	else if(strcmp(str,"TK_FUNID")==0)
+		value = TK_FUNID;
+	else if(strcmp(str,"TK_RECORDID")==0)
+		value = TK_RECORDID;
+	else if(strcmp(str,"TK_WITH")==0)
+		value = TK_WITH;
+	else if(strcmp(str,"TK_PARAMETERS")==0)
+		value = TK_PARAMETERS;
+	else if(strcmp(str,"TK_END")==0)
+		value = TK_END;
+	else if(strcmp(str,"TK_WHILE")==0)
+		value = TK_WHILE;
+	else if(strcmp(str,"TK_TYPE")==0)
+		value = TK_TYPE;
+	else if(strcmp(str,"TK_MAIN")==0)
+		value = TK_MAIN;
+	else if(strcmp(str,"TK_GLOBAL")==0)
+		value = TK_GLOBAL;
+	else if(strcmp(str,"TK_PARAMETER")==0)
+		value = TK_PARAMETER;
+	else if(strcmp(str,"TK_LIST")==0)
+		value = TK_LIST;
+	else if(strcmp(str,"TK_SQL")==0)
+		value = TK_SQL;
+	else if(strcmp(str,"TK_SQR")==0)
+		value = TK_SQR;
+	else if(strcmp(str,"TK_INPUT")==0)
+		value = TK_INPUT;
+	else if(strcmp(str,"TK_OUTPUT")==0)
+		value = TK_OUTPUT;
+	else if(strcmp(str,"TK_INT")==0)
+		value = TK_INT;
+	else if(strcmp(str,"TK_REAL")==0)
+		value = TK_REAL;
+	else if(strcmp(str,"TK_COMMA")==0)
+		value = TK_COMMA;
+	else if(strcmp(str,"TK_SEM")==0)
+		value = TK_SEM;
+	else if(strcmp(str,"TK_COLON")==0)
+		value = TK_COLON;
+	else if(strcmp(str,"TK_DOT")==0)
+		value = TK_DOT;
+	else if(strcmp(str,"TK_ENDWHILE")==0)
+		value = TK_ENDWHILE;
+	else if(strcmp(str,"TK_OP")==0)
+		value = TK_OP;
+	else if(strcmp(str,"TK_CL")==0)
+		value = TK_CL;
+	else if(strcmp(str,"TK_else if")==0)
+		value = TK_else if;
+	else if(strcmp(str,"TK_THEN")==0)
+		value = TK_THEN;
+	else if(strcmp(str,"TK_ENDelse if")==0)
+		value = TK_ENDelse if;
+	else if(strcmp(str,"TK_READ")==0)
+		value = TK_READ;
+	else if(strcmp(str,"TK_WRITE")==0)
+		value = TK_WRITE;
+	else if(strcmp(str,"TK_value =")==0)
+		value = TK_value =;
+	else if(strcmp(str,"TK_PLUS")==0)
+		value = TK_PLUS;
+	else if(strcmp(str,"TK_MINUS")==0)
+		value = TK_MINUS;
+	else if(strcmp(str,"TK_MUL")==0)
+		value = TK_MUL;
+	else if(strcmp(str,"TK_DIV")==0)
+		value = TK_DIV;
+	else if(strcmp(str,"TK_CALL")==0)
+		value = TK_CALL;
+	else if(strcmp(str,"TK_RECORD")==0)
+		value = TK_RECORD;
+	else if(strcmp(str,"TK_ENDRECORD")==0)
+		value = TK_ENDRECORD;
+	else if(strcmp(str,"TK_ELSE")==0)
+		value = TK_ELSE;
+	else if(strcmp(str,"TK_AND")==0)
+		value = TK_AND;
+	else if(strcmp(str,"TK_OR")==0)
+		value = TK_OR;
+	else if(strcmp(str,"TK_NOT")==0)
+		value = TK_NOT;
+	else if(strcmp(str,"TK_LT")==0)
+		value = TK_LT;
+	else if(strcmp(str,"TK_LE")==0)
+		value = TK_LE;
+	else if(strcmp(str,"TK_EQ")==0)
+		value = TK_EQ;
+	else if(strcmp(str,"TK_GT")==0)
+		value = TK_GT;
+	else if(strcmp(str,"TK_GE")==0)
+		value = TK_GE;
+	else if(strcmp(str,"TK_NE")==0)
+		value = TK_NE;
+}
