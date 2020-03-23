@@ -359,8 +359,28 @@ return node;
         //To do
 }
 
-case(16):
+case(16)://output_plist -> ID COLON type output_plist_lr
+
 {
+int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+free(root->kids[1]);
+astNode* child2 = buildAST(root->kids[2]);
+astNode* child3 = buildAST(root->kids[3]);
+child0->sibling = child2;
+child2->sibling = child3;
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+child2->parent = node
+child3->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
