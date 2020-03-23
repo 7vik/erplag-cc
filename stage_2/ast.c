@@ -191,7 +191,6 @@ astNode* buildAST(PARSE_TREE* root)
             }
 
             // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
-
             case(8):
             {
                 // note to continuer
@@ -201,6 +200,34 @@ astNode* buildAST(PARSE_TREE* root)
                 //uska sibling hoga ret ka ASt, uska sibling moduleDef ka AST, again iss rule mein make_node hoga
                 //you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
                 // run ./make 7 10 11 and answer 1
+
+                int certificate = string_to_enum(root->data->lexeme);
+
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+                free(root->kids[3]);
+                free(root->kids[4]);
+                free(root->kids[5]);
+                free(root->kids[6]);
+                astNode* child7 = buildAST(root->kids[7]);
+                free(root->kids[8]);
+                free(root->kids[9]);
+                astNode* child10 = buildAST(root->kids[10]);
+                astNode* child11 = buildAST(root->kids[11]);
+                child2->sibling = child7;
+                child7->sibling = child10;
+                child10->sibling = child11;
+
+                astNode* node = make_ASTnode(certificate);
+
+                node->tree_node = root->data;
+                child2->parent = node
+                child7->parent = node
+                child10->parent = node
+                child11->parent = node
+                node->child = child2;
+                return node;                
             }
 
             // op1 -> PLUS
