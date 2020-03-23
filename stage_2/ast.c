@@ -34,7 +34,7 @@ Doubts:
 
 astNode* make_ASTnode(int certificate)
 {
-    astNode* node = (astNode*) malloc(sizeof(astNode));
+    astNode* node = (astNode*) malloc(sizeof(astNode));             // malloc check?
     node->node_marker = certificate;
     node->tree_node = NULL;
     //node->next = NULL;
