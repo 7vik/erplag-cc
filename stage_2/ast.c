@@ -263,9 +263,30 @@ return node;
         
 }
 
-case(11):
+case(11)://input_plist_lr -> COMMA ID COLON datatype input_plist_lr 
+
 {
         //To do
+int certificate = string_to_enum(root->data->lexeme);
+
+free(root->kids[0]);
+astNode* child1 = buildAST(root->kids[1]);
+free(root->kids[2]);
+astNode* child3 = buildAST(root->kids[3]);
+astNode* child4 = buildAST(root->kids[4]);
+child1->sibling = child3;
+child3->sibling = child4;
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child1->parent = node
+child3->parent = node
+child4->parent = node
+node->child = child1;
+return node;
+
+break;
 }
 
 case(12):
