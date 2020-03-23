@@ -66,8 +66,7 @@ astNode* buildAST(PARSE_TREE* root)
 
         switch(rule_num)
         {
-            //-[1] program -> moduleDeclarations otherModules driverModule otherModules
-
+            //program -> moduleDeclarations otherModules driverModule otherModules
             case(1):
             {
                 // here certi is program, trying to avoid hardcode
