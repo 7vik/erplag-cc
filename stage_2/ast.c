@@ -402,7 +402,25 @@ case(19):
 }
 
 case(20):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+free(root->kids[0]);
+free(root->kids[1]);
+astNode* child2 = buildAST(root->kids[2]);
+free(root->kids[3]);
+free(root->kids[4]);
+astNode* child5 = buildAST(root->kids[5]);
+child2->sibling = child5;
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child2->parent = node
+child5->parent = node
+node->child = child2;
+return node;
+
+break;
         //To do
 }
 
