@@ -587,27 +587,67 @@ break;
 }
 
 case(33):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+free(root->kids[0]);
+free(root->kids[1]);
+astNode* child2 = buildAST(root->kids[2]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child2->parent = node
+node->child = child2;
+return node;
+
+break;
         //To do
 }
 
 case(34):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+free(root->kids[0]);
+free(root->kids[1]);
+astNode* child2 = buildAST(root->kids[2]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child2->parent = node
+node->child = child2;
+return node;
+
+break;
         //To do
 }
 
 case(35):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+astNode* child1 = buildAST(root->kids[1]);
+child0->sibling = child1;
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+child1->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(36):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
 case(37):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
