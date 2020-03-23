@@ -52,6 +52,9 @@ astNode* buildLeafAST(PARSE_TREE* t)
     astNode* node = make_ASTnode(certificate);
     node->tree_node = t->data;
     node->is_leaf = 1;
+    node->parent = NULL;
+    node->child = NULL;
+    node->sibling = NULL;
     return node;
 }
 
@@ -332,13 +335,50 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleReuseStmt -> optional USE MODULE ID WITH PARAMETERS idList SEMICOL
             case(51):
             {
-                
+                free(root->kids[1]); //USE
+                free(root->kids[2]); //MODULE
+                free(root->kids[4]); //WITH
+                free(root->kids[5]); //PARAMETERS
+                free(root->kids[7]); //SEMICOL
+
+                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                node->tree_node = root->data;
+
+                astNode* child0 = buildAST(root->kids[0]); //optional
+                astNode* child3 = buildLeafAST(root->kids[3]); //ID
+                astNode* child6 = buildAST(root->kids[6]); //but this is a linked list!
+                astNode* list_id = make_ASTnode(string_to_enum(root->kids[6])); //Will store the address of the head of linked list of identifiers
+
+                list_id->child = child6;
+                child6->parent = list_id;
+
+                child0->sibling = child3;
+                child3->sibling = list_id;
+
+                node->child = child0;
+                child0->parent = node;
+                child3->parent = node;
+                list_id->parent = node;
+
+                return node;
             }
 
             // optional -> SQBO idList SQBC ASSIGNOP
             case(52):
             {
-                
+                free(root->kids[0]); //SQBO
+    
+                astNode* child1 = buildAST(root->kids[1]); //idList
+
+                free(root->kids[2]); //SQBC
+
+                astNode* node = make_ASTnode(string_to_enum(root->kids[3]->data->lexeme));
+                node->tree_node =  root->kids[3]->data; // Information of "=" to be stored in node.
+
+                node->child = child1;
+                child1->parent = node;
+
+                return node;
             }
     
 
@@ -351,7 +391,12 @@ astNode* buildAST(PARSE_TREE* root)
             // idList_lr -> COMMA ID idList_lr1
             case(54):
             {
-                
+                free(root->kids[0]);
+                astNode* child1 = buildLeafAST(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+
+                child1->sibling = child2;
+                return child1;
             }
 
             // idList_lr -> EPS
@@ -363,7 +408,11 @@ astNode* buildAST(PARSE_TREE* root)
             // idList -> ID idList_lr
             case(56):
             {
-                
+                astNode* child0 = buildLeafAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+
+                child0->sibling = child1;
+                return child0;
             }
 
             // expression -> unaryExpression
