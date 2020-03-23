@@ -451,9 +451,11 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* child2 = buildAST(root->kids[2]);
 
                 astNode* node = make_ASTnode(certificate);
+                free(root->kids[2]);
+                free(root->kids[3]);     
 
                 node->tree_node = root->data;
-                child2->parent = root;
+                child2->parent = node;
                 node->child = child2;
                 return node;
 
@@ -512,7 +514,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 child0->parent = child1;
                 child2->parent = child1;
-                child0->sibling = child2->sibling;
+                child1->child = child0;
                 return child1;
 
                 break;
