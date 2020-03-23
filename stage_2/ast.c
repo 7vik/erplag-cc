@@ -348,8 +348,14 @@ break;
         //To do
 }
 
-case(15):
+case(15)://output_plist_lr -> EPS
+
 {
+int certificate = string_to_enum(root->data->lexeme);
+astNode* node = make_ASTnode(certificate);
+node->tree_node = root->kids[0]->data;
+node->is_leaf = 1;
+return node;
         //To do
 }
 
@@ -408,8 +414,14 @@ case(26):
         //To do
 }
 
-case(27):
+case(27)://statements -> EPS
+
 {
+    int certificate = string_to_enum(root->data->lexeme);
+astNode* node = make_ASTnode(certificate);
+node->tree_node = root->kids[0]->data;
+node->is_leaf = 1;
+return node;
         //To do
 }
 
@@ -470,6 +482,11 @@ case(38):
 
 case(39):
 {
+int certificate = string_to_enum(root->data->lexeme);
+astNode* node = make_ASTnode(certificate);
+node->tree_node = root->kids[0]->data;
+node->is_leaf = 1;
+return node;
         //To do
 }
 
