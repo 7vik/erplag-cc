@@ -126,7 +126,6 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* child1 = buildAST(root->kids[1]);
                 child0->sibling = child1;
                 return child0;
-
                 break;
             }
             
@@ -229,6 +228,195 @@ astNode* buildAST(PARSE_TREE* root)
                 node->child = child2;
                 return node;                
             }
+
+            case(9)://ret -> RETURNS SQBO output_plist SQBC SEMICOL 
+
+{
+        int certificate = string_to_enum(root->data->lexeme);
+
+free(root->kids[0]);
+free(root->kids[1]);
+astNode* child2 = buildAST(root->kids[2]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child2->parent = node
+node->child = child2;
+return node;
+
+break;
+}
+
+case(10):
+{
+        //To do
+}
+
+case(11):
+{
+        //To do
+}
+
+case(12):
+{
+        //To do
+}
+
+case(13):
+{
+        //To do
+}
+
+case(14):
+{
+        //To do
+}
+
+case(15):
+{
+        //To do
+}
+
+case(16):
+{
+        //To do
+}
+
+case(17):
+{
+        //To do
+}
+
+case(18):
+{
+        //To do
+}
+
+case(19):
+{
+        //To do
+}
+
+case(20):
+{
+        //To do
+}
+
+case(21):
+{
+        //To do
+}
+
+case(22):
+{
+        //To do
+}
+
+case(23):
+{
+        //To do
+}
+
+case(24):
+{
+        //To do
+}
+
+case(25):
+{
+        //To do
+}
+
+case(26):
+{
+        //To do
+}
+
+case(27):
+{
+        //To do
+}
+
+case(28):
+{
+        //To do
+}
+
+case(29):
+{
+        //To do
+}
+
+case(30):
+{
+        //To do
+}
+
+case(31):
+{
+        //To do
+}
+
+case(32):
+{
+        //To do
+}
+
+case(33):
+{
+        //To do
+}
+
+case(34):
+{
+        //To do
+}
+
+case(35):
+{
+        //To do
+}
+
+case(36):
+{
+        //To do
+}
+
+case(37):
+{
+        //To do
+}
+
+case(38):
+{
+        //To do
+}
+
+case(39):
+{
+        //To do
+}
+
+case(40):
+{
+        //To do
+}
+
+case(41):
+{
+        //To do
+}
+
+case(42):
+{
+        //To do
+}
+
+case(43):
+{
+        //To do
+}
 
             // op1 -> PLUS
             case(80):
