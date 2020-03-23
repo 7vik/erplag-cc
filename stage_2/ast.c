@@ -252,13 +252,10 @@ case(10)://ret -> EPS
 
 {
         //To do
-        int certificate = string_to_enum(root->data->lexeme);
-
+int certificate = string_to_enum(root->data->lexeme);
 astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-
+node->tree_node = root->kids[0]->data;
 node->is_leaf = 1;
-
 return node;
         
 }
@@ -289,8 +286,14 @@ return node;
 break;
 }
 
-case(12):
+case(12)://input_plist_lr -> EPS
 {
+int certificate = string_to_enum(root->data->lexeme);
+astNode* node = make_ASTnode(certificate);
+node->tree_node = root->kids[0]->data;
+node->is_leaf = 1;
+return node;
+
         //To do
 }
 
