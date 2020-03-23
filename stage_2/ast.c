@@ -445,17 +445,17 @@ break;
 }
 
 case(22):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
 case(23):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
 case(24):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
