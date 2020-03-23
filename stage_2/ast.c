@@ -507,27 +507,82 @@ return node;
 }
 
 case(28):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(29):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(30):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(31):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(32):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
@@ -572,22 +627,66 @@ return node;
 }
 
 case(40):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(41):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(42):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
 case(43):
-{
+{int certificate = string_to_enum(root->data->lexeme);
+
+astNode* child0 = buildAST(root->kids[0]);
+
+astNode* node = make_ASTnode(certificate);
+
+node->tree_node = root->data;
+child0->parent = node
+node->child = child0;
+return node;
+
+break;
         //To do
 }
 
