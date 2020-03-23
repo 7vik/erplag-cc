@@ -248,9 +248,19 @@ return node;
 break;
 }
 
-case(10):
+case(10)://ret -> EPS
+
 {
         //To do
+        int certificate = string_to_enum(root->data->lexeme);
+
+astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+
+node->is_leaf = 1;
+
+return node;
+        
 }
 
 case(11):
