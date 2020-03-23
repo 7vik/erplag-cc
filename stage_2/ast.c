@@ -386,16 +386,18 @@ break;
 
 case(17):
 {
+    
+    return buildLeafAST(root->kids[0]);
         //To do
 }
 
 case(18):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
 case(19):
-{
+{return buildLeafAST(root->kids[0]);
         //To do
 }
 
