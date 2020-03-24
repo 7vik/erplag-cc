@@ -58,6 +58,61 @@ astNode* buildLeafAST(PARSE_TREE* t)
     return node;
 }
 
+/* A few failed attempts/unnecessary code pieces
+
+astNode* traverse_and_add_left(astNode* parent, astNode* child)
+{
+    astNode* ptr = parent;
+    
+    while(ptr->child != NULL)
+        ptr = ptr->child;
+    
+    astNode* par = ptr->parent;
+    
+    par->child = child;
+    child->parent = par;
+    child->sibling = ptr;
+
+    return parent;
+}
+
+int first_preorder(astNode* parent) 
+//this will check whether the subtree (internal node) to be traversed first in preorder traveral has a single child
+{
+    astNode* temp = parent;
+    while(temp->child != NULL)
+    {
+        temp = temp->child;
+        if(temp->sibling == NULL)
+            return 1;
+    }
+    return 0;  
+}
+
+*/
+
+astNode* traverse_and_add_left(astNode* parent, astNode* child)
+{
+    astNode* ptr = parent;
+    astNode* temp = ptr->child;
+
+    while(temp != NULL)
+    {
+        if(temp->sibling == NULL)
+        {
+            ptr->child = child;
+            child->parent = ptr;
+            child->sibling = temp;
+            break;
+        }
+        ptr = temp;
+        temp = temp->child;
+    }
+
+    return parent;
+}
+
+
 // Takes a node and Returns its astTree's root node
 
 astNode* buildAST(PARSE_TREE* root)
@@ -347,7 +402,7 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* child0 = buildAST(root->kids[0]); //optional
                 astNode* child3 = buildLeafAST(root->kids[3]); //ID
                 astNode* child6 = buildAST(root->kids[6]); //but this is a linked list!
-                astNode* list_id = make_ASTnode(string_to_enum(root->kids[6])); //Will store the address of the head of linked list of identifiers
+                astNode* list_id = make_ASTnode(string_to_enum(root->kids[6]->data->lexeme)); //Will store the address of the head of linked list of identifiers
 
                 list_id->child = child6;
                 child6->parent = list_id;
@@ -418,49 +473,97 @@ astNode* buildAST(PARSE_TREE* root)
             // expression -> unaryExpression
             case(57):
             {
-                
+                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                astNode* child0 = buildAST(root->kids[0]);
+
+                node->tree_node = root->data;
+                child0->parent = node;
+                node->child = child0;
+
+                return node;
             }
 
             // expression -> arithmeticOrBooleanExpression
             case(58):
             {
-                
+                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                astNode* child0 = buildAST(root->kids[0]);
+
+                node->tree_node = root->data;
+                child0->parent = node;
+                node->child = child0;
+
+                return node;
             }
 
             // unaryExpression -> MINUS unary_opt
             case(59):
             {
-                
+                astNode* child0 = buildLeafAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                child0->sibling = child1;
+                return child0;
             }
 
             // unaryExpression -> PLUS unary_opt
             case(60):
             {
-                
+                astNode* child0 = buildLeafAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                child0->sibling = child1;
+                return child0;    
             }
 
             // unary_opt -> BO arithmeticExpr BC
             case(61):
             {
-                
+                free(root->kids[0]);
+                free(root->kids[2]);
+                return buildAST(root->kids[1]);
             }
 
             // unary_opt -> var
             case(62):
             {
-                
+                return buildAST(root->kids[0]);
             }
    
             // arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
             case(63):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                if(child1->node_marker == EPS)
+                {
+                    free(child1);
+                    return child0;
+                }
+                else
+                {
+                    child1 = traverse_and_add_left(child1, child0);
+                    return child1;    
+                }
             }
 
             // opt_expr_lr -> logicalOp opt_expr opt_expr_lr1
             case(64):
             {
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
 
+                child0->child = child1;
+                child1->parent = child0;
+                if(child2->node_marker != EPS)
+                {
+                    child2 = traverse_and_add_left(child2, child0);
+                }
+                else /* child2->node_marker is EPS---> just pass on the pointer after freeing node pointed to by child2 */
+                {
+                    free(child2);
+                    child2 = child0;
+                }
+                return child2;
             }
     
             // opt_expr_lr -> EPS
@@ -472,19 +575,35 @@ astNode* buildAST(PARSE_TREE* root)
             // opt_expr -> arithmeticExpr one_more_opt
             case(66):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                if(child1->node_marker == EPS)
+                {
+                    free(child1);
+                    return child0;
+                }
+                else
+                {
+                    child1 = traverse_and_add_left(child1, child0);
+                    return child1;    
+                }    
             }
 
             // opt_expr -> booleanConst
             case(67):
             {
-                
+                return buildAST(root->kids[0]);
             }
     
             // one_more_opt -> relationalOp arithmeticExpr
             case(68):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                child0->child = child1;
+                child1->parent = child0;
+
+                return child0;
             }
 
             // one_more_opt -> EPS
@@ -508,7 +627,24 @@ astNode* buildAST(PARSE_TREE* root)
             // arithmeticExpr_lr -> op1 term arithmeticExpr_lr1
             case(72):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                //child0->node_marker = root->kids[0]->data;
+
+                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+
+                child0->child = child1;
+                child1->parent = child0;
+                if(child2->node_marker != EPS)
+                {
+                    child2 = traverse_and_add_left(child2, child0);
+                }
+                else /* child2->node_marker is EPS---> just pass on the pointer after freeing node pointed to by child2 */
+                {
+                    free(child2);
+                    child2 = child0;
+                }
+                return child2;
             }
 
             // arithmeticExpr_lr -> EPS
@@ -520,13 +656,41 @@ astNode* buildAST(PARSE_TREE* root)
             // arithmeticExpr -> term arithmeticExpr_lr
             case(74):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                if(child1->node_marker == EPS)
+                {
+                    free(child1);
+                    return child0;
+                }
+                else
+                {
+                    child1 = traverse_and_add_left(child1, child0);
+                    return child1;
+                }
             }
 
             // term_lr -> op2 factor term_lr1
             case(75):
             {
-                
+                astNode* child0 = buildAST(root->kids[0]);
+                //child0->node_marker = root->kids[0]->data;
+
+                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child2 = buildAST(root->kids[2]);
+
+                child0->child = child1;
+                child1->parent = child0;
+                if(child2->node_marker != EPS)
+                {
+                    child2 = traverse_and_add_left(child2, child0);
+                }
+                else /* child2->node_marker is EPS---> just pass on the pointer after freeing node pointed to by child2 */
+                {
+                    free(child2);
+                    child2 = child0;
+                }
+                return child2; 
             }
 
             // term_lr -> EPS
@@ -538,19 +702,35 @@ astNode* buildAST(PARSE_TREE* root)
             // term -> factor term_lr
             case(77):
             {
-                
+                /*
+                term.addr = traverse_and_add_left(term_lr.addr, factor.addr)
+                */
+                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child1 = buildAST(root->kids[1]);
+                if(child1->node_marker == EPS)
+                {
+                    free(child1);
+                    return child0;
+                }
+                else
+                {
+                    child1 = traverse_and_add_left(child1, child0);
+                    return child1;
+                }    
             }
 
             // factor -> BO arithmeticOrBooleanExpression BC
             case(78):
             {
-                
+                free(root->kids[0]);
+                free(root->kids[2]);
+                return buildAST(root->kids[1]);
             }
 
             // factor -> var
             case(79):
             {
-                
+                return buildAST(root->kids[0]);
             }
 
             // op1 -> PLUS
