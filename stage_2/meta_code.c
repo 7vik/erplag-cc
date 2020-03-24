@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
         for(int i = 0; i < argc - 1; i++)
         {
-            printf("child%d->parent = node\n", atoi(argv[i + 1]));
+            printf("child%d->parent = node;\n", atoi(argv[i + 1]));
         }
         printf("node->child = child%d;\n", atoi(argv[1]));
         printf("return node;\n");
