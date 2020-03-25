@@ -99,7 +99,7 @@ typedef struct parse_tree_node_data
     char *value_if_number;
     PARSE_TREE *parent_node_pointer;             
     int is_leaf_node;               // 1 for yes       
-    char *node_symbol;
+    char *node_symbol;                // "program"
     unsigned int rule_number;       // rule number used to expand this node (0 in case of leaf node)
 } TREE_NODE;
 

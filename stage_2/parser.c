@@ -250,6 +250,13 @@ void print_grammar(GRAMMAR* g)
 // returns integer value mapping of string
 int string_to_enum(char* string)
 {
+    // handle NULL case
+
+    if (string == NULL)
+    {
+        printf("The given string is NULL");
+        return -1;
+    }    
     int variable_array_size = sizeof(variables_array) / sizeof ( *variables_array);
 
     for (int i = 0; i < variable_array_size; i++)

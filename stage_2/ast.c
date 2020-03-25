@@ -83,7 +83,8 @@ astNode* buildAST(PARSE_TREE* root)
 
     if (root != NULL)
     {
-        int rule_num = root->data->rule_number;
+        int rule_num = root->data->rule_number + 1;
+        printf("Rule number: %d\n", rule_num);
 
         switch(rule_num)
         {
@@ -91,13 +92,17 @@ astNode* buildAST(PARSE_TREE* root)
             case(1):
             {
                 // here certi is program, trying to avoid hardcode
-                int certificate = string_to_enum(root->data->lexeme);
-
+                printf("dbfbrh\n");
+                int certificate = string_to_enum(root->data->node_symbol);
+                printf("H1\n");
                 astNode* child0 = buildAST(root->kids[0]);
+                printf("H2\n");
                 astNode* child1 = buildAST(root->kids[1]);
+                printf("H3\n");
                 astNode* child2 = buildAST(root->kids[2]);
+                printf("H4\n");
                 astNode* child3 = buildAST(root->kids[3]);
-
+                printf("frhb\n");
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
                 child0->parent = node;
@@ -141,7 +146,7 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleDeclarations -> moduleDeclaration moduleDeclarations1
             case(2):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -159,7 +164,7 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleDeclaration -> DECLARE MODULE ID SEMICOL
             case(4):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
                 free(root->kids[0]);
@@ -175,7 +180,7 @@ astNode* buildAST(PARSE_TREE* root)
 
             case(5):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -199,7 +204,7 @@ astNode* buildAST(PARSE_TREE* root)
             // driverModule -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef
             case(7):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[2]);
@@ -221,11 +226,11 @@ astNode* buildAST(PARSE_TREE* root)
                 //you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
                 // run ./make 7 10 11 and answer 1
 
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 free(root->kids[1]);
-                astNode* child2 = buildAST(root->kids[2]);
+                astNode* child2 = buildLeafAST(root->kids[2]);
                 free(root->kids[3]);
                 free(root->kids[4]);
                 free(root->kids[5]);
@@ -253,7 +258,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(9)://ret -> RETURNS SQBO output_plist SQBC SEMICOL 
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -273,7 +278,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             {
                     //To do
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->kids[0]->data;
                 node->is_leaf = 1;
@@ -285,10 +290,10 @@ astNode* buildAST(PARSE_TREE* root)
             
             {
                     //To do
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 
                 free(root->kids[0]);
-                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child1 = buildLeafAST(root->kids[1]);
                 free(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
@@ -309,7 +314,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(12)://input_plist_lr -> EPS
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->kids[0]->data;
                 node->is_leaf = 1;
@@ -321,9 +326,9 @@ astNode* buildAST(PARSE_TREE* root)
             case(13)://input_plist -> ID COLON datatype input_plist_lr
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 
-                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child0 = buildLeafAST(root->kids[0]);
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
@@ -346,10 +351,10 @@ astNode* buildAST(PARSE_TREE* root)
             case(14)://output_plist_lr -> COMMA ID COLON type output_plist_lr 
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 
                 free(root->kids[0]);
-                astNode* child1 = buildAST(root->kids[1]);
+                astNode* child1 = buildLeafAST(root->kids[1]);
                 free(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
@@ -372,7 +377,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(15)://output_plist_lr -> EPS
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->kids[0]->data;
                 node->is_leaf = 1;
@@ -383,9 +388,9 @@ astNode* buildAST(PARSE_TREE* root)
             case(16)://output_plist -> ID COLON type output_plist_lr
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 
-                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child0 = buildLeafAST(root->kids[0]);
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
@@ -426,7 +431,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(20):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -450,7 +455,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(21):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 free(root->kids[1]);
@@ -489,7 +494,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(25):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -507,7 +512,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(26):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -528,7 +533,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(27)://statements -> EPS
             
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->kids[0]->data;
                 node->is_leaf = 1;
@@ -538,7 +543,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(28):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -555,7 +560,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(29):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -572,7 +577,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(30):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -589,7 +594,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(31):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -606,7 +611,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(32):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -623,7 +628,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(33):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -642,7 +647,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(34):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -661,7 +666,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(35):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -693,7 +698,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(38):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -711,7 +716,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(39):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->kids[0]->data;
                 node->is_leaf = 1;
@@ -721,7 +726,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(40):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -738,7 +743,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(41):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -755,7 +760,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(42):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -772,7 +777,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(43):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 
@@ -790,7 +795,7 @@ astNode* buildAST(PARSE_TREE* root)
             //assignmentStmt -> ID whichStmt
             case(44):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* child0 = buildLeafAST(root->kids[0]); //ID
                 astNode* child1 = buildAST(root->kids[1]);  //whichstmt, with "=" present at root.
@@ -883,7 +888,7 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[5]); //PARAMETERS
                 free(root->kids[7]); //SEMICOL
 
-                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
                 node->tree_node = root->data;
 
                 astNode* child0 = buildAST(root->kids[0]); //optional
@@ -960,7 +965,7 @@ astNode* buildAST(PARSE_TREE* root)
             // expression -> unaryExpression
             case(57):
             {
-                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
                 astNode* child0 = buildAST(root->kids[0]);
 
                 node->tree_node = root->data;
@@ -973,7 +978,7 @@ astNode* buildAST(PARSE_TREE* root)
             // expression -> arithmeticOrBooleanExpression
             case(58):
             {
-                astNode* node = make_ASTnode(string_to_enum(root->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
                 astNode* child0 = buildAST(root->kids[0]);
 
                 node->tree_node = root->data;
@@ -1341,7 +1346,7 @@ astNode* buildAST(PARSE_TREE* root)
             // add free of remaining kids
             case(92):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -1394,7 +1399,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 1 3 6; generates this code automatically !!
             case(96):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -1422,7 +1427,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 1 3 6
             case(97):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -1460,7 +1465,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 2
             case(99):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -1493,7 +1498,7 @@ astNode* buildAST(PARSE_TREE* root)
             // need to handle ID case
             case(101):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -1521,7 +1526,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 0 1 2; doesn't help much in this case
             case(102):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* child0 = buildLeafAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
@@ -1540,7 +1545,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 2 4 7; No change required, generates perfect code!!
             case(103):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -1569,7 +1574,7 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 2 5; perfect again!!
             case(104):
             {
-                int certificate = string_to_enum(root->data->lexeme);
+                int certificate = string_to_enum(root->data->node_symbol);
 
                 free(root->kids[0]);
                 free(root->kids[1]);
@@ -1591,7 +1596,7 @@ astNode* buildAST(PARSE_TREE* root)
             }
             default:
             {
-                printf("No rule number matching, rule number: %d", rule_num);
+                printf("No rule number matching, rule number: %d, node symbol: %s, is leaf: %d\n", rule_num, root->data->node_symbol, root->data->is_leaf_node);
                 break;
             }
         }
@@ -1600,13 +1605,43 @@ astNode* buildAST(PARSE_TREE* root)
 
     else
     {
-        printf("Input too buildAST is NULL. BAD\n");
+        printf("Input to buildAST is NULL. BAD\n");
         exit(1);
         return NULL;
     } 
     return NULL;
 }
-int main()          // driver
+int main(int argc, char* argv[])          // driver
 {
+    if(argc != 3)
+    {
+        printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
+        printf("\nAborting Execution!!\n");
+        exit(2);
+    }
+
+    FILE* test_fp = fopen(argv[1], "r");
+    FILE* test_parse_fp = fopen(argv[2], "w");
+    populate_ht(hash_table, KEYWORDS_FILE);
+    int line_count = 1;
+    TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+    init_buffer(test_fp, twin_buff);
+    GRAMMAR* grammar = generate_grammar();
+    first_follow *ff = get_first_follow_table(grammar);
+    TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+    create_parse_table(ff, parse_table, grammar);
+    STACK *stack = NULL;
+    PARSE_TREE *tree;
+    parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+    fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
+    print_parse_tree(tree, test_parse_fp);
+    printf("Printed Parse Tree in file '%s'.\n", argv[2]);
+    // printf("Rule number of root: %d\n", tree->kids[0]->data->rule_number);
+    astNode* ast_root = buildAST(tree);
+
+    fclose(test_fp);
+    fclose(test_parse_fp);
+    free(twin_buff);
+    free(parse_table);
     return 0;
 }
