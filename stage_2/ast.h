@@ -1,7 +1,9 @@
 #ifndef __AST
 #define __AST
 #include "parser.h"
+#include<stdio.h>
 #include<stdlib.h>
+
 typedef struct astNode
 {
     int node_marker;  // LHS enum will act a marker for a astNode for a particular rule; eg program(enum) will be certi for <program> -> blah blah

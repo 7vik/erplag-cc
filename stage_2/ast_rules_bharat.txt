@@ -4,12 +4,12 @@ a) addr - to denote address of terminal nodes
 Each AST node is supposed to have a link to the leftmost child, which in turn will have a link to its immediate sibling,
 barring the exception of the use of arithmetic, logical and relational operators.
 ***************************************************************************************************************************
--[1] program -> moduleDeclarations otherModules driverModule otherModules
+[1] program -> moduleDeclarations otherModules driverModule otherModules
 
     program.addr = make_node("program", moduleDeclarations.addr, otherModules.addr, driverModule.addr, otherModules.addr)
     freenodes(moduleDeclarations, otherModules, driverModule, otherModules)
 
--[2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
+[2] moduleDeclarations -> moduleDeclaration moduleDeclarations1 
 
     /*
     Aliter:
@@ -21,22 +21,7 @@ barring the exception of the use of arithmetic, logical and relational operators
     // need to extract the children of the nodes and then create a linked list of statement AST nodes
     freenodes(moduleDeclaration, moduleDeclarations1)   
 
-    /*
-    #Ayush
-    Ayush, I'm writing a pseudocode to possibly help you.
-    You can create additional functions depending upon modularity concerns.
-    !.... Assume function to be generate_AST() -> here, input will be moduleDeclarations non-terminal
-    !.... Beginning of code ....
-    moduleDeclaration_node = generate_AST(moduleDeclaration)
-    moduleDeclarations1_node = generate_AST(moduleDeclarations1)
-    moduleDeclarations_node = make_node("moduleDeclarations") //initialize everything else appropriately
-    moduleDeclarations_node.addr = moduleDeclaration_node //Attribute name addr can be replaced by name child
-    moduleDeclaration_node.sibling = moduleDeclarations1_node.addr
-
-    return moduleDeclaration_node
-    */
-
--[3] moduleDeclarations -> EPS
+[3] moduleDeclarations -> EPS
 
     /*
     Aliter:
@@ -44,54 +29,26 @@ barring the exception of the use of arithmetic, logical and relational operators
     */
     moduleDeclarations.addr = NULL /* return statement, base case of recursion */
 
-    /*
-    #Ayush
-    return NULL
-    */
-
--[4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
+[4] moduleDeclaration -> DECLARE MODULE ID SEMICOL
 
     moduleDeclaration.addr = ID.addr
     freenodes(DECLARE, MODULE, SEMICOL)
 
-    /*#Ayush
-    moduleDeclaration_node = make_node("ID")
-    //code to copy contents of the terminal node ID in moduleDeclaration_node
+[5] otherModules -> module otherModules
 
-    return moduleDeclaration_node
-    */
+    otherModules.addr = make_node("otherModules", module.addr, otherModules.addr)
+    freenodes(module, otherModules)
 
--[5] otherModules -> module otherModules1
-
-    otherModules.addr = make_node("otherModules", module.addr, otherModules1.addr)
-    freenodes(module, otherModules1)
-
-    /* #Ayush
-    module_node = generate_AST(module)
-    otherModules1_node = generate_AST(otherModules1)
-    otherModules_node = make_node("otherModules") //initialize everything else appropriately
-    otherModules_node.addr = module_node
-    module_node.sibling = otherModules1_node.addr
-
-    //free nodes appropriately
-
-    return otherModules_node
-    */ 
-
--[6] otherModules -> EPS
+[6] otherModules -> EPS
 
     otherModules.addr = NULL
-
-    /* #Ayush
-    return NULL
-    */
 
 [7] driverModule -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef
 
     driverModule.addr = moduleDef.addr
     freenodes(DRIVERDEF, DRIVER, PROGRAM, DRIVERENDDEF, moduleDef)
 
--[8] module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
+[8] module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
 
     module.addr = make_node("module", ID.addr, input_plist.addr, ret.addr, moduleDef.addr)
     /* 
@@ -101,46 +58,14 @@ barring the exception of the use of arithmetic, logical and relational operators
     */
     freenodes(DEF, MODULE, ENDDEF, TAKES, INPUT, SQBO, input_plist, SQBC, SEMICOL, ret, moduleDef)
 
-    /* #Ayush
-    module_node = make_node("module")
-    temp = make_node("ID")
-    
-    //code to copy contents of the terminal node ID in the newly created AST node
-    
-    module_node.addr = temp;
-    
-    input_plist_node = make_node("input_plist")
-    input_plist_node.addr = generate_AST(input_plist)
-    temp.sibling = input_plist_node
-    temp = temp.sibling
-
-    ret_node = make_node("ret")
-    ret_node.addr = generate_AST(ret)
-    temp.sibling = ret_node
-    temp = temp.sibling
-
-    moduleDef_node = make_node("moduleDef")
-    moduleDef_node.addr = generate_AST(moduleDef)
-    temp.sibling = moduleDef_node
-    temp = temp.sibling
-
-    //free nodes appropriately
-
-    return module_node
-    */
-
 [9] ret -> RETURNS SQBO output_plist SQBC SEMICOL
 
     ret.addr = output_plist.addr
     freenodes(RETURNS, SQBO, output_plist, SQBC, SEMICOL)
 
--[10] ret -> EPS
+[10] ret -> EPS
 
     ret.addr = NULL
-
-    /* #Ayush
-    return NULL
-    */
 
 [11] input_plist_lr -> COMMA ID COLON datatype input_plist_lr1
 
