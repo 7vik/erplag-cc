@@ -410,26 +410,30 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(17):
+            case(17)://datatype -> INTEGER 
+
             {
                 
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(18):
+            case(18)://datatype -> REAL 
+
             {   
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(19):
+            case(19)://datatype -> BOOLEAN 
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(20):
+            case(20)://datatype -> ARRAY SQBO rangeArr SQBC OF type
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -453,7 +457,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(21):
+            case(21)://rangeArr -> index_nt RANGEOP index_nt
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -474,25 +479,29 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(22):
+            case(22)://type -> INTEGER 
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(23):
+            case(23)://type -> REAL 
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(24):
+            case(24)://type -> BOOLEAN
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(25):
+            case(25)://moduleDef -> START statements END
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -510,7 +519,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(26):
+            case(26)://statements -> statement statements 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -541,7 +551,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(28):
+            case(28)://statement -> ioStmt 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -558,7 +569,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(29):
+            case(29)://statement -> simpleStmt 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -575,7 +587,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(30):
+            case(30)://statement -> declareStmt 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -592,7 +605,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(31):
+            case(31)://statement -> conditionalStmt 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -609,7 +623,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(32):
+            case(32)://statement -> iterativeStmt
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -626,7 +641,28 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(33):
+            case(33)://ioStmt -> GET_VALUE BO ID BC SEMICOL 
+
+            {
+                int certificate = string_to_enum(root->data->node_symbol);
+            
+                free(root->kids[0]);
+                free(root->kids[1]);
+                astNode* child2 = buildLeafAST(root->kids[2]);
+                
+                astNode* node = make_ASTnode(certificate);
+                
+                node->tree_node = root->data;
+                child2->parent = node;
+                node->child = child2;
+                return node;
+                
+                break;
+                    //To do
+            }
+            
+            case(34)://ioStmt -> PRINT BO printOpt BC SEMICOL
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -645,30 +681,12 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(34):
+            case(35)://var -> ID whichId 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
-                free(root->kids[0]);
-                free(root->kids[1]);
-                astNode* child2 = buildAST(root->kids[2]);
-                
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
-                child2->parent = node;
-                node->child = child2;
-                return node;
-                
-                break;
-                    //To do
-            }
-            
-            case(35):
-            {
-                int certificate = string_to_enum(root->data->node_symbol);
-            
-                astNode* child0 = buildAST(root->kids[0]);
+                astNode* child0 = buildLeafAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
                 child0->sibling = child1;
                 
@@ -684,19 +702,22 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(36):
+            case(36)://var -> NUM
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(37):
+            case(37)://var -> RNUM
+
             {
                 return buildLeafAST(root->kids[0]);
                     //To do
             }
             
-            case(38):
+            case(38)://whichId -> SQBO index_nt SQBC 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -714,7 +735,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(39):
+            case(39)://whichId -> EPS
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
@@ -724,7 +746,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(40):
+            case(40)://printOpt -> booleanConst
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -741,7 +764,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(41):
+            case(41)://printOpt -> var
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -758,7 +782,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(42):
+            case(42)://simpleStmt -> assignmentStmt 
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
@@ -775,7 +800,8 @@ astNode* buildAST(PARSE_TREE* root)
                     //To do
             }
             
-            case(43):
+            case(43)://simpleStmt -> moduleReuseStmt
+
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
