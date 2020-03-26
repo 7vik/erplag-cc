@@ -48,7 +48,7 @@ astNode* make_ASTnode(int certificate)
 
 astNode* buildLeafAST(PARSE_TREE* t)
 {
-    int certificate = string_to_enum(t->data->lexeme);
+    int certificate = string_to_enum(t->data->node_symbol);
     astNode* node = make_ASTnode(certificate);
     node->tree_node = t->data;
     node->is_leaf = 1;
@@ -83,7 +83,7 @@ astNode* buildAST(PARSE_TREE* root)
 
     if (root != NULL)
     {
-        int rule_num = root->data->rule_number + 1;
+        int rule_num = root->data->rule_number;
         printf("Rule number: %d\n", rule_num);
 
         switch(rule_num)

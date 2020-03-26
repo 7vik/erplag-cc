@@ -909,7 +909,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
         else if (rule_id != -1)
         {
             pop(&st);
-            active->data->rule_number = rule_id;                // this is the rule used to open active
+            active->data->rule_number = rule_id + 1;                // this is the rule used to open active
             pushr(active, &st, g->rules[rule_id]->next);
             active = active->kids[0];
         }
