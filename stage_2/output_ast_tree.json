@@ -1,0 +1,64 @@
+{
+"nodeStructure":{
+"text": { "name": "program" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "module" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:empty" },
+"children":[]
+}
+,{
+"text": { "name": "input_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "BOOLEAN:boolean" },
+"children":[]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+,{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+}

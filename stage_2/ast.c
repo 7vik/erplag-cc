@@ -84,7 +84,7 @@ astNode* buildAST(PARSE_TREE* root)
     if (root != NULL)
     {
         int rule_num = root->data->rule_number;
-        printf("Rule number: %d\n", rule_num);
+        // printf("Rule number: %d\n", rule_num);
 
         switch(rule_num)
         {
@@ -92,17 +92,14 @@ astNode* buildAST(PARSE_TREE* root)
             case(1):
             {
                 // here certi is program, trying to avoid hardcode
-                printf("dbfbrh\n");
                 int certificate = string_to_enum(root->data->node_symbol);
-                printf("H1\n");
                 astNode* child0 = buildAST(root->kids[0]);
-                printf("H2\n");
                 astNode* child1 = buildAST(root->kids[1]);
-                printf("H3\n");
                 astNode* child2 = buildAST(root->kids[2]);
-                printf("H4\n");
                 astNode* child3 = buildAST(root->kids[3]);
-                printf("frhb\n");
+                
+                printf("%s\n", variables_array[child1->node_marker]);
+
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
                 child0->parent = node;
@@ -114,6 +111,7 @@ astNode* buildAST(PARSE_TREE* root)
             
                 if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
                 {
+                    printf("here\n");
                     node->child = child2;
                     free(child0);
                     free(child1);
@@ -184,7 +182,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1->sibling;
+                child0->sibling = child1;
                 return child0;
 
                 break;
@@ -193,11 +191,7 @@ astNode* buildAST(PARSE_TREE* root)
             // otherModules -> EPS
             case(6):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
             }
 
 
@@ -278,11 +272,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             {
                     //To do
-                int certificate = string_to_enum(root->data->node_symbol);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
                     
             }
             
@@ -314,11 +304,7 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(12)://input_plist_lr -> EPS
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
             
                     //To do
             }
@@ -377,11 +363,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(15)://output_plist_lr -> EPS
             
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
                     //To do
             }
             
@@ -543,11 +525,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(27)://statements -> EPS
             
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
                     //To do
             }
             
@@ -738,11 +716,7 @@ astNode* buildAST(PARSE_TREE* root)
             case(39)://whichId -> EPS
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildLeafAST(root->kids[0]);
                     //To do
             }
             
@@ -1254,117 +1228,69 @@ astNode* buildAST(PARSE_TREE* root)
             // op1 -> PLUS
             case(80):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // op1 -> MINUS
             case(81):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // op2 -> MUL
             case(82):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // op2 -> DIV
             case(83):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             
             // logicalOp -> AND
             case(84):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             // logicalOp -> OR
             case(85):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             // relationalOp -> LT
             case(86):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             // relationalOp -> LE
             case(87):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             // relationalOp -> GT
             case(88):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // relationalOp -> GE
             case(89):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // relationalOp -> EQ
             case(90):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // relationalOp -> NE
             case(91):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // declareStmt -> DECLARE idList COLON datatype SEMICOL
@@ -1394,31 +1320,19 @@ astNode* buildAST(PARSE_TREE* root)
             // value -> NUM
             case(93):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // value -> TRUE
             case(94):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // value -> FALSE
             case(95):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
 
             // caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
@@ -1480,11 +1394,7 @@ astNode* buildAST(PARSE_TREE* root)
             // caseStmt -> EPS
             case(98):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             
             // default_nt -> DEFAULT COLON statements BREAK SEMICOL
@@ -1512,11 +1422,7 @@ astNode* buildAST(PARSE_TREE* root)
             // default_nt -> EPS
             case(100):
             {
-                int certificate = string_to_enum(root->kids[0]->data->lexeme);
-                astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->kids[0]->data;
-                node->is_leaf = 1;
-                return node;
+                return buildAST(root->kids[0]);
             }
             
             // conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
@@ -1638,8 +1544,10 @@ astNode* buildAST(PARSE_TREE* root)
     return NULL;
 }
 
-void printJSON(astNode* t, FILE *fp){
-    if(t==NULL){
+void print_ast_JSON(astNode* t, FILE *fp)
+{
+    if(t==NULL)
+    {
         fprintf(fp,"{\n\"text\": { \"name\": \"NULL\" },\n");
         fprintf(fp,"\"children\": []\n}\n");
         return;
@@ -1657,27 +1565,74 @@ void printJSON(astNode* t, FILE *fp){
     {
         s=malloc(snprintf(NULL, 0, "%s:%s",t->tree_node->token_name,t->tree_node->lexeme)+1);
         sprintf(s,"%s:%s",t->tree_node->token_name,t->tree_node->lexeme);
-        printf("%s\n",s);
+        // printf("%s\n",s);
+    }
+    
+    fprintf(fp,"{\n");
+    fprintf(fp,"\"text\": { \"name\": \"%s\" },\n",s);
+    if(t->child  != NULL)
+    {
+        fprintf(fp,"\"collapsed\": true,\n");
+        fprintf(fp,"\"children\": [\n");
+        
+        astNode* temp = t->child;
+        while(temp != NULL)
+        {
+            print_ast_JSON(temp ,fp);
+            if(temp->sibling != NULL)
+                fprintf(fp,",");
+            temp = temp->sibling;
+        }
+        fprintf(fp,"]\n");
+    }
+    else
+    {
+        fprintf(fp,"\"children\":[]\n");
+    }
+    fprintf(fp,"}\n");
+}
+
+void print_parse_tree_JSON(PARSE_TREE* t, FILE *fp){
+    if(t==NULL){
+        fprintf(fp,"{\n\"text\": { \"name\": \"NULL\" },\n");
+        fprintf(fp,"\"children\": []\n}\n");
+        return;
+    }
+
+    char *s;
+
+    // if non terminal
+    if(t->kids[0] != NULL)
+    {
+        s = t->data->node_symbol; //enum to string
+    }
+
+    else
+    {
+        s=malloc(snprintf(NULL, 0, "%s:%s",t->data->token_name,t->data->lexeme)+1);
+        sprintf(s,"%s:%s",t->data->token_name,t->data->lexeme);
+        // printf("%s\n",s);
     }
     fprintf(fp,"{\n");
-        fprintf(fp,"\"text\": { \"name\": \"%s\" },\n",s);
-        if(t->child  != NULL){
-            fprintf(fp,"\"collapsed\": true,\n");
-            fprintf(fp,"\"children\": [\n");
-            
-            astNode* temp = t->child;
-            while(temp != NULL)
-            {
-                printJSON(temp ,fp);
-                if(temp->sibling != NULL)
-                    fprintf(fp,",");
-                temp = temp->sibling;
-            }
-            fprintf(fp,"]\n");
+    fprintf(fp,"\"text\": { \"name\": \"%s\" },\n",s);
+    if(t->num_of_kids  != 0)
+    {
+        fprintf(fp,"\"collapsed\": true,\n");
+        fprintf(fp,"\"children\": [\n");
+        
+        //astNode* temp = t->child[0];
+        for(int i = 0; i < t->num_of_kids; i++)
+        {
+            print_parse_tree_JSON(t->kids[i] ,fp);
+            if(i != t->num_of_kids - 1) // if not the last node
+                fprintf(fp,",");
         }
-        else{
-            fprintf(fp,"\"children\":[]\n");
-        }
+        fprintf(fp,"]\n");
+    }
+    else
+    {
+        fprintf(fp,"\"children\":[]\n");
+    }
     fprintf(fp,"}\n");
 }
 
@@ -1691,9 +1646,25 @@ void print_ast_json(astNode* tree,  char *outputfile)
 
     fprintf(fp,"{\n");
     fprintf(fp,"\"nodeStructure\":");
-    printJSON(tree,fp);
+    print_ast_JSON(tree,fp);
     fprintf(fp,"}\n");
     printf("AST output to %s\n",outputfile);
+    fflush(fp);
+}
+
+void print_parse_tree_json(PARSE_TREE* tree,  char *outputfile)
+{
+    FILE *fp=fopen(outputfile,"w");
+    if(fp==NULL){
+        printf("Error opening file %s\n",outputfile);
+        return;
+    }
+
+    fprintf(fp,"{\n");
+    fprintf(fp,"\"nodeStructure\":");
+    print_parse_tree_JSON(tree,fp);
+    fprintf(fp,"}\n");
+    printf("Parse tree output to %s\n",outputfile);
     fflush(fp);
 }
 
@@ -1726,11 +1697,14 @@ int main(int argc, char* argv[])          // driver
     parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
     fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
     print_parse_tree(tree, test_parse_fp);
+
+    print_parse_tree_json(tree, "output_parse_tree.json");
+
     printf("Printed Parse Tree in file '%s'.\n", argv[2]);
     // printf("Rule number of root: %d\n", tree->kids[0]->data->rule_number);
     astNode* ast_root = buildAST(tree);
 
-    print_ast_json(ast_root, "output_tree.json");
+    print_ast_json(ast_root, "output_ast_tree.json");
 
     fclose(test_fp);
     fclose(test_parse_fp);
