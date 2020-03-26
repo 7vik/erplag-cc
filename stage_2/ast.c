@@ -1637,6 +1637,71 @@ astNode* buildAST(PARSE_TREE* root)
     } 
     return NULL;
 }
+
+void printJSON(astNode* t, FILE *fp){
+    if(t==NULL){
+        fprintf(fp,"{\n\"text\": { \"name\": \"NULL\" },\n");
+        fprintf(fp,"\"children\": []\n}\n");
+        return;
+    }
+
+    char *s;
+
+    // if non terminal
+    if(t->child != NULL)
+    {
+        s = variables_array[(t->node_marker)]; //enum to string
+    }
+
+    else
+    {
+        s=malloc(snprintf(NULL, 0, "%s:%s",t->tree_node->token_name,t->tree_node->lexeme)+1);
+        sprintf(s,"%s:%s",t->tree_node->token_name,t->tree_node->lexeme);
+        printf("%s\n",s);
+    }
+    fprintf(fp,"{\n");
+        fprintf(fp,"\"text\": { \"name\": \"%s\" },\n",s);
+        if(t->child  != NULL){
+            fprintf(fp,"\"collapsed\": true,\n");
+            fprintf(fp,"\"children\": [\n");
+            
+            astNode* temp = t->child;
+            while(temp != NULL)
+            {
+                printJSON(temp ,fp);
+                if(temp->sibling != NULL)
+                    fprintf(fp,",");
+                temp = temp->sibling;
+            }
+            fprintf(fp,"]\n");
+        }
+        else{
+            fprintf(fp,"\"children\":[]\n");
+        }
+    fprintf(fp,"}\n");
+}
+
+void print_ast_json(astNode* tree,  char *outputfile)
+{
+    FILE *fp=fopen(outputfile,"w");
+    if(fp==NULL){
+        printf("Error opening file %s\n",outputfile);
+        return;
+    }
+
+    fprintf(fp,"{\n");
+    fprintf(fp,"\"nodeStructure\":");
+    printJSON(tree,fp);
+    fprintf(fp,"}\n");
+    printf("AST output to %s\n",outputfile);
+    fflush(fp);
+}
+
+void print_AST_tree(astNode* tree)
+{
+
+    return;
+}
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1664,6 +1729,8 @@ int main(int argc, char* argv[])          // driver
     printf("Printed Parse Tree in file '%s'.\n", argv[2]);
     // printf("Rule number of root: %d\n", tree->kids[0]->data->rule_number);
     astNode* ast_root = buildAST(tree);
+
+    print_ast_json(ast_root, "output_tree.json");
 
     fclose(test_fp);
     fclose(test_parse_fp);

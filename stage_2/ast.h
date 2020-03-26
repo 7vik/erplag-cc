@@ -21,6 +21,9 @@ typedef struct astNode
 //     astNode* ast_tree_node; 
 
 // }astTree;
-
+astNode* make_ASTnode(int certificate);
+astNode* buildLeafAST(PARSE_TREE* t);
+astNode* traverse_and_add_left(astNode* parent, astNode* child);
+astNode* buildAST(PARSE_TREE* root);
 
 #endif
