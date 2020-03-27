@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    printf("int certificate = string_to_enum(root->data->lexeme);\n\n");
+    printf("int certificate = string_to_enum(root->data->node_symbol);\n\n");
 
     if (choice == 2)
     {

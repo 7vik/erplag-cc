@@ -98,7 +98,7 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* child2 = buildAST(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
                 
-                printf("%s\n", variables_array[child1->node_marker]);
+                // printf("%s\n", variables_array[child1->node_marker]);
 
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
@@ -111,7 +111,7 @@ astNode* buildAST(PARSE_TREE* root)
             
                 if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
                 {
-                    printf("here\n");
+                    // printf("here\n");
                     node->child = child2;
                     free(child0);
                     free(child1);
@@ -128,8 +128,9 @@ astNode* buildAST(PARSE_TREE* root)
 
                 else 
                 {
+                    // printf("here\n");
                     node->child = child0;
-                    child0->sibling = child1->sibling;
+                    child0->sibling = child1;
                     child1->sibling = child2;
                     child2->sibling = child3;
                 }
@@ -832,7 +833,7 @@ astNode* buildAST(PARSE_TREE* root)
             // lalueIDStmt -> ASSIGNOP expression SEMICOL
             case(47):
             {
-                astNode* node = make_ASTnode(string_to_enum(root->kids[0]->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->kids[0]->data->node_symbol));
                 node->tree_node = root->kids[0]->data; // Information of "=" to be stored in node.
                 astNode* child1 = buildAST(root->kids[1]);
 
@@ -852,7 +853,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 free(root->kids[2]); //SQBC
 
-                astNode* node = make_ASTnode(string_to_enum(root->kids[3]->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->kids[3]->data->node_symbol));
                 node->tree_node = root->kids[3]->data; // Information of "=" to be stored in node.
 
                 astNode* child4 = buildAST(root->kids[4]); //expression
@@ -894,7 +895,7 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* child0 = buildAST(root->kids[0]); //optional
                 astNode* child3 = buildLeafAST(root->kids[3]); //ID
                 astNode* child6 = buildAST(root->kids[6]); //but this is a linked list!
-                astNode* list_id = make_ASTnode(string_to_enum(root->kids[6]->data->lexeme)); //Will store the address of the head of linked list of identifiers
+                astNode* list_id = make_ASTnode(string_to_enum(root->kids[6]->data->node_symbol)); //Will store the address of the head of linked list of identifiers
 
                 list_id->child = child6;
                 child6->parent = list_id;
@@ -919,7 +920,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 free(root->kids[2]); //SQBC
 
-                astNode* node = make_ASTnode(string_to_enum(root->kids[3]->data->lexeme));
+                astNode* node = make_ASTnode(string_to_enum(root->kids[3]->data->node_symbol));
                 node->tree_node =  root->kids[3]->data; // Information of "=" to be stored in node.
 
                 node->child = child1;
@@ -1461,14 +1462,14 @@ astNode* buildAST(PARSE_TREE* root)
                 int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* child0 = buildLeafAST(root->kids[0]);
-                astNode* child1 = buildAST(root->kids[1]);
+                // astNode* child1 = buildAST(root->kids[1]);
                 astNode* child2 = buildLeafAST(root->kids[2]);
                 child0->sibling = child2;
 
-                child0->parent = child1;
-                child2->parent = child1;
-                child1->child = child0;
-                return child1;
+                // child0->parent = child1;
+                // child2->parent = child1;
+                //child1->child = child0;
+                return child0;
 
                 break;
             }
@@ -1697,13 +1698,12 @@ int main(int argc, char* argv[])          // driver
     parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
     fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
     print_parse_tree(tree, test_parse_fp);
-
     print_parse_tree_json(tree, "output_parse_tree.json");
 
     printf("Printed Parse Tree in file '%s'.\n", argv[2]);
     // printf("Rule number of root: %d\n", tree->kids[0]->data->rule_number);
     astNode* ast_root = buildAST(tree);
-
+    // printf("H1\n");
     print_ast_json(ast_root, "output_ast_tree.json");
 
     fclose(test_fp);

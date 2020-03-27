@@ -918,5 +918,9 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
     if (num_errors == 0)
         printf("Input source code is syntactically correct..........\n");
     else 
+    {
         printf("Encountered %d syntax errors.\n", num_errors);
+        printf("Please fix parsing errors. Exiting....\n");
+        exit(1);
+    }
 }
