@@ -505,19 +505,20 @@ astNode* buildAST(PARSE_TREE* root)
             case(26)://statements -> statement statements 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+               // int certificate = string_to_enum(root->data->node_symbol);
             
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
                 child0->sibling = child1;
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                child1->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // child1->parent = node;
+                // node->child = child0;
+
+                return child0;
                 
                 break;
                     //To do
@@ -533,90 +534,98 @@ astNode* buildAST(PARSE_TREE* root)
             case(28)://statement -> ioStmt 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
             case(29)://statement -> simpleStmt 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
             case(30)://statement -> declareStmt 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
             case(31)://statement -> conditionalStmt 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
             case(32)://statement -> iterativeStmt
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
@@ -760,36 +769,38 @@ astNode* buildAST(PARSE_TREE* root)
             case(42)://simpleStmt -> assignmentStmt 
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
             
             case(43)://simpleStmt -> moduleReuseStmt
 
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                return buildAST(root->kids[0]);
+                // int certificate = string_to_enum(root->data->node_symbol);
             
-                astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child0 = buildAST(root->kids[0]);
                 
-                astNode* node = make_ASTnode(certificate);
+                // astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
-                return node;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
+                // return node;
                 
-                break;
+                // break;
                     //To do
             }
 
@@ -819,14 +830,14 @@ astNode* buildAST(PARSE_TREE* root)
             // whichStmt -> lvalueIDStmt
             case(45):
             {
-                return buildLeafAST(root->kids[0]); //pass on the pointer up the AST
+                return buildAST(root->kids[0]); //pass on the pointer up the AST
             }
 
 
             // whichStmt -> lvalueARRStmt
             case(46):
             {
-                return buildLeafAST(root->kids[0]); //pass on the pointer up the AST
+                return buildAST(root->kids[0]); //pass on the pointer up the AST
             }
 
 
@@ -966,27 +977,29 @@ astNode* buildAST(PARSE_TREE* root)
             // expression -> unaryExpression
             case(57):
             {
-                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
-                astNode* child0 = buildAST(root->kids[0]);
+                return buildAST(root->kids[0]);
+                // astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
+                // astNode* child0 = buildAST(root->kids[0]);
 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
 
-                return node;
+                // return node;
             }
 
             // expression -> arithmeticOrBooleanExpression
             case(58):
             {
-                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
-                astNode* child0 = buildAST(root->kids[0]);
+                return buildAST(root->kids[0]);
+                // astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
+                // astNode* child0 = buildAST(root->kids[0]);
 
-                node->tree_node = root->data;
-                child0->parent = node;
-                node->child = child0;
+                // node->tree_node = root->data;
+                // child0->parent = node;
+                // node->child = child0;
 
-                return node;
+                // return node;
             }
 
             // unaryExpression -> MINUS unary_opt
@@ -1018,7 +1031,7 @@ astNode* buildAST(PARSE_TREE* root)
             // unary_opt -> var
             case(62):
             {
-                return buildLeafAST(root->kids[0]);
+                return buildAST(root->kids[0]);
             }
    
             // arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
@@ -1085,7 +1098,7 @@ astNode* buildAST(PARSE_TREE* root)
             // opt_expr -> booleanConst
             case(67):
             {
-                return buildLeafAST(root->kids[0]);
+                return buildAST(root->kids[0]);
             }
     
             // one_more_opt -> relationalOp arithmeticExpr
@@ -1223,7 +1236,7 @@ astNode* buildAST(PARSE_TREE* root)
             // factor -> var
             case(79):
             {
-                return buildLeafAST(root->kids[0]);
+                return buildAST(root->kids[0]);
             }
 
             // op1 -> PLUS
