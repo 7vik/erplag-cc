@@ -818,14 +818,14 @@ astNode* buildAST(PARSE_TREE* root)
             // whichStmt -> lvalueIDStmt
             case(45):
             {
-                return buildAST(root->kids[0]); //pass on the pointer up the AST
+                return buildLeafAST(root->kids[0]); //pass on the pointer up the AST
             }
 
 
             // whichStmt -> lvalueARRStmt
             case(46):
             {
-                return buildAST(root->kids[0]); //pass on the pointer up the AST
+                return buildLeafAST(root->kids[0]); //pass on the pointer up the AST
             }
 
 
@@ -1017,7 +1017,7 @@ astNode* buildAST(PARSE_TREE* root)
             // unary_opt -> var
             case(62):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
    
             // arithmeticOrBooleanExpression -> opt_expr opt_expr_lr
@@ -1084,7 +1084,7 @@ astNode* buildAST(PARSE_TREE* root)
             // opt_expr -> booleanConst
             case(67):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
     
             // one_more_opt -> relationalOp arithmeticExpr
@@ -1222,75 +1222,75 @@ astNode* buildAST(PARSE_TREE* root)
             // factor -> var
             case(79):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // op1 -> PLUS
             case(80):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // op1 -> MINUS
             case(81):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // op2 -> MUL
             case(82):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // op2 -> DIV
             case(83):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             
             // logicalOp -> AND
             case(84):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             // logicalOp -> OR
             case(85):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             // relationalOp -> LT
             case(86):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             // relationalOp -> LE
             case(87):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             // relationalOp -> GT
             case(88):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // relationalOp -> GE
             case(89):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // relationalOp -> EQ
             case(90):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // relationalOp -> NE
             case(91):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // declareStmt -> DECLARE idList COLON datatype SEMICOL
@@ -1320,19 +1320,19 @@ astNode* buildAST(PARSE_TREE* root)
             // value -> NUM
             case(93):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // value -> TRUE
             case(94):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // value -> FALSE
             case(95):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
 
             // caseStmts -> CASE value COLON statements BREAK SEMICOL caseStmt
@@ -1394,7 +1394,7 @@ astNode* buildAST(PARSE_TREE* root)
             // caseStmt -> EPS
             case(98):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             
             // default_nt -> DEFAULT COLON statements BREAK SEMICOL
@@ -1422,7 +1422,7 @@ astNode* buildAST(PARSE_TREE* root)
             // default_nt -> EPS
             case(100):
             {
-                return buildAST(root->kids[0]);
+                return buildLeafAST(root->kids[0]);
             }
             
             // conditionalStmt -> SWITCH BO ID BC START caseStmts default_nt END
