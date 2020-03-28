@@ -250,6 +250,13 @@ void print_grammar(GRAMMAR* g)
 // returns integer value mapping of string
 int string_to_enum(char* string)
 {
+    // handle NULL case
+
+    if (string == NULL)
+    {
+        printf("The given string is NULL");
+        return -1;
+    }    
     int variable_array_size = sizeof(variables_array) / sizeof ( *variables_array);
 
     for (int i = 0; i < variable_array_size; i++)
@@ -902,7 +909,7 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
         else if (rule_id != -1)
         {
             pop(&st);
-            active->data->rule_number = rule_id;                // this is the rule used to open active
+            active->data->rule_number = rule_id + 1;                // this is the rule used to open active
             pushr(active, &st, g->rules[rule_id]->next);
             active = active->kids[0];
         }
@@ -911,5 +918,9 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
     if (num_errors == 0)
         printf("Input source code is syntactically correct..........\n");
     else 
+    {
         printf("Encountered %d syntax errors.\n", num_errors);
+        printf("Please fix parsing errors. Exiting....\n");
+        exit(1);
+    }
 }

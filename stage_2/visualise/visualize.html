@@ -1,0 +1,56 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tree Viewer</title>
+</head>
+
+<link rel="stylesheet" href="./js/Treant.css" type="text/css"/>
+<link rel="stylesheet" href="visualize.css" type="text/css"/>
+<script src="js/vendor/raphael.js"></script>
+<script src="js/Treant.js"></script>
+<script>
+    function visualize(){
+        const selectedFile = document.getElementById('file').files[0];
+        var reader=new FileReader();
+        var tree_data;
+        reader.onload = function(e) {
+            // The file's text will be printed here
+            console.log(e.target.result)
+            var file_data=e.target.result;
+            tree_data = JSON.parse(file_data);
+            my_chart_props = {
+                container: "#tree-simple",
+                animateOnInit: true,
+                
+                node: {
+                    collapsable: true,
+                },
+                animation: {
+                    nodeAnimation: "easeOutBounce",
+                    nodeSpeed: 700,
+                    connectorsAnimation: "bounce",
+                    connectorsSpeed: 700
+                },
+                rootOrientation: "WEST",
+                nodeAlign: "BOTTOM"
+            }
+            tree_data.chart = my_chart_props;
+            console.log(tree_data);
+            var my_chart = new Treant(tree_data);
+        };
+        reader.readAsText(selectedFile);
+    }
+</script>
+<body>
+    <table>
+    <tr>
+        <td><input type="file" id="file"></input></td>
+        <td><input type="submit" onclick="visualize()"></input></td>
+    </tr>
+    </table>
+
+    <div id="tree-simple"> </div>
+</body>
+</html>

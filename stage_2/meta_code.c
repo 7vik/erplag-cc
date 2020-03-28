@@ -21,17 +21,23 @@ int main(int argc, char* argv[])
             Press 1 if you want astnode\n \
             0 if no astNode\n \
             Press 2 for constructing case stmts\n \
-            Press 3 for constructing case Non-Terminal -> Terminal\n\n ");
+            Press 3 for constructing case Non-Terminal -> Terminal\n \
+            Press 4 for A -> B stmts \n ");
     int choice;
     scanf("%d", &choice);
 
+    if(choice == 4)
+    {
+        printf("return buildAST(root->kids[0]);\n");
+        return 0;
+    }
     if(choice == 3)
     {
         printf("return buildLeafAST(root->kids[0]);\n");
         return 0;
     }
 
-    printf("int certificate = string_to_enum(root->data->lexeme);\n\n");
+    printf("int certificate = string_to_enum(root->data->node_symbol);\n\n");
 
     if (choice == 2)
     {
