@@ -255,7 +255,7 @@ SYMBOL *st_lookup(char *name, ST *st)
 }
 
 // finally, traverse an AST to populate the symbol table
-void st_populate(ST *symbol_table, AST *ast)
+void st_populate(ST *symbol_table, astNode *root)
 {
     st_initialize(symbol_table, "global", NULL);
     // traverse and fill
