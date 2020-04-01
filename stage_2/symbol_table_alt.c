@@ -162,7 +162,8 @@ void st_insert_symbol(SYMBOL *sym, ST *st)
 }
 
 // We make insertions into the global ST
-void st_insert_global(astNode *node, ST_GLOBAL *st, TREE_NODE *ipList, TREE_NODE *opList, TREE_NODE *ipType, TREE_NODE *opType)
+void st_insert_global(astNode *node, ST_GLOBAL *st, TREE_NODE *ipList, TREE_NODE *opList, TREE_NODE *ipType, TREE_NODE *opType, 
+ST *st_local)
 {
     // first, create an entry for the global ST
     ST_GLOBAL_ENTRY *new = (ST_GLOBAL_ENTRY *) malloc(sizeof(ST_GLOBAL_ENTRY));
@@ -193,7 +194,7 @@ void st_insert_global(astNode *node, ST_GLOBAL *st, TREE_NODE *ipList, TREE_NODE
     new->head_input_type = ipType;
     new->head_output_type = opType;
 
-    new->st = NULL; //This field ought to be filled while traversing the AST
+    new->st = st_local; //This field ought to be filled after traversing the corresponding subtree in AST
     return;
 }
 
@@ -301,4 +302,71 @@ void st_populate(ST_GLOBAL *symbol_table, astNode *root)
     // traverse and fill
     // we need to call a helper function create_symbol (see above) that will take an AST node and create a symbol out of it
     return;
+}
+
+// just a helper function for testing. Comment this out
+astNode *init_ast_node_par()
+{
+    astNode *node = (astNode *)malloc(sizeof(astNode));
+    node->child = NULL;
+    node->parent = NULL;
+    node->sibling = NULL;
+    node->is_leaf = 1;
+    node->node_marker = ID;
+    return node;
+}
+int main()
+{
+    // just to test if it's working
+
+    ST_GLOBAL *symbol_table = (ST_GLOBAL *) malloc(sizeof(ST_GLOBAL));       // our global symbol table
+    if (!symbol_table)
+        malloc_error    
+    ST *inner_table = (ST *) malloc(sizeof(ST));       // our inner table -> table for identifiers in the outer scope
+    if (!inner_table)
+        malloc_error    
+
+    st_initialize_global(symbol_table, "global");
+    st_initialize(inner_table, "for_loop", NULL);
+
+    astNode *node_g = init_ast_node_par();
+    node_g->tree_node->lexeme = (char *)calloc(21, sizeof(char));
+    strcpy(node_g->tree_node->lexeme, "Characteristics");
+    
+    //st_insert_global(node_g,symbol_table,NULL,NULL,NULL,NULL,NULL);
+    //st_print_global(symbol_table);
+    printf("Hello!");
+
+    astNode *node_1 = init_ast_node_par();
+    //printf("Hello!"); ---- why is this not getting printed?
+    node_1->tree_node->lexeme = "Age";
+    //printf("Hello!"); ---- this, too!
+    st_insert_symbol(create_symbol(node_1, INTEGER), inner_table);
+    //printf("Hello!"); ---- :(
+
+    astNode *node_2 = init_ast_node_par();
+    node_2->tree_node->lexeme = (char *)calloc(21, sizeof(char));
+    strcpy(node_2->tree_node->lexeme, "Height");
+    st_insert_symbol(create_symbol(node_2, INTEGER), inner_table);
+    
+    astNode *node_3 = init_ast_node_par();
+    node_3->tree_node->lexeme = (char *)calloc(21, sizeof(char));
+    strcpy(node_3->tree_node->lexeme, "Weight");
+    st_insert_symbol(create_symbol(node_3, INTEGER), inner_table);
+
+    astNode *node_4 = init_ast_node_par();
+    node_4->tree_node->lexeme = (char *)calloc(21, sizeof(char));
+    strcpy(node_4->tree_node->lexeme, "Frac31");
+    st_insert_symbol(create_symbol(node_4, REAL), inner_table);
+    
+    astNode *node_5 = init_ast_node_par();
+    node_5->tree_node->lexeme = (char *)calloc(21, sizeof(char));
+    strcpy(node_5->tree_node->lexeme, "Married");
+    st_insert_symbol(create_symbol(node_5, BOOLEAN), inner_table);
+    
+    st_insert_global(node_g,symbol_table,NULL,NULL,NULL,NULL,inner_table);
+    // st_print(symbol_table);
+    if (st_lookup_global("Married", symbol_table))  printf("FOUND"); else printf("NOT FOUND.\n");
+    if (st_lookup("Married", inner_table)) printf("FOUND"); else printf("NOT FOUND.\n");
+    return 0;
 }
