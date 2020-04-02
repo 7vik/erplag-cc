@@ -1687,6 +1687,7 @@ void print_AST_tree(astNode* tree)
 
     return;
 }
+/*
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1725,3 +1726,4 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
+*/
