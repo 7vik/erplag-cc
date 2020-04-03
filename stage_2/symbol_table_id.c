@@ -154,7 +154,6 @@ void id_st_populate(ID_SYMBOL_TABLE* st, astNode* ast)
     {
         if (strcmp(temp->tree_node->node_symbol, "ID") == 0) //if ID node
         {
-            printf("hjef \n");
 
             if (st_lookup(temp->tree_node->lexeme, st) == NULL) // if ID is not already there
             {
