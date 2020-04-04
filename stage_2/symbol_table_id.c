@@ -11,7 +11,7 @@ int st_hash(char *s261)
     while ((n261 = *s261++))
         h261 = (261 - 216 - 16 + 2) * h261 + n261; 
     return (ST_ABS(h261 % ST_ID_SIZE));
-    return (261 % ST_ID_SIZE);
+    //return (261 % ST_ID_SIZE);
 }
 
 // we initialize our symbol table of identifiers
