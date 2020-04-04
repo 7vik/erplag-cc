@@ -1,8 +1,11 @@
+// gcc symbol_table_id.c ast.c parser.c lexer.c hash.c bool.c 
+
 #include "symbol_table_id.h"
 #define ST_ABS(N) ((N<0)?(-N):(N))    // because of my awesome hashing function
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
 // hash function: implementing ayush's hash, patent pending ;)
+// Satya pareshan ho sakta h, parajit nhi.
 // to save coding effort, just hashing on the name has been done
 int st_hash(char *s261)
 {
@@ -11,13 +14,12 @@ int st_hash(char *s261)
     while ((n261 = *s261++))
         h261 = (261 - 216 - 16 + 2) * h261 + n261; 
     return (ST_ABS(h261 % ST_ID_SIZE));
-    //return (261 % ST_ID_SIZE);
 }
 
 // we initialize our symbol table of identifiers
 ID_SYMBOL_TABLE* create_id_st(void)
 {
-    ID_SYMBOL_TABLE* id_table = (ID_SYMBOL_TABLE*) malloc(sizeof(ID_SYMBOL_TABLE));
+    ID_SYMBOL_TABLE *id_table = (ID_SYMBOL_TABLE *) malloc(sizeof(ID_SYMBOL_TABLE));
    
     for (int iterator = 0; iterator < ST_ID_SIZE; ++iterator)
         id_table->id_table[iterator] = NULL;               // no symbols initially in the table
@@ -31,15 +33,6 @@ ID_SYMBOL_TABLE* create_id_st(void)
 // ID entry should have been populated.
 void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st)
 {
-    // //first, create an entry for the symbol
-    // ID_TABLE_ENTRY *new = (ID_TABLE_ENTRY *) malloc(sizeof(ID_TABLE_ENTRY));
-
-    // if (!new)
-    //     malloc_error
-
-    // new->symbol = sym;              
-    // new->next = NULL;
-
     // then, calculate the hash to find out where to insert this entry 
     int key = st_hash(sym->lexeme);
 
@@ -130,12 +123,9 @@ int get_width(int datatype)
 ID_TABLE_ENTRY *create_symbol(astNode *node, int type)      
 {
     assert(strcmp(node->tree_node->token_name, "ID") == 0); //this should have ID info
-    //printf("Hello!");
     ID_TABLE_ENTRY *new = (ID_TABLE_ENTRY *) malloc(sizeof(ID_TABLE_ENTRY));
     if (!new)
-        malloc_error
-    //printf("Hello!");
-    
+        malloc_error    
     new->lexeme = node->tree_node->lexeme;
     new->datatype = type;
     new->width = get_width(type);
@@ -149,12 +139,10 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, int type)
 void id_st_populate(ID_SYMBOL_TABLE* st, astNode* ast)
 {
     astNode* temp = ast;
-
     if (temp->child == NULL)  //leaf node
     {
         if (strcmp(temp->tree_node->node_symbol, "ID") == 0) //if ID node
         {
-
             if (st_lookup(temp->tree_node->lexeme, st) == NULL) // if ID is not already there
             {
                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, INTEGER);

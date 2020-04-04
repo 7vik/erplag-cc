@@ -24,18 +24,18 @@
 
 typedef struct ID_TABLE_ENTRY
 {
-    char* lexeme;  //variable name from lexer, hash on this
-    int datatype; //enum of datatype
+    char *lexeme;                               //variable name from lexer, hash on this
+    int datatype;                               //enum of datatype
     int width;
     int offset;
-    struct ID_TABLE_ENTRY* next; // for chaining
-}ID_TABLE_ENTRY;
+    struct ID_TABLE_ENTRY *next;                // for chaining
+} ID_TABLE_ENTRY;
 
 typedef struct ID_SYMBOL_TABLE
 {
     ID_TABLE_ENTRY* id_table[ST_ID_SIZE];
-    int total_ids; 
-}ID_SYMBOL_TABLE;
+    int total_ids;                               
+} ID_SYMBOL_TABLE;
 
 int st_hash(char *s261);
 ID_SYMBOL_TABLE* create_id_st(void);
