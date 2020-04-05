@@ -2,6 +2,8 @@
 
 #include "symbol_table_id.h"
 #include "type.h"
+#include<stdlib.h>                                      // int atoi(), char *strcat()
+#include<string.h>                                      // char *strcpy()
 #define ST_ABS(N) ((N<0)?(-N):(N))                      // because of my awesome hashing function
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
@@ -49,20 +51,35 @@ void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st)
 
 char *show_type(TYPE *t)
 {
-   char *tt = t->simple == INTEGER  ? "INTEGER"
-            : t->simple == REAL     ? "REAL"
-            : t->simple == BOOLEAN  ? "BOOLEAN"
-            : t->simple == ARRAY?   t->arrtype->base_type == INTEGER    ? "ARRAY of INT"
-                                :   t->arrtype->base_type == REAL       ? "ARRAY of REAL"
-                                :   t->arrtype->base_type == BOOLEAN    ? "ARRAY of BOOL"
-                                :   "TYPE_ERROR"
-            : "TYPE_ERROR";
-    return tt;
+    if (t->simple == INTEGER) return "INTEGER";
+    if (t->simple == REAL   ) return "REAL";
+    if (t->simple == BOOLEAN) return "BOOLEAN";
+    if (t->simple == ARRAY  ) 
+    {
+        char *array_type_str = (char *) malloc(42);
+        strcpy(array_type_str, "ARRAY [");
+        int length = snprintf(NULL, 0, "%d", t->arrtype->begin);
+        char* str1 = malloc( length + 1 );
+        snprintf( str1, length + 1, "%d", t->arrtype->begin );
+        strcat(array_type_str,str1);
+        free(str1);
+        strcat(array_type_str, "..");
+        length = snprintf(NULL, 0, "%d", t->arrtype->end);
+        str1 = malloc( length + 1 );
+        snprintf( str1, length + 1, "%d", t->arrtype->end );
+        strcat(array_type_str,str1);
+        free(str1);
+        strcat(array_type_str, "] of ");
+        strcat(array_type_str, variables_array[t->arrtype->base_type]);
+        return array_type_str;
+    }
+    return NULL;
 }
 
 // helper function to print a symbol table of identifiers
 void id_st_print(ID_SYMBOL_TABLE *st)
 {
+    if (st == NULL) return;
     printf("\nPrinting ID Symbol Table with %d ids\n\n", st->total_ids);
     for(int i = 0; i < ST_ID_SIZE; i++)
     {
@@ -130,13 +147,29 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     return new;
 }
 
-TYPE *get_type(astNode *ast)                // change later, currently just int
+// extract the type out of any AST node
+TYPE *get_type(astNode *ast)              
 {
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
-    new->simple = INTEGER;
-    new->arrtype = NULL;
+    if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
+    {
+        new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
+        if (new->simple == datatype)                            // it's an array
+        {
+            new->simple = ARRAY;
+            new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
+            if (! new->arrtype)
+                malloc_error
+            new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
+            new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
+            new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
+        }
+        // printf("\t\t%s\n", variables_array[new->simple]);
+        else
+            new->arrtype = NULL;
+    }
     return new;
 }
 
