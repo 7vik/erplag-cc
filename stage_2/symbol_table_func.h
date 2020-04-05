@@ -13,18 +13,17 @@
 
 // list of types required
 // for input parameters
-typedef struct typeList
+typedef struct parList
 {
-    char* lexeme; // variable name
-    int datatype; // enum of datatype
+    char* parname; // variable name
+    TYPE* datatype; // enum of datatype
     struct typeList* next;
-}typeList;
+}parList;
 
 typedef struct FUNC_TABLE_ENTRY
 {
-    char* lexeme;  //function name from lexer, hash on this
-    typeList* inputPara, *outputPara; //list of input and output parameters
-    int datatype; //enum of datatype
+    char* fun_name;  //function name from lexer, hash on this
+    parList* inputPara, *outputPara; //list of input and output parameters
     int width; // total size of all local vars
     ID_SYMBOL_TABLE* local_id_table;
     struct FUNC_TABLE_ENTRY* next; // for chaining
@@ -34,6 +33,6 @@ typedef struct FUNC_SYMBOL_TABLE
 {
     FUNC_TABLE_ENTRY* func_table[ST_FUNC_SIZE];
     int total_ids; 
-}FUNC_SYMBOL_TABLE;
+}GST;
 
 #endif
