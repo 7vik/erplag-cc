@@ -4,10 +4,10 @@
 // type data for an array
 typedef struct ARRAY_TYPE_DATA
 {
-    // array[begin..end] of simple
+    // array[begin..end] of base_type
     unsigned int begin;
     unsigned int end;
-    unsigned short int simple;                // 1,2,3 for integer, real, boolean
+    unsigned short int base_type;                // enum for integer, real, boolean
     // changes here if she allows for nested arrays
 } ARRAY_TYPE_DATA;
 
@@ -23,7 +23,7 @@ typedef struct ARRAY_TYPE_DATA
 // abstract structure to store any given type (insert a good type type pun)
 typedef struct TYPE_INFO
 {
-    unsigned short int simple;                   // 1,2,3,4 for integer, real, boolean, array
+    unsigned short int simple;                   // enum for integer, real, boolean, array
     ARRAY_TYPE_DATA *arrtype;                   // if array, else NULL
     // FUNCTION_TYPE_DATA *functype;              // if function, else NULL
 } TYPE;

@@ -49,13 +49,13 @@ void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st)
 
 char *show_type(TYPE *t)
 {
-   char *tt = t->simple == 1 ? "INTEGER"
-            : t->simple == 2 ? "REAL"
-            : t->simple == 3 ? "BOOLEAN"
-            : t->simple == 4 ?  t->arrtype->simple == 1 ? "ARRAY of INT"
-                                : t->arrtype->simple == 2 ? "ARRAY of REAL"
-                                : t->arrtype->simple == 3 ? "ARRAY of BOOL"
-                                : "TYPE_ERROR"
+   char *tt = t->simple == INTEGER  ? "INTEGER"
+            : t->simple == REAL     ? "REAL"
+            : t->simple == BOOLEAN  ? "BOOLEAN"
+            : t->simple == ARRAY?   t->arrtype->base_type == INTEGER    ? "ARRAY of INT"
+                                :   t->arrtype->base_type == REAL       ? "ARRAY of REAL"
+                                :   t->arrtype->base_type == BOOLEAN    ? "ARRAY of BOOL"
+                                :   "TYPE_ERROR"
             : "TYPE_ERROR";
     return tt;
 }
@@ -104,13 +104,13 @@ ID_TABLE_ENTRY* st_lookup(char *name, ID_SYMBOL_TABLE *st)
 
 int get_width(TYPE *t)
 {
-   int size = t->simple == 1 ? 4
-            : t->simple == 2 ? 8
-            : t->simple == 3 ? 1
-            : t->simple == 4 ?    t->arrtype->simple == 1 ? (4 * (t->arrtype->end - t->arrtype->begin + 1))
-                                : t->arrtype->simple == 2 ? (8 * (t->arrtype->end - t->arrtype->begin + 1))
-                                : t->arrtype->simple == 3 ? (1 * (t->arrtype->end - t->arrtype->begin + 1))
-                                : 0
+   int size = t->simple == INTEGER  ? 4
+            : t->simple == REAL     ? 8
+            : t->simple == BOOLEAN  ? 1
+            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (4 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == REAL   ? (8 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       0
             : 0;
     return size;
 }
@@ -135,7 +135,7 @@ TYPE *get_type(astNode *ast)                // change later, currently just int
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
-    new->simple = 1;
+    new->simple = INTEGER;
     new->arrtype = NULL;
     return new;
 }
@@ -154,7 +154,6 @@ void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
                 st_insert_id_entry(table_entry, st);
             }
-            
         }
         return;
     }
