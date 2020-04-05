@@ -63,6 +63,7 @@ char *show_type(TYPE *t)
 // helper function to print a symbol table of identifiers
 void id_st_print(ID_SYMBOL_TABLE *st)
 {
+    if (st == NULL) return;
     printf("\nPrinting ID Symbol Table with %d ids\n\n", st->total_ids);
     for(int i = 0; i < ST_ID_SIZE; i++)
     {
