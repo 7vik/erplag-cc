@@ -130,13 +130,17 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     return new;
 }
 
+// extract the type out of any AST node
 TYPE *get_type(astNode *ast)                // change later, currently just int
 {
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
-    new->simple = INTEGER;
-    new->arrtype = NULL;
+    if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
+    {
+        new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
+        new->arrtype = NULL;
+    }
     return new;
 }
 
