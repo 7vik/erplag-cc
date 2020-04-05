@@ -65,7 +65,7 @@ void global_st_print(GST *st)
     } 
     //comment the following statement if you don't want to print ST for identifiers, for which the current ST will serve as the ancestor.
     
-    id_st_print(st->local_id_table);	// Hence, need to compile with symbol_table_id.c as well.
+    //id_st_print(st->local_id_table);	// Not like this!
 
     return;
 }
