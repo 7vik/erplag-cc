@@ -30,7 +30,8 @@ Doubts:
 
 */
 
-
+int num_ast_nodes = 0;
+int num_parse_nodes = 0;
 
 astNode* make_ASTnode(int certificate)
 {
@@ -42,7 +43,7 @@ astNode* make_ASTnode(int certificate)
     node->child = NULL;
     node->sibling = NULL;
     node->is_leaf = 0;
-
+    num_ast_nodes++;
     return node;
 }
 
@@ -52,6 +53,7 @@ astNode* buildLeafAST(PARSE_TREE* t)
     astNode* node = make_ASTnode(certificate);
     node->tree_node = t->data;
     node->is_leaf = 1;
+    num_parse_nodes++;
     return node;
 }
 
@@ -84,6 +86,7 @@ astNode* buildAST(PARSE_TREE* root)
     if (root != NULL)
     {
         int rule_num = root->data->rule_number;
+        num_parse_nodes++;
         // printf("Rule number: %d\n", rule_num);
 
         switch(rule_num)

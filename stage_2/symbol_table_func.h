@@ -33,7 +33,7 @@ typedef struct FUNC_SYMBOL_TABLE
 {
     FUNC_TABLE_ENTRY* func_table[GST_SIZE];
     int total_ids; 
-}GST;
+}GST;     // global symbol table
 
 /* This is the list of functions defined in symbol_table_func.c */
 int st_hash_global(char *);
