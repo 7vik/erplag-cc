@@ -2,6 +2,7 @@
 
 #include "symbol_table_id.h"
 #include "type.h"
+#include<stdlib.h>                                      // int atoi()
 #define ST_ABS(N) ((N<0)?(-N):(N))                      // because of my awesome hashing function
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
@@ -132,7 +133,7 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
 }
 
 // extract the type out of any AST node
-TYPE *get_type(astNode *ast)                // change later, currently just int
+TYPE *get_type(astNode *ast)              
 {
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
@@ -140,7 +141,19 @@ TYPE *get_type(astNode *ast)                // change later, currently just int
     if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
     {
         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
-        new->arrtype = NULL;
+        if (new->simple == datatype)                            // it's an array
+        {
+            new->simple = ARRAY;
+            new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
+            if (! new->arrtype)
+                malloc_error
+            new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
+            new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
+            new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
+        }
+        // printf("\t\t%s\n", variables_array[new->simple]);
+        else
+            new->arrtype = NULL;
     }
     return new;
 }
