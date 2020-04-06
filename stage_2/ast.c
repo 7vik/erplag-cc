@@ -164,7 +164,15 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->sibling = temp;
                 child1->child = NULL;
                 free(child1);
-                temp->parent = NULL;
+                if(temp != NULL)
+                    temp->parent = NULL;
+                
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
                 return node;
             }
             
@@ -204,7 +212,15 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->sibling = temp;
                 child1->child = NULL;
                 free(child1);
-                temp->parent = NULL;
+                if(temp != NULL)
+                    temp->parent = NULL;
+
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
                 return node;
             }
             
