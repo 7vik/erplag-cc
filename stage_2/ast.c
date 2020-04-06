@@ -249,7 +249,7 @@ astNode* buildAST(PARSE_TREE* root)
             // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
             case(8):
             {
-                // you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
+                // You can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
                 // Run ./make 2 7 10 11 and answer 1.
                 // But use your own wisdom to handle intricacies.
 
@@ -289,230 +289,240 @@ astNode* buildAST(PARSE_TREE* root)
                 
                 free(root->kids[0]);
                 free(root->kids[1]);
+                free(root->kids[3]);
+                free(root->kids[4]);
+
                 astNode* child2 = buildAST(root->kids[2]);
                 
                 astNode* node = make_ASTnode(certificate);
-                
                 node->tree_node = root->data;
-                child2->parent = node;
+
                 node->child = child2;
+
+                astNode* temp = child2;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
+
                 return node;
-                
-                break;
             }
             
-            case(10)://ret -> EPS
-            
+            case(10)://ret -> EPS -- in case of no output parameter, return a node with no child.
             {
-                    //To do
-                return buildLeafAST(root->kids[0]);
-                    
+                astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
+                node->tree_node = root->data;
+                node->is_leaf = 1;
+                return node;        
             }
             
-            case(11)://input_plist_lr -> COMMA ID COLON datatype input_plist_lr 
-            
+            case(11)://input_plist_lr -> COMMA ID COLON datatype input_plist_lr1
             {
-                    //To do
-                int certificate = string_to_enum(root->data->node_symbol);
-                
+                astNode* new = make_ASTnode(input_plist);   // Making a new node - Hardcoding! Though, doesn't matter.
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "id_type";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+
                 free(root->kids[0]);
+                
                 astNode* child1 = buildLeafAST(root->kids[1]);
                 free(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
-                astNode* child4 = buildAST(root->kids[4]);
+                
                 child1->sibling = child3;
-                child3->sibling = child4;
-                
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
-                child1->parent = node;
-                child3->parent = node;
-                child4->parent = node;
-                node->child = child1;
-                return node;
-                
-                break;
+                child1->parent = new;
+                child3->parent = new;
+                new->child = child1;
+
+                astNode* child4 = buildAST(root->kids[4]);  
+                // creating a chain
+                new->sibling = child4;
+
+                return new;
             }
             
             case(12)://input_plist_lr -> EPS
             {
-                return buildLeafAST(root->kids[0]);
-            
-                    //To do
+                return NULL;
             }
             
             case(13)://input_plist -> ID COLON datatype input_plist_lr
             
             {
                 int certificate = string_to_enum(root->data->node_symbol);
-                
+                astNode* new = make_ASTnode(certificate);   // making a new node
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "id_type";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+
+                astNode* node = make_ASTnode(certificate);  // keeping the same certificate; shouldn't matter much
+                node->tree_node = root->data;
+
                 astNode* child0 = buildLeafAST(root->kids[0]);
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
-                astNode* child3 = buildAST(root->kids[3]);
+
                 child0->sibling = child2;
-                child2->sibling = child3;
-                
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
-                child0->parent = node;
-                child2->parent = node;
-                child3->parent = node;
-                node->child = child0;
+                child0->parent = new;
+                child2->parent = new;
+                new->child = child0;
+
+                astNode* child3 = buildAST(root->kids[3]);
+                new->sibling = child3;
+
+                node->child = new;
+                astNode* temp = new;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
+
                 return node;
-                
-                break;
-                    //To do
             }
             
             case(14)://output_plist_lr -> COMMA ID COLON type output_plist_lr 
-            
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-                
+                astNode* new = make_ASTnode(output_plist);   // Making a new node - Hardcoding! Though, doesn't matter.
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "id_type";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+
                 free(root->kids[0]);
+                
                 astNode* child1 = buildLeafAST(root->kids[1]);
                 free(root->kids[2]);
                 astNode* child3 = buildAST(root->kids[3]);
-                astNode* child4 = buildAST(root->kids[4]);
+                
                 child1->sibling = child3;
-                child3->sibling = child4;
-                
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
-                child1->parent = node;
-                child3->parent = node;
-                child4->parent = node;
-                node->child = child1;
-                return node;
-                
-                break;
-                    //To do
+                child1->parent = new;
+                child3->parent = new;
+                new->child = child1;
+
+                astNode* child4 = buildAST(root->kids[4]);  
+                // creating a chain
+                new->sibling = child4;
+
+                return new;
             }
             
             case(15)://output_plist_lr -> EPS
-            
             {
-                return buildLeafAST(root->kids[0]);
-                    //To do
+                return NULL;
             }
             
             case(16)://output_plist -> ID COLON type output_plist_lr
-            
             {
                 int certificate = string_to_enum(root->data->node_symbol);
-                
+                astNode* new = make_ASTnode(certificate);   // making a new node
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "id_type";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+
                 astNode* child0 = buildLeafAST(root->kids[0]);
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
-                astNode* child3 = buildAST(root->kids[3]);
+
                 child0->sibling = child2;
-                child2->sibling = child3;
-                
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
-                child0->parent = node;
-                child2->parent = node;
-                child3->parent = node;
-                node->child = child0;
-                return node;
-            
-                break;
-                    //To do
+                child0->parent = new;
+                child2->parent = new;
+                new->child = child0;
+
+                astNode* child3 = buildAST(root->kids[3]);
+                new->sibling = child3;
+
+                return new;
             }
             
             case(17)://datatype -> INTEGER 
-
             {
-                
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(18)://datatype -> REAL 
-
             {   
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(19)://datatype -> BOOLEAN 
-
             {
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(20)://datatype -> ARRAY SQBO rangeArr SQBC OF type
-
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-            
-                free(root->kids[0]);
+                int certificate = string_to_enum(root->kids[0]->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->kids[0]->data;
+
                 free(root->kids[1]);
+
                 astNode* child2 = buildAST(root->kids[2]);
+
                 free(root->kids[3]);
                 free(root->kids[4]);
+
                 astNode* child5 = buildAST(root->kids[5]);
                 child2->sibling = child5;
                 
-                astNode* node = make_ASTnode(certificate);
                 
-                node->tree_node = root->data;
                 child2->parent = node;
                 child5->parent = node;
                 node->child = child2;
                 return node;
-                
-                break;
-                    //To do
             }
             
             case(21)://rangeArr -> index_nt RANGEOP index_nt
-
             {
                 int certificate = string_to_enum(root->data->node_symbol);
-            
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
+
                 astNode* child0 = buildAST(root->kids[0]);
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
                 child0->sibling = child2;
                 
-                astNode* node = make_ASTnode(certificate);
-                
-                node->tree_node = root->data;
                 child0->parent = node;
                 child2->parent = node;
                 node->child = child0;
                 return node;
-                
-                break;
-                    //To do
             }
             
             case(22)://type -> INTEGER 
-
             {
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(23)://type -> REAL 
-
             {
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(24)://type -> BOOLEAN
-
             {
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(25)://moduleDef -> START statements END
