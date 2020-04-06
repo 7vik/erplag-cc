@@ -161,7 +161,11 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->parent = node;
 
                 node->child = child0;
-                child0->sibling = child1->child;
+                astNode* temp = child1->child;
+                child0->sibling = temp;
+                child1->child = NULL;
+                free(child1);
+                temp->parent = NULL;
                 return node;
             }
             
@@ -174,16 +178,14 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleDeclaration -> DECLARE MODULE ID SEMICOL
             case(4):
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                int certificate = string_to_enum(root->kids[2]->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->data;
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[3]);
                 node->tree_node = root->kids[2]->data;
                 node->is_leaf = 1;
-                return node;
-                break;  
+                return node;  
             }
 
             // otherModules -> module otherModules1
