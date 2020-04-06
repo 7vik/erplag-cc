@@ -34,7 +34,12 @@ Doubts:
 
 astNode* make_ASTnode(int certificate)
 {
-    astNode* node = (astNode*) malloc(sizeof(astNode));             // malloc check?
+    astNode* node = (astNode*) malloc(sizeof(astNode));
+    if(node == NULL)
+    {
+        printf("Malloc error. Terminating.\n\n"); 
+        exit(5);
+    }
     node->node_marker = certificate;
     node->tree_node = NULL;
     //node->next = NULL;
@@ -128,7 +133,6 @@ astNode* buildAST(PARSE_TREE* root)
 
                 else 
                 {
-                    // printf("here\n");
                     node->child = child0;
                     child0->sibling = child1;
                     child1->sibling = child2;
@@ -138,7 +142,7 @@ astNode* buildAST(PARSE_TREE* root)
                 // NOTE: We don't care if last othermodules is EPS, we have a NULL node in EPS. WHich we are fine with. 
                 // Similar is the case when child1 is EPS while child0 is not.
                 return node;
-                break; // LOL, this is scam
+                break; // this won't be executed at all! Avoid this from next time.
             }
             
 
@@ -146,12 +150,16 @@ astNode* buildAST(PARSE_TREE* root)
             case(2):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
-                return child0;
-                break;
+                child0->parent = node;
+
+                node->child = child0;
+                child0->sibling = child1->child;
+                return node;
             }
             
             // moduleDeclarations -> EPS
