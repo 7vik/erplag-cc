@@ -111,23 +111,28 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
                 child0->parent = node;
+                printf("H1\n");
                 child1->parent = node;
+                printf("H1\n");
                 child2->parent = node;
+                printf("H1\n");
                 child3->parent = node;
+                printf("H1\n");
 
                 //moduleDeclarations and otherModules can be NULL :(
             
                 if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
                 {
-                    // printf("here\n");
+                    printf("here\n");
                     node->child = child2;
                     free(child0);
                     free(child1);
                     child2->sibling = child3;
                 }
-
+                
                 else if(child0->node_marker == EPS)
                 {
+                    printf("shbdd\n");
                     free(child0);
                     node->child = child1;
                     child1->sibling = child2;
@@ -136,10 +141,15 @@ astNode* buildAST(PARSE_TREE* root)
 
                 else 
                 {
+                    printf("erjbf\n");
                     node->child = child0;
+                    printf("H1\n");
                     child0->sibling = child1;
+                    printf("H2\n");
                     child1->sibling = child2;
+                    printf("H3\n");
                     child2->sibling = child3;
+                    printf("H4\n");
                 }
                 
                 // NOTE: We don't care if last othermodules is EPS, we have a NULL node in EPS. WHich we are fine with. 
@@ -167,12 +177,14 @@ astNode* buildAST(PARSE_TREE* root)
                 if(temp != NULL)
                     temp->parent = NULL;
                 
+                printf("h1\n");
                 temp = node->child;
                 while(temp != NULL)
                 {
                     temp->parent = node;
                     temp = temp->sibling;
                 }
+                printf("h2\n");
                 return node;
             }
             
@@ -522,15 +534,19 @@ astNode* buildAST(PARSE_TREE* root)
 
             {
                 int certificate = string_to_enum(root->data->node_symbol);
-            
-                free(root->kids[0]);
+                astNode* child0 = buildLeafAST(root->kids[0]);
+                //free(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                
+                astNode* child2 = buildLeafAST(root->kids[2]);
                 astNode* node = make_ASTnode(certificate);
                 
                 node->tree_node = root->data;
+                child0->parent = node;
                 child1->parent = node;
-                node->child = child1;
+                child2->parent = node;
+                node->child = child0;
+                child0->sibling = child1;
+                child1->sibling = child2;
                 return node;
                 
                 break;
@@ -1485,18 +1501,24 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[1]);
                 astNode* child2 = buildLeafAST(root->kids[2]); //handle ID here, change to buildLeafAST
                 free(root->kids[3]);
-                free(root->kids[4]);
+                astNode* child4 = buildLeafAST(root->kids[4]);
+                //free(root->kids[4]);
                 astNode* child5 = buildAST(root->kids[5]);
                 astNode* child6 = buildAST(root->kids[6]);
-                child2->sibling = child5;
+                child2->sibling = child4;
+                child4->sibling = child5;
                 child5->sibling = child6;
 
+                astNode* child7 = buildLeafAST(root->kids[7]);
+                child6->sibling = child7;
                 astNode* node = make_ASTnode(certificate);
 
                 node->tree_node = root->data;
                 child2->parent = node;
+                child4->parent = node;
                 child5->parent = node;
                 child6->parent = node;
+                child7->parent = node;
                 node->child = child2;
                 return node;
 
@@ -1534,10 +1556,14 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
                 free(root->kids[5]);
-                free(root->kids[6]);
+                astNode* child6 = buildLeafAST(root->kids[6]);
                 astNode* child7 = buildAST(root->kids[7]);
                 child2->sibling = child4;
-                child4->sibling = child7;
+                child4->sibling = child6;
+                child6->sibling = child7;
+
+                astNode* child8 = buildLeafAST(root->kids[8]);
+                child7->sibling = child8;
 
                 astNode* node = make_ASTnode(certificate);
 
@@ -1545,6 +1571,8 @@ astNode* buildAST(PARSE_TREE* root)
                 child2->parent = node;
                 child4->parent = node;
                 child7->parent = node;
+                child6->parent = node;
+                child8->parent = node;
                 node->child = child2;
                 return node;
 
@@ -1561,15 +1589,21 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[1]);
                 astNode* child2 = buildAST(root->kids[2]);
                 free(root->kids[3]);
-                free(root->kids[4]);
+                //free(root->kids[4]);
+                astNode* child4 = buildLeafAST(root->kids[4]);
                 astNode* child5 = buildAST(root->kids[5]);
-                child2->sibling = child5;
+                child2->sibling = child4;
+                child4->sibling = child5;
 
+                astNode* child6 = buildLeafAST(root->kids[6]);
+                child5->sibling = child6;
                 astNode* node = make_ASTnode(certificate);
 
                 node->tree_node = root->data;
                 child2->parent = node;
                 child5->parent = node;
+                child4->parent = node;
+                child6->parent = node;
                 node->child = child2;
                 return node;
 
@@ -1722,7 +1756,7 @@ void print_AST_tree(astNode* tree)
 
     return;
 }
-/*
+
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1761,4 +1795,3 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
-*/

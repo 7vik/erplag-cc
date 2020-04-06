@@ -4,10 +4,20 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "moduleDeclarations" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "ID:readArr" },
 "children":[]
 }
+]
+}
 ,{
+"text": { "name": "otherModules" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "module" },
 "collapsed": true,
 "children": [
@@ -96,6 +106,10 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
 "text": { "name": "declareStmt" },
 "collapsed": true,
 "children": [
@@ -110,242 +124,28 @@
 ]
 }
 ,{
-"text": { "name": "declareStmt" },
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "driverModule" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
-"children":[]
-}
-,{
-"text": { "name": "BOOLEAN:boolean" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "RNUM:0.0" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "iterativeStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:index" },
-"children":[]
-}
-,{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:t" },
-"children":[]
-}
-,{
-"text": { "name": "LE" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:index" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:n" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "conditionalStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:t" },
-"children":[]
-}
-,{
-"text": { "name": "caseStmts" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "TRUE:true" },
-"children":[]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:list" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:index" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "caseStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "FALSE:false" },
-"children":[]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
 "text": { "name": "moduleDef" },
 "collapsed": true,
 "children": [
 {
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
 "text": { "name": "declareStmt" },
 "collapsed": true,
 "children": [
@@ -380,150 +180,18 @@
 ]
 }
 ,{
-"text": { "name": "declareStmt" },
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "otherModules" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:k" },
-"children":[]
-}
-,{
-"text": { "name": "INTEGER:integer" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "declareStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:s" },
-"children":[]
-}
-,{
-"text": { "name": "REAL:real" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:k" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "moduleReuseStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-,{
-"text": { "name": "ID:readArr" },
-"children":[]
-}
-,{
-"text": { "name": "idList" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:A" },
-"children":[]
-}
-,{
-"text": { "name": "ID:k" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "moduleReuseStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:s" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "ID:arraySum" },
-"children":[]
-}
-,{
-"text": { "name": "idList" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:A" },
-"children":[]
-}
-,{
-"text": { "name": "ID:k" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:s" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
 "text": { "name": "module" },
 "collapsed": true,
 "children": [
@@ -592,6 +260,10 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
 "text": { "name": "declareStmt" },
 "collapsed": true,
 "children": [
@@ -606,113 +278,7 @@
 ]
 }
 ,{
-"text": { "name": "declareStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "INTEGER:integer" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "iterativeStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "LE" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:k" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:tempvar" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:arr1" },
-"children":[]
-}
-,{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:tempvar" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
+"text": { "name": "END:end" },
 "children":[]
 }
 ]
@@ -720,64 +286,6 @@
 ]
 }
 ]
-}
-,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "PLUS" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
 }
 ]
 }
