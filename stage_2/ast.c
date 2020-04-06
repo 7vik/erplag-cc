@@ -115,6 +115,7 @@ astNode* buildAST(PARSE_TREE* root)
                 child2->parent = node;
                 child3->parent = node;
 
+                
                 //moduleDeclarations and otherModules can be NULL :(
             
                 if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
@@ -1425,23 +1426,53 @@ astNode* buildAST(PARSE_TREE* root)
             {
                 int certificate = string_to_enum(root->data->node_symbol);
 
-                free(root->kids[0]);
-                astNode* child1 = buildAST(root->kids[1]);
-                free(root->kids[2]);
-                astNode* child3 = buildAST(root->kids[3]);
-                free(root->kids[4]);
-                free(root->kids[5]);
-                astNode* child6 = buildAST(root->kids[6]);
-
+                
                 astNode* node = make_ASTnode(certificate);
 
                 node->tree_node = root->data;
-                child1->parent = node;
-                child3->parent = node;
-                child6->parent = node;
+                
+                astNode* new = make_ASTnode(caseStmt);   // Making a new node - Hardcoding! Though, doesn't matter.
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "caseStmt";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+                new->tree_node->lexeme = "caseStmt";
+
+                free(root->kids[0]);
+                
+                astNode* child1 = buildAST(root->kids[1]);
+                free(root->kids[2]);
+                astNode* child3 = buildAST(root->kids[3]);
+                
                 child1->sibling = child3;
-                child3->sibling = child6;
-                node->child = child1;
+                child1->parent = new;
+                child3->parent = new;
+                new->child = child1;
+
+                
+                free(root->kids[4]);
+                free(root->kids[5]);
+                astNode* child6 = buildAST(root->kids[6]);  
+                // creating a chain
+                node->child = new;
+                astNode* temp = child6->child;
+                new->sibling = temp;
+                child6->child = NULL;
+                free(child6);
+                if(temp != NULL)
+                    temp->parent = NULL;
+                
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
+                
                 return node;
 
                 break;
@@ -1451,25 +1482,55 @@ astNode* buildAST(PARSE_TREE* root)
             // ./meta 1 3 6
             case(97):
             {
-                int certificate = string_to_enum(root->data->node_symbol);
-
-                free(root->kids[0]);
-                astNode* child1 = buildAST(root->kids[1]);
-                free(root->kids[2]);
-                astNode* child3 = buildAST(root->kids[3]);
-                free(root->kids[4]);
-                free(root->kids[5]);
-                astNode* child6 = buildAST(root->kids[6]);
-                child1->sibling = child3;
-                child3->sibling = child6;
+                 int certificate = string_to_enum(root->data->node_symbol);
 
                 astNode* node = make_ASTnode(certificate);
 
                 node->tree_node = root->data;
-                child1->parent = node;
-                child3->parent = node;
-                child6->parent = node;
-                node->child = child1;
+               
+
+                astNode* new = make_ASTnode(caseStmt);   // Making a new node - Hardcoding! Though, doesn't matter.
+                TREE_NODE* var = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                if(var == NULL)
+                {
+                    printf("Malloc error. Terminating.\n\n"); 
+                    exit(5);
+                }
+                var->node_symbol = "caseStmt";   // only initializing one field; no need to initialize others
+                new->tree_node = var;
+                new->tree_node->lexeme = "caseStmt";
+
+                free(root->kids[0]);
+                
+                astNode* child1 = buildAST(root->kids[1]);
+                free(root->kids[2]);
+                astNode* child3 = buildAST(root->kids[3]);
+                
+                child1->sibling = child3;
+                child1->parent = new;
+                child3->parent = new;
+                new->child = child1;
+
+                
+                free(root->kids[4]);
+                free(root->kids[5]);
+                astNode* child6 = buildAST(root->kids[6]);  
+                // creating a chain
+                node->child = new;
+                astNode* temp = child6->child;
+                new->sibling = temp;
+                child6->child = NULL;
+                free(child6);
+                if(temp != NULL)
+                    temp->parent = NULL;
+                
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
+                
                 return node;
 
                 break;
@@ -1665,9 +1726,9 @@ void print_ast_JSON(astNode* t, FILE *fp)
 
     else
     {
+
         s=malloc(snprintf(NULL, 0, "%s:%s",t->tree_node->token_name,t->tree_node->lexeme)+1);
         sprintf(s,"%s:%s",t->tree_node->token_name,t->tree_node->lexeme);
-        // printf("%s\n",s);
     }
     
     fprintf(fp,"{\n");

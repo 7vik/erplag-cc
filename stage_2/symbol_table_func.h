@@ -18,7 +18,7 @@ typedef struct parList
 {
     char* parname; // variable name
     TYPE* datatype; // enum of datatype
-    bool is_assigned;
+    bool is_assigned; //if the outvars are assigned values inside function before returning
     struct parList* next;
 }parList;
 
