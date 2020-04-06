@@ -166,6 +166,13 @@ astNode* buildAST(PARSE_TREE* root)
                 free(child1);
                 if(temp != NULL)
                     temp->parent = NULL;
+                
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
                 return node;
             }
             
@@ -207,6 +214,13 @@ astNode* buildAST(PARSE_TREE* root)
                 free(child1);
                 if(temp != NULL)
                     temp->parent = NULL;
+
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
                 return node;
             }
             
@@ -228,19 +242,16 @@ astNode* buildAST(PARSE_TREE* root)
                 free(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
                 node->child = child4;
+                child4->parent = node;
                 return node;
             }
 
             // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
             case(8):
             {
-                // note to continuer
-
-                //module->child hoga ID node
-                //Id vaali node ka sibling hoga input_plist waala AST, make sure you do make_node in input_plist rule
-                //uska sibling hoga ret ka ASt, uska sibling moduleDef ka AST, again iss rule mein make_node hoga
-                //you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
-                // run ./make 7 10 11 and answer 1
+                // you can use make_code code. Feel free to add things. Like you can auto rule for creating free nodes too. Simple logic.  
+                // Run ./make 2 7 10 11 and answer 1.
+                // But use your own wisdom to handle intricacies.
 
                 int certificate = string_to_enum(root->data->node_symbol);
 
