@@ -111,19 +111,14 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
                 child0->parent = node;
-                printf("H1\n");
                 child1->parent = node;
-                printf("H1\n");
                 child2->parent = node;
-                printf("H1\n");
                 child3->parent = node;
-                printf("H1\n");
 
                 //moduleDeclarations and otherModules can be NULL :(
             
                 if(child0->node_marker == EPS && child1->node_marker == EPS) //both are EPS
                 {
-                    printf("here\n");
                     node->child = child2;
                     free(child0);
                     free(child1);
@@ -132,7 +127,6 @@ astNode* buildAST(PARSE_TREE* root)
                 
                 else if(child0->node_marker == EPS)
                 {
-                    printf("shbdd\n");
                     free(child0);
                     node->child = child1;
                     child1->sibling = child2;
@@ -141,15 +135,10 @@ astNode* buildAST(PARSE_TREE* root)
 
                 else 
                 {
-                    printf("erjbf\n");
                     node->child = child0;
-                    printf("H1\n");
                     child0->sibling = child1;
-                    printf("H2\n");
                     child1->sibling = child2;
-                    printf("H3\n");
                     child2->sibling = child3;
-                    printf("H4\n");
                 }
                 
                 // NOTE: We don't care if last othermodules is EPS, we have a NULL node in EPS. WHich we are fine with. 
@@ -177,14 +166,12 @@ astNode* buildAST(PARSE_TREE* root)
                 if(temp != NULL)
                     temp->parent = NULL;
                 
-                printf("h1\n");
                 temp = node->child;
                 while(temp != NULL)
                 {
                     temp->parent = node;
                     temp = temp->sibling;
                 }
-                printf("h2\n");
                 return node;
             }
             

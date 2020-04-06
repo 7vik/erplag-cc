@@ -8,6 +8,7 @@
 #include "parser.h"             // TREE_NODE structure
 #include <assert.h>
 #include "symbol_table_id.h"
+#include "bool.h"
 #define GST_SIZE 8          // max size of the global symbol table, for testing purposes, change later
 
 
@@ -27,6 +28,7 @@ typedef struct FUNC_TABLE_ENTRY
     int width; // total size of all local vars
     ID_SYMBOL_TABLE* local_id_table;
     struct FUNC_TABLE_ENTRY* next; // for chaining
+    bool is_declared;  // to check if it is declared.
 }FUNC_TABLE_ENTRY;
 
 typedef struct FUNC_SYMBOL_TABLE

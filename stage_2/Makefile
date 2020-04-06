@@ -41,3 +41,6 @@ ast.o : ast.c
 
 symbol_table_id.o: symbol_table_id.c
 	gcc -c symbol_table_id.c
+
+clean:
+	rm ast.o symbol_table_id.o hash.o bool.o parser.o lexer.o
