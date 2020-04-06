@@ -144,6 +144,7 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     new->width = get_width(type);
     new->offset = 0;                             // for now, I am not sure how to handle it
     new->next = NULL;
+    new->is_declared = false;
     return new;
 }
 
@@ -204,17 +205,18 @@ void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
 }
 
 
-// just a helper function for testing. Comment this out
-astNode *init_ast_node_par()
-{
-    astNode *node = (astNode *)malloc(sizeof(astNode));
-    node->child = NULL;
-    node->parent = NULL;
-    node->sibling = NULL;
-    node->is_leaf = 1;
-    node->node_marker = ID;
-    return node;
-}
+// // just a helper function for testing. Comment this out
+// astNode *init_ast_node_par()
+// {
+//     astNode *node = (astNode *)malloc(sizeof(astNode));
+//     node->child = NULL;
+//     node->parent = NULL;
+//     node->sibling = NULL;
+//     node->is_leaf = 1;
+//     node->node_marker = ID;
+//     return node;
+// }
+
 int main(int argc, char* argv[])
 {
     // just to test if it's working

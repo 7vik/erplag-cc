@@ -110,6 +110,7 @@ FUNC_TABLE_ENTRY *create_func_symbol(astNode *node, parList *inp_par, parList *o
     new->width = get_total_width(st);
     new->local_id_table = st;
     new->next = NULL;
+    new->is_declared = false;
     return new;
 }
 
