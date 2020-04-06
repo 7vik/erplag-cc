@@ -18,8 +18,8 @@
 
 all: hellor
 
-hellor: bool.o parser.o lexer.o hash.o ast.o
-	gcc -o stage2exe ast.o bool.o parser.o lexer.o hash.o
+hellor: bool.o parser.o lexer.o hash.o ast.o symbol_table_id.o
+	gcc -o stage2exe symbol_table_id.o ast.o bool.o parser.o lexer.o hash.o
 
 bool.o : bool.c
 	gcc -c bool.c
@@ -35,3 +35,6 @@ hash.o : hash.c
 
 ast.o : ast.c
 	gcc -c ast.c
+
+symbol_table_id.o: symbol_table_id.c
+	gcc -c symbol_table_id.c

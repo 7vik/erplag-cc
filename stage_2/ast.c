@@ -30,11 +30,17 @@ Doubts:
 
 */
 
-
+int num_ast_nodes = 0;
+int num_parse_nodes = 0;
 
 astNode* make_ASTnode(int certificate)
 {
-    astNode* node = (astNode*) malloc(sizeof(astNode));             // malloc check?
+    astNode* node = (astNode*) malloc(sizeof(astNode));
+    if(node == NULL)
+    {
+        printf("Malloc error. Terminating.\n\n"); 
+        exit(5);
+    }
     node->node_marker = certificate;
     node->tree_node = NULL;
     //node->next = NULL;
@@ -42,7 +48,7 @@ astNode* make_ASTnode(int certificate)
     node->child = NULL;
     node->sibling = NULL;
     node->is_leaf = 0;
-
+    num_ast_nodes++;
     return node;
 }
 
@@ -52,6 +58,7 @@ astNode* buildLeafAST(PARSE_TREE* t)
     astNode* node = make_ASTnode(certificate);
     node->tree_node = t->data;
     node->is_leaf = 1;
+    num_parse_nodes++;
     return node;
 }
 
@@ -84,6 +91,7 @@ astNode* buildAST(PARSE_TREE* root)
     if (root != NULL)
     {
         int rule_num = root->data->rule_number;
+        num_parse_nodes++;
         // printf("Rule number: %d\n", rule_num);
 
         switch(rule_num)
@@ -128,7 +136,6 @@ astNode* buildAST(PARSE_TREE* root)
 
                 else 
                 {
-                    // printf("here\n");
                     node->child = child0;
                     child0->sibling = child1;
                     child1->sibling = child2;
@@ -138,7 +145,6 @@ astNode* buildAST(PARSE_TREE* root)
                 // NOTE: We don't care if last othermodules is EPS, we have a NULL node in EPS. WHich we are fine with. 
                 // Similar is the case when child1 is EPS while child0 is not.
                 return node;
-                break; // LOL, this is scam
             }
             
 
@@ -146,12 +152,21 @@ astNode* buildAST(PARSE_TREE* root)
             case(2):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
-                return child0;
-                break;
+                child0->parent = node;
+
+                node->child = child0;
+                astNode* temp = child1->child;
+                child0->sibling = temp;
+                child1->child = NULL;
+                free(child1);
+                if(temp != NULL)
+                    temp->parent = NULL;
+                return node;
             }
             
             // moduleDeclarations -> EPS
@@ -163,16 +178,14 @@ astNode* buildAST(PARSE_TREE* root)
             // moduleDeclaration -> DECLARE MODULE ID SEMICOL
             case(4):
             {
-                int certificate = string_to_enum(root->data->node_symbol);
+                int certificate = string_to_enum(root->kids[2]->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
-                node->tree_node = root->data;
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[3]);
                 node->tree_node = root->kids[2]->data;
                 node->is_leaf = 1;
-                return node;
-                break;  
+                return node;  
             }
 
             // otherModules -> module otherModules1
@@ -180,13 +193,21 @@ astNode* buildAST(PARSE_TREE* root)
             case(5):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
 
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
-                return child0;
+                child0->parent = node;
 
-                break;
+                node->child = child0;
+                astNode* temp = child1->child;
+                child0->sibling = temp;
+                child1->child = NULL;
+                free(child1);
+                if(temp != NULL)
+                    temp->parent = NULL;
+                return node;
             }
             
             // otherModules -> EPS
@@ -200,14 +221,14 @@ astNode* buildAST(PARSE_TREE* root)
             case(7):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[2]);
                 free(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
-                return child4;
-
-                break;
+                node->child = child4;
+                return node;
             }
 
             // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
@@ -1687,6 +1708,7 @@ void print_AST_tree(astNode* tree)
 
     return;
 }
+/*
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1725,3 +1747,4 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
+*/

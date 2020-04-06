@@ -11,6 +11,7 @@
 #include<stdlib.h>              // malloc() , exit()
 #include<string.h>              // strcmp()
 
+#define FUNC_PARAMS 8             // max number of function parametes (both IO)
 #define ST_SIZE 8                 // max size of symbol table, for testing purposes, change later
 #define MAX_KIDS 8                // max kids of a symbol table, for testing purposes, change later
 #define ST_ABS(N) ((N<0)?(-N):(N))    // because of my awesome hashing function
@@ -44,65 +45,51 @@ A symbol table is a table of symbols. It is required to:
     - and nothing else
 
 - for variables, we should store the name and the type
-- for functions, we should store the name and the type (two linked lists of types)
+- for functions, we should store the name and the type (two lists of types)
 
 - a symbol table can be a hash_table (preferred over linear self-organizing lists and trees), with
     - key: name of the variable / function (id)
     - value: the type of the variable / function where the type of a function will be a much elaborate structure
+    - the width and offset (dunno why)
 
 - to create the symbol table(s), we need to traverse the AST, and for each type of AST node, 
-- hardcode rules to add stuff to the ST. This traversal will be written after the AST is created.
-
-- to create two functions
-    - one to add symbols (key, value) to a ST
-    - one to search for them and return the value (type)
-
-- So I'm creating a rudimentary ST, we'll need to make a lot of changes
-- which should be easy since I write awesome code ¯\_(ツ)_/¯ 
-
-DOUBTS:
-
-- do we need to think about built-in types like integer, real, etc during symbol table?
-- how do we store a symbol table inside a symbol table in case of nested blocks, and 
-- do we really need to?
-- if we don't store values in the ST, and just the AST, does that create a problem for the code generation part?
-
+- hardcode rules to add stuff to the ST. 
 */
 
 // type data for an array
 typedef struct ArRAY_TyPE_DaTA
 {
     // array[begin..end] of simple
-    int begin;
-    int end;
-    int simple;                // 1,2,3 for integer, real, boolean
+    unsigned int begin;
+    unsigned int end;
+    unsigned short int simple;                // 1,2,3 for integer, real, boolean
     // changes here if she allows for nested arrays
 } ARRAY_TYPE_DATA;
 
-// abstract structure to store any given type (insert a good type type pun)
-typedef struct TYPE_INFO
+// type data for a function
+typedef struct FuNCTION_TyPE_DaTA
 {
-    unsigned short int simple;                   // 1,2,3,4 for integer, real, boolean or array
-    ARRAY_TYPE_DATA *arrtype;       // if array, else nulla
+    // a function type has inputs and outputs (as an array)
+    unsigned int num_in, num_out;                        // number of inputs/outputs
+    struct symbol_data *inputs[FUNC_PARAMS];                     // everything else NULL, only for type of parameters with name
+    struct symbol_data *outputs[FUNC_PARAMS];
+} FUNCTION_TYPE_DATA;
+
+// abstract structure to store any given type (insert a good type type pun)
+typedef struct TyPE_InFO
+{
+    unsigned short int simple;                   // 1,2,3,4,5 for integer, real, boolean, array or function
+    ARRAY_TYPE_DATA *arrtype;                   // if array, else NULL
+    FUNCTION_TYPE_DATA *functype;              // if function, else NULL
 } TYPE;
 
-// scope data structure, 
-// I'm assuming scope data must be stored in the ST
-typedef struct scope_data
-{
-    char *scope;
-    // NOTE: Since everything has a scope, NULL means global scope.
-    // otherwise, the name of the program / function / block will have to be stored here
-    // will take care of this part after AST creation
-} SCOPE;
-
-// we define a structure 'symbol' that will store the symbols
-// this later needs to be changed as per necessity
+// we define a structure 'symbol' that will store the symbols (entries in the symbol table)
 typedef struct symbol_data
 {
     char *name;
     TYPE *type;
-    SCOPE *scope;
+    unsigned int width;
+    unsigned int offset;
     // anything else add here
 } SYMBOL;
 
@@ -116,14 +103,15 @@ typedef struct st_entry_list_node
     struct st_entry_list_node *next;            //  chaining for collisions
 } ST_ENTRY;
 
-// now our single, global symbol table
+// now our single, global symbol table (every function/scope has its own ST)
 typedef struct SYMBOL_TABLE
 {
     struct SYMBOL_TABLE *parent;                // pointer to misogynistic parent, NULL for global symbol table
-    char *st_name;                              // name of the symbol table, global initially, can be used for scope info
-    ST_ENTRY *table[ST_SIZE];
-    unsigned short int kid_table_count;                      // initially zero
-    struct SYMBOL_TABLE *kid_tables[MAX_KIDS];            // array of kid tables to support nested STs. I know I'm awesome
+    char *fn_name;                              // name of the symbol table, global initially later name of function / block
+    FUNCTION_TYPE_DATA *ftype;                  // type if function, else NULL
+    ST_ENTRY *table[ST_SIZE];                   // ST for variables
+    unsigned short int kid_table_count;         // initially zero
+    struct SYMBOL_TABLE *kid_tables[MAX_KIDS];  // array of kid tables to support nested STs
 } ST;  
 
 // we initialize our symbol table
@@ -132,7 +120,7 @@ void st_initialize(ST *symbol_table, char *name, ST *parent)
     symbol_table->parent = parent;
     if (parent != NULL)
         parent->kid_tables[parent->kid_table_count++] = symbol_table;
-    symbol_table->st_name = name;
+    symbol_table->fn_name = name;
     for (int iterator=0; iterator<ST_SIZE; ++iterator)
         symbol_table->table[iterator] = NULL;               // no symbols. Duh!
     symbol_table->kid_table_count = 0;                  // no kid tables initially
@@ -179,46 +167,11 @@ void st_insert_symbol(SYMBOL *sym, ST *st)
     }
     return;
 }
-
-/* I have never tested this in my life. I'd prefer it commented out for all eternity.
-int delete(char *value, ST_ENTRY **hash_table)
-{
-    int key = hash(value);
-    ENTRY *temp = hash_table[key];
-    ENTRY *dealloc;
-    if (temp != NULL)
-    {
-        if(temp->data == value)
-        {
-            dealloc = temp;
-            temp = temp->next;
-            free(dealloc);
-            return 0;
-        }
-        else
-        {
-            while(temp->next)
-            {
-                if(temp->next->data == value)
-                {
-                    dealloc = temp->next;
-                    temp->next = temp->next->next;
-                    free(dealloc);
-                    return 0;
-                }
-                temp = temp->next;
-            }
-        }
-    }
-    return 1;
-}
-*/
-
 // helper function to print a symbol table
 // recursive (oh yeah finally)
 void st_print(ST *st)
 {
-    printf("\nPrinting Symbol Table: %s\n\n", st->st_name);
+    printf("\nPrinting Symbol Table: %s\n\n", st->fn_name);
     for(int i = 0; i < ST_SIZE; i++)
     {
         ST_ENTRY *temp = st->table[i];
