@@ -526,16 +526,16 @@ astNode* buildAST(PARSE_TREE* root)
             }
             
             case(25)://moduleDef -> START statements END
-
             {
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* child0 = buildLeafAST(root->kids[0]);
-                //free(root->kids[0]);
+                
                 astNode* child1 = buildAST(root->kids[1]);
                 astNode* child2 = buildLeafAST(root->kids[2]);
-                astNode* node = make_ASTnode(certificate);
                 
+                astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
+
                 child0->parent = node;
                 child1->parent = node;
                 child2->parent = node;
@@ -543,29 +543,10 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->sibling = child1;
                 child1->sibling = child2;
                 return node;
-                
-                break;
-                    //To do
             }
             
             case(26)://statements -> statement statements 
-
             {
-               // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                // astNode* child1 = buildAST(root->kids[1]);
-                // child0->sibling = child1;
-                
-                // // astNode* node = make_ASTnode(certificate);
-                
-                // // node->tree_node = root->data;
-                // // child0->parent = node;
-                // // child1->parent = node;
-                // // node->child = child0;
-
-                // return child0;
-
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
                 node->tree_node = root->data;
@@ -589,118 +570,39 @@ astNode* buildAST(PARSE_TREE* root)
                     temp = temp->sibling;
                 }
                 return node;
-                
-                break;
-                    //To do
             }
             
             case(27)://statements -> EPS
-            
             {
                 return buildLeafAST(root->kids[0]);
-                    //To do
             }
             
             case(28)://statement -> ioStmt 
-
             {
                 return buildAST(root->kids[0]);
-                // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // node->child = child0;
-                // return node;
-                
-                // break;
-                    //To do
             }
             
             case(29)://statement -> simpleStmt 
-
             {
                 return buildAST(root->kids[0]);
-                // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // node->child = child0;
-                // return node;
-                
-                // break;
-                    //To do
             }
             
             case(30)://statement -> declareStmt 
-
             {
                 return buildAST(root->kids[0]);
-
-                // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // node->child = child0;
-                // return node;
-                
-                // break;
-                    //To do
             }
             
             case(31)://statement -> conditionalStmt 
-
             {
                 return buildAST(root->kids[0]);
-
-                // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // node->child = child0;
-                // return node;
-                
-                // break;
-                    //To do
             }
             
             case(32)://statement -> iterativeStmt
-
             {
                 return buildAST(root->kids[0]);
-
-                // int certificate = string_to_enum(root->data->node_symbol);
-            
-                // astNode* child0 = buildAST(root->kids[0]);
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // node->child = child0;
-                // return node;
-                
-                // break;
-                    //To do
             }
             
             case(33)://ioStmt -> GET_VALUE BO ID BC SEMICOL 
-
             {
                 int certificate = string_to_enum(root->data->node_symbol);
             
