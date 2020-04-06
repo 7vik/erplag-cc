@@ -145,7 +145,6 @@ astNode* buildAST(PARSE_TREE* root)
                 // NOTE: We don't care if last othermodules is EPS, we have a NULL node in EPS. WHich we are fine with. 
                 // Similar is the case when child1 is EPS while child0 is not.
                 return node;
-                break; // this won't be executed at all! Avoid this from next time.
             }
             
 
@@ -220,14 +219,14 @@ astNode* buildAST(PARSE_TREE* root)
             case(7):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[2]);
                 free(root->kids[3]);
                 astNode* child4 = buildAST(root->kids[4]);
-                return child4;
-
-                break;
+                node->child = child4;
+                return node;
             }
 
             // module -> DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef
