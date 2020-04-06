@@ -156,6 +156,8 @@ TYPE *get_type(astNode *ast)
         malloc_error
     if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
     {
+        if(ast->sibling == NULL)
+            printf("%s\n", variables_array[ast->parent->node_marker]);
         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
         if (new->simple == datatype)                            // it's an array
         {
