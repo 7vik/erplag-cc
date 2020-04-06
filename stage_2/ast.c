@@ -553,18 +553,42 @@ astNode* buildAST(PARSE_TREE* root)
             {
                // int certificate = string_to_enum(root->data->node_symbol);
             
+                // astNode* child0 = buildAST(root->kids[0]);
+                // astNode* child1 = buildAST(root->kids[1]);
+                // child0->sibling = child1;
+                
+                // // astNode* node = make_ASTnode(certificate);
+                
+                // // node->tree_node = root->data;
+                // // child0->parent = node;
+                // // child1->parent = node;
+                // // node->child = child0;
+
+                // return child0;
+
+                int certificate = string_to_enum(root->data->node_symbol);
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
+
                 astNode* child0 = buildAST(root->kids[0]);
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
-                
-                // astNode* node = make_ASTnode(certificate);
-                
-                // node->tree_node = root->data;
-                // child0->parent = node;
-                // child1->parent = node;
-                // node->child = child0;
+                child0->parent = node;
 
-                return child0;
+                node->child = child0;
+                astNode* temp = child1->child;
+                child0->sibling = temp;
+                child1->child = NULL;
+                free(child1);
+                if(temp != NULL)
+                    temp->parent = NULL;
+
+                temp = node->child;
+                while(temp != NULL)
+                {
+                    temp->parent = node;
+                    temp = temp->sibling;
+                }
+                return node;
                 
                 break;
                     //To do
