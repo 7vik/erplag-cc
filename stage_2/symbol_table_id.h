@@ -8,6 +8,7 @@
 #include "parser.h"             // TREE_NODE structure
 #include "type.h"               // type data
 #include <assert.h>
+#include "bool.h"
 #define ST_ID_SIZE 8            // max size of the id symbol table, for testing purposes, change later
 #define ST_KID_NUM 8            // max no of kids of an ID symbol table, change later
 
@@ -30,6 +31,7 @@ typedef struct ID_TABLE_ENTRY
     TYPE *datatype;                               //structure of datatype
     int width;
     int offset;
+    bool is_declared;
     struct ID_TABLE_ENTRY *next;                // for chaining
 } ID_TABLE_ENTRY;
 

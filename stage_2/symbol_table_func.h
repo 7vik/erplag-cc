@@ -18,6 +18,7 @@ typedef struct parList
 {
     char* parname; // variable name
     TYPE* datatype; // enum of datatype
+    bool is_assigned;
     struct parList* next;
 }parList;
 
