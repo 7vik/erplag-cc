@@ -237,6 +237,7 @@ astNode* buildAST(PARSE_TREE* root)
             {
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
                 free(root->kids[0]);
                 free(root->kids[1]);
                 free(root->kids[2]);

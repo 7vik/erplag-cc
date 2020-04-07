@@ -73,6 +73,7 @@ char *show_type(TYPE *t)
         strcat(array_type_str, variables_array[t->arrtype->base_type]);
         return array_type_str;
     }
+        // printf("SHOW ME AAYA\n");
     return NULL;
 }
 
@@ -118,7 +119,7 @@ ID_TABLE_ENTRY* st_lookup(char *name, ID_SYMBOL_TABLE *st)
 
 int get_width(TYPE *t)
 {
-    printf("IN GET WITDH\n");
+    // printf("IN GET WITDH\n");
    int size = t->simple == INTEGER  ? 4
             : t->simple == REAL     ? 8
             : t->simple == BOOLEAN  ? 1
@@ -127,7 +128,7 @@ int get_width(TYPE *t)
                                 :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       0
             : 0;
-    printf("OUT GET WITDH\n");
+    // printf("OUT GET WITDH\n");
     return size;
 }
 
@@ -147,76 +148,157 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     return new;
 }
 
-// extract the type out of any AST node
-TYPE *get_type(astNode *ast)              
+// // extract the type out of any AST node
+// TYPE *get_type(astNode *ast)              
+// {
+//     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
+//     if (!new)
+//         malloc_error
+//     if (ast == NULL)    printf("BAS1\n");
+//     if (ast->tree_node == NULL)    printf("BAS2\n");
+//     if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
+//     {
+//         printf("Save: %s\n", ast->tree_node->lexeme);
+//         if (ast->sibling == NULL || is(ast->sibling, "idList") || is(ast->sibling, "ID"))
+//         {
+//             printf("FASgaya\n");
+//             new->simple = INTEGER;      // change later
+//             new->arrtype = NULL;
+//             return new;
+//         }    
+//         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
+//         if (new->simple == ARRAY)                            // it's an array
+//         {
+//             new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
+//             if (! new->arrtype)
+//                 malloc_error
+//             new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
+//             new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
+//             new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
+//         }
+//         else
+//             new->arrtype = NULL;
+//     }
+//     return new;
+// }
+
+TYPE *get_type(astNode *n)          // temporary, delete it
 {
-    printf("IN GET TYPE\n");
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
-    if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
-    {
-        printf("ALL FINE\n");
-        if (ast->sibling == NULL)
-            printf("BOO\n");
-        printf("NO\n");
-        if(ast->sibling == NULL)
-            printf("%s\n", variables_array[ast->parent->node_marker]);
-        new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
-        if (new->simple == ARRAY)                            // it's an array
-        {
-            new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
-            if (! new->arrtype)
-                malloc_error
-            new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
-            new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
-            
-            new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
-        }
-        else
-            new->arrtype = NULL;
-    }
-    // printf("\t\t%s\n", variables_array[new->simple]);
-    printf("OUT GET TYPE\n");
+    new->simple = INTEGER;
+    new->arrtype = NULL;
     return new;
 }
 
-// // this currently just traverse the entire AST and adds the variables to the symbol table
-// // this for testing purposes only and demonstrating the traversal of AST.
-// void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
-// {
-//     astNode* temp = ast;                                    // temp will traverse
-//     if (temp->child == NULL)                                // if it's a leaf node
-//     {
-//         if (strcmp(temp->tree_node->node_symbol, "ID") == 0)            //  and an ID node
-//         {
-//             if (st_lookup(temp->tree_node->lexeme, st) == NULL)         // and if ID is not already there
-//             {
-//                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
-//                 printf("HIIHI\n");
-//                 st_insert_id_entry(table_entry, st);
-//             }
-//         }
-//         return;
-//     }
-//     else  // non terminal
-//     {
-//         // iterate over its child
-//         temp = temp->child; 
-//         while(temp != NULL)
-//         {
-//             id_st_populate(st, temp);
-//             temp = temp->sibling;
-//         }
-//         return;
-//     }
-// }
+int is(astNode *node, char *comp)
+{
+    if (strcmp(node->tree_node->node_symbol, comp) == 0)
+        return 1;
+    return 0;
+}
+
+void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st)
+{
+    // printf("IN4\n");
+    astNode* temp = node;
+    if (temp->child == NULL)                                //  terminal
+    {    
+        if (is(temp, "ID"))            //  and an ID node
+        {
+            if (st_lookup(temp->tree_node->lexeme, id_st) == NULL)         // and if ID is not already there
+            {
+                // printf("YO1\n");
+                TYPE *t = get_type(temp);
+                // printf("YO2\n");
+                ID_TABLE_ENTRY *e = create_symbol(temp, t);
+                // printf("YO3\n");
+                st_insert_id_entry(e, id_st);
+                // printf("YO4\n");
+            }
+        }
+    }
+    else  // non terminal
+    {    
+        for(temp = temp->child; temp; temp = temp->sibling)
+            traverse_the_universe(temp, id_st);
+    }
+    // printf("OUT4\n");
+}
 
 // traverse the ast, fill the GST (while performing some checks)
-void *traverse_the_multiverse(astNode *node, GST *st)
+void traverse_the_multiverse(astNode *n, GST *st)
 {
-    
+    if (is(n,"program"))                
+        for(astNode *temp = n->child; temp; temp = temp->sibling)
+            traverse_the_multiverse(temp,st);
+
+    if (is(n, "moduleDeclarations"))
+        for (astNode *temp = n->child; temp; temp = temp->sibling)
+            st_insert_func_entry(create_function(temp,NULL, NULL, NULL), st);
+        
+    if (is(n, "otherModules") && n->sibling != NULL)
+    {
+        for (astNode *m = n->child; m; m = m->sibling)
+        {
+            PARAMS *p1 = create_param(m->child->sibling->child);
+            PARAMS *p2 = create_param(m->child->sibling->sibling->child);
+            ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
+            st_insert_func_entry(create_function(m->child, p1, p2, id_st), st);
+            traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
+        }
+    }
+    if (is(n, "driverModule"))
+    {
+        ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
+        FUNC_TABLE_ENTRY *fnew = create_function(NULL, NULL, NULL, id_st);
+        // printf("Ha1\n");
+        st_insert_func_entry(fnew, st);
+        // printf("Ha2\n");
+        traverse_the_universe(n->child, id_st);
+        // printf("Ha3\n");
+    }
+    if (is(n, "otherModules") && n->sibling == NULL)
+    {
+        for (astNode *m = n->child; m; m = m->sibling)
+        {
+            FUNC_TABLE_ENTRY *temp = global_st_lookup(m->child->tree_node->lexeme, st);
+            if (!temp)
+            {
+                printf("Semantic Error: Module '%s' defined without declaration.", m->child->tree_node->lexeme);
+                exit(54);
+            }
+            else
+            {
+                PARAMS *p1 = create_param(m->child->sibling->child);
+                PARAMS *p2 = create_param(m->child->sibling->child);    // change later
+                ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
+                temp->in_params = p1;
+                temp->out_params = p2;
+                temp->local_id_table = id_st;
+                traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
+            }
+        }
+    }
+    if (is(n, "EPS"))
+        return;
     return;
+}
+
+PARAMS *create_param(astNode *plist)
+{
+    PARAMS *new = (PARAMS *) malloc(sizeof(PARAMS));
+    if (!new)
+        malloc_error
+    new->param_name = plist->child->tree_node->lexeme;
+    new->datatype = get_type(plist->child);
+    new->is_assigned = false;
+    if (plist->sibling)
+        new->next = create_param(plist->sibling);
+    else
+        new->next = NULL;
+    return new;
 }
 
 // we initialize our global symbol table
@@ -252,8 +334,8 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
 // helper function to print the global symbol table
 void gst_print(GST *st)
 {
-    printf("\nPrinting GST with %d functions:\n\n", st->total_functions);
-    for(int i = 0; i < st->total_functions; i++)
+    printf("\nPrinting GST with %d function(s):\n\n", st->total_functions);
+    for(int i = 0; i < GST_SIZE; i++)
     {
         FUNC_TABLE_ENTRY *temp = st->func_table[i];
         while(temp)
@@ -261,7 +343,7 @@ void gst_print(GST *st)
             printf("\tPrinting Function Table for '%s':\n", temp->func_name);
 	        print_params(temp->in_params);	            // defined below
 	        print_params(temp->out_params);
-            printf("\tThe ID ST for '%s' is:\n\n");
+            printf("\tThe ID ST for this function is:\n\n");
             id_st_print(temp->local_id_table);
             temp = temp->next;
         }
@@ -273,10 +355,12 @@ void gst_print(GST *st)
 void print_params(PARAMS *list)
 {
     PARAMS *temp = list;
-    printf("\t\tParams => ")
+    printf("\tPARAMS:\n");
     while(temp)
     {
-        printf("[%s %s] --> ",temp->param_name, show_type(temp->datatype));	
+        char *pn = temp->param_name;
+        char *ty = show_type(temp->datatype);	
+        printf("[%s %s] --> ",pn, ty); 
 	    temp = temp->next;
     }
     putchar('\n');
@@ -301,17 +385,31 @@ FUNC_TABLE_ENTRY *global_st_lookup(char *name, GST *st)
 // populating a global symbol table entry, will be created when we define a function
 FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_par, ID_SYMBOL_TABLE *st)      
 {
-    assert(strcmp(node->tree_node->token_name, "ID") == 0);             //this should have ID info
+    // printf("IN2\n");
     FUNC_TABLE_ENTRY *new = (FUNC_TABLE_ENTRY *) malloc(sizeof(FUNC_TABLE_ENTRY));
     if (!new)
-        malloc_error    
-    new->func_name = node->tree_node->lexeme;
-    new->in_params = inp_par;
-    new->out_params = out_par;
-    new->width = get_total_width(st);
-    new->local_id_table = st;
-    new->next = NULL;
-    new->is_declared = false;
+        malloc_error
+    if (node == NULL)       // for the driver function
+    {
+        new->func_name = "driver";
+        new->in_params = NULL;
+        new->out_params = NULL;
+        new->local_id_table = st;
+        new->next = NULL;
+        new->is_declared = true;
+    }
+    else
+    {
+        assert(strcmp(node->tree_node->token_name, "ID") == 0);             //this should have ID info
+        new->func_name = node->tree_node->lexeme;
+        new->in_params = inp_par;
+        new->out_params = out_par;
+        new->width = get_total_width(st);
+        new->local_id_table = st;
+        new->next = NULL;
+        new->is_declared = false;
+    }
+    // printf("OUT2\n");
     return new;
 }
 
@@ -337,20 +435,6 @@ int get_total_width(ID_SYMBOL_TABLE *st)
 
     return total;
 }
-
-
-
-// // just a helper function for testing. Comment this out
-// astNode *init_ast_node_par()
-// {
-//     astNode *node = (astNode *)malloc(sizeof(astNode));
-//     node->child = NULL;
-//     node->parent = NULL;
-//     node->sibling = NULL;
-//     node->is_leaf = 1;
-//     node->node_marker = ID;
-//     return node;
-// }
 
 int main(int argc, char* argv[])
 {
@@ -384,6 +468,7 @@ int main(int argc, char* argv[])
 
     // Test Symbol table
     GST *st = create_global_st();
+    traverse_the_multiverse(ast_root, st);
     gst_print(st);
 
     fclose(test_fp);
