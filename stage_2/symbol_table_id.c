@@ -7,7 +7,7 @@
 #define ST_ABS(N) ((N<0)?(-N):(N))                      // because of my awesome hashing function
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
-// hash function: implementing ayush's hash, patent pending ;)
+// hash function: implementing vunDina's hash, patent pending ;)
 int st_hash(char *s261)
 {
     int n261 = 261;
@@ -18,7 +18,7 @@ int st_hash(char *s261)
 }
 
 // we initialize our symbol table of identifiers
-ID_SYMBOL_TABLE* create_id_st(void *papa)
+ID_SYMBOL_TABLE *create_id_st(ID_SYMBOL_TABLE *papa)
 {
     ID_SYMBOL_TABLE *id_table = (ID_SYMBOL_TABLE *) malloc(sizeof(ID_SYMBOL_TABLE));   
     for (int iterator = 0; iterator < ST_ID_SIZE; ++iterator)
@@ -104,7 +104,7 @@ void id_st_print(ID_SYMBOL_TABLE *st)
 // lookup the symbol table of identifiers for name, and return the symbol if found
 ID_TABLE_ENTRY* st_lookup(char *name, ID_SYMBOL_TABLE *st)
 {
-    // first, compute the key where the variable would be (tentatively) stored
+    // first, compute the key where the variable would be stored
     int key = st_hash(name);
     ID_TABLE_ENTRY *temp = st->id_table[key];
     while(temp)
@@ -214,6 +214,128 @@ void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
         return;
     }
 }
+
+// we initialize our global symbol table
+GST* create_global_st()
+{
+    GST *st = (GST *) malloc(sizeof(GST));
+    if (!st)
+        malloc_error   
+    for (int iterator = 0; iterator < GST_SIZE; ++iterator)
+        st->func_table[iterator] = NULL;                        // no functions in the table
+    st->total_functions = 0;
+    return st;
+}
+
+// now, we insert function table entry to our global ST
+// The corresponding structure 'sym' should have been populated earlier.
+void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
+{
+    int key = st_hash(f->func_name);          // calculate the hash to find out where to insert this entry 
+    if (st->func_table[key] == NULL)      // if there is no collision, 
+        st->func_table[key] = f;        // just add it
+    else                                // collision resolved by 
+    {
+        FUNC_TABLE_ENTRY *temp = st->func_table[key];       // going to the end of list
+        while (temp->next)
+            temp = temp->next;
+        temp->next = f;                               // and adding it there
+    }
+    st->total_functions += 1;
+    return;
+}
+
+// helper function to print the global symbol table
+void gst_print(GST *st)
+{
+    printf("\nPrinting Global Symbol Table with %d functions:\n\n", st->total_functions);
+    for(int i = 0; i < st->total_functions; i++)
+    {
+        FUNC_TABLE_ENTRY *temp = st->func_table[i];
+        printf("GST[%d]-->",i);
+        while(temp)
+        {
+            printf("[[[ %s -- ", temp->func_name);
+	        print_params(temp->in_params);	            // defined below
+ 	        printf(" -- ");
+	        print_params(temp->out_params);
+	        printf(" ]]] -->");	                       
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    } 
+    //id_st_print(st->local_id_table);	// Not like this!
+    return;
+}
+
+// helper function to print the parameter lists of global symbol table
+void print_params(PARAMS *list)
+{
+    PARAMS *temp = list;
+    while(temp)
+    {
+        printf("[%s %s] --> ",temp->param_name, show_type(temp->datatype));	
+	    temp = temp->next;
+    }
+    printf("NULL");
+    return;
+}
+ 
+// lookup the global symbol table for function, and return the entry if found
+FUNC_TABLE_ENTRY *global_st_lookup(char *name, GST *st)
+{
+    // first, compute the key where the variable would be stored in GST
+    int key = st_hash(name);
+    FUNC_TABLE_ENTRY *temp = st->func_table[key];
+    while(temp)
+    {
+        if(strcmp(temp->func_name, name) == 0)   // entry found
+            return temp;
+        temp = temp->next;
+    }
+    return NULL;  // function with the specified name not defined (no need to recurse)
+}
+
+// populating a global symbol table entry, will be created when we define a function
+FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_par, ID_SYMBOL_TABLE *st)      
+{
+    assert(strcmp(node->tree_node->token_name, "ID") == 0);             //this should have ID info
+    FUNC_TABLE_ENTRY *new = (FUNC_TABLE_ENTRY *) malloc(sizeof(FUNC_TABLE_ENTRY));
+    if (!new)
+        malloc_error    
+    new->func_name = node->tree_node->lexeme;
+    new->in_params = inp_par;
+    new->out_params = out_par;
+    new->width = get_total_width(st);
+    new->local_id_table = st;
+    new->next = NULL;
+    new->is_declared = false;
+    return new;
+}
+
+int get_total_width(ID_SYMBOL_TABLE *st)
+{
+    if(st == NULL)	// No symbol table of identifiers <=> no local variables of function
+	return 0;
+
+    int total = 0;
+    ID_TABLE_ENTRY *temp;
+    for(int i = 0; i < ST_ID_SIZE; i++)	// summing up the widths of each identifier in the current ST.
+    {
+        temp = st->id_table[i];
+        while(temp)
+	{
+	    total += temp->width;
+    	    temp = temp->next;
+        }
+    }
+
+    for(int j = 0; j < st->kid_table_count; j++)
+	total += get_total_width(st->kid_st[j]);
+
+    return total;
+}
+
 
 
 // // just a helper function for testing. Comment this out
