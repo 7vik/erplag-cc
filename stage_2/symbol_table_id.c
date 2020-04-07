@@ -163,6 +163,8 @@ TYPE *get_type(astNode *ast)
         if (ast->sibling == NULL)
             printf("BOO\n");
         printf("NO\n");
+        if(ast->sibling == NULL)
+            printf("%s\n", variables_array[ast->parent->node_marker]);
         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
         if (new->simple == ARRAY)                            // it's an array
         {

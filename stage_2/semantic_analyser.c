@@ -154,7 +154,10 @@ void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
             check_ioStmt_semantic(temp, id_table);
         else if (temp->node_marker == assignmentStmt)
             check_assignmentStmt_semantic(temp, id_table);
-        else if (temp->node_marker == simpleStmt)
+        else if (temp->node_marker == iterativeStmt)
+            check_iterativeStmt_semantic(temp, id_table);
+        else if (temp->node_marker == case)
+            
         temp = temp->sibling;
     }
 
