@@ -80,7 +80,7 @@ char *show_type(TYPE *t)
 void id_st_print(ID_SYMBOL_TABLE *st)
 {
     if (st == NULL) return;
-    printf("\nPrinting ID Symbol Table with %d ids\n\n", st->total_ids);
+    printf("\n\tPrinting ID Symbol Table with %d ids:\n\n", st->total_ids);
     for(int i = 0; i < ST_ID_SIZE; i++)
     {
         ID_TABLE_ENTRY *temp = st->id_table[i];
@@ -91,12 +91,9 @@ void id_st_print(ID_SYMBOL_TABLE *st)
             temp = temp->next;
         }
         printf("NULL\n");
-    } 
-    //comment the following loop if you don't want to print ST for inner scopes as well, for which the current ST will serve as the ancestor.
-    
+    }     
     for (int j = 0; j < st->kid_table_count; ++j)
         id_st_print(st->kid_st[j]);
-
     return;
 }
 
@@ -184,35 +181,42 @@ TYPE *get_type(astNode *ast)
     return new;
 }
 
-// this currently just traverse the entire AST and adds the variables to the symbol table
-// this for testing purposes only and demonstrating the traversal of AST.
-void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
+// // this currently just traverse the entire AST and adds the variables to the symbol table
+// // this for testing purposes only and demonstrating the traversal of AST.
+// void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
+// {
+//     astNode* temp = ast;                                    // temp will traverse
+//     if (temp->child == NULL)                                // if it's a leaf node
+//     {
+//         if (strcmp(temp->tree_node->node_symbol, "ID") == 0)            //  and an ID node
+//         {
+//             if (st_lookup(temp->tree_node->lexeme, st) == NULL)         // and if ID is not already there
+//             {
+//                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
+//                 printf("HIIHI\n");
+//                 st_insert_id_entry(table_entry, st);
+//             }
+//         }
+//         return;
+//     }
+//     else  // non terminal
+//     {
+//         // iterate over its child
+//         temp = temp->child; 
+//         while(temp != NULL)
+//         {
+//             id_st_populate(st, temp);
+//             temp = temp->sibling;
+//         }
+//         return;
+//     }
+// }
+
+// traverse the ast, fill the GST (while performing some checks)
+void *traverse_the_multiverse(astNode *node, GST *st)
 {
-    astNode* temp = ast;                                    // temp will traverse
-    if (temp->child == NULL)                                // if it's a leaf node
-    {
-        if (strcmp(temp->tree_node->node_symbol, "ID") == 0)            //  and an ID node
-        {
-            if (st_lookup(temp->tree_node->lexeme, st) == NULL)         // and if ID is not already there
-            {
-                ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
-                printf("HIIHI\n");
-                st_insert_id_entry(table_entry, st);
-            }
-        }
-        return;
-    }
-    else  // non terminal
-    {
-        // iterate over its child
-        temp = temp->child; 
-        while(temp != NULL)
-        {
-            id_st_populate(st, temp);
-            temp = temp->sibling;
-        }
-        return;
-    }
+
+    return;
 }
 
 // we initialize our global symbol table
@@ -248,23 +252,20 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
 // helper function to print the global symbol table
 void gst_print(GST *st)
 {
-    printf("\nPrinting Global Symbol Table with %d functions:\n\n", st->total_functions);
+    printf("\nPrinting GST with %d functions:\n\n", st->total_functions);
     for(int i = 0; i < st->total_functions; i++)
     {
         FUNC_TABLE_ENTRY *temp = st->func_table[i];
-        printf("GST[%d]-->",i);
         while(temp)
         {
-            printf("[[[ %s -- ", temp->func_name);
+            printf("\tPrinting Function Table for '%s':\n", temp->func_name);
 	        print_params(temp->in_params);	            // defined below
- 	        printf(" -- ");
 	        print_params(temp->out_params);
-	        printf(" ]]] -->");	                       
+            printf("\tThe ID ST for '%s' is:\n\n");
+            id_st_print(temp->local_id_table);
             temp = temp->next;
         }
-        printf("NULL\n");
     } 
-    //id_st_print(st->local_id_table);	// Not like this!
     return;
 }
 
@@ -272,12 +273,13 @@ void gst_print(GST *st)
 void print_params(PARAMS *list)
 {
     PARAMS *temp = list;
+    printf("\t\tParams => ")
     while(temp)
     {
         printf("[%s %s] --> ",temp->param_name, show_type(temp->datatype));	
 	    temp = temp->next;
     }
-    printf("NULL");
+    putchar('\n');
     return;
 }
  
@@ -352,7 +354,6 @@ int get_total_width(ID_SYMBOL_TABLE *st)
 
 int main(int argc, char* argv[])
 {
-    // just to test if it's working
     if(argc != 3)
     {
         printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
@@ -376,24 +377,18 @@ int main(int argc, char* argv[])
     fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
     print_parse_tree(tree, test_parse_fp);
     print_parse_tree_json(tree, "output_parse_tree.json");
-
     printf("Printed Parse Tree in file '%s'.\n", argv[2]);
-    // printf("Rule number of root: %d\n", tree->kids[0]->data->rule_number);
     astNode* ast_root = buildAST(tree);
-    // printf("H1\n");
     print_ast_json(ast_root, "output_ast_tree.json");
 
 
     // Test Symbol table
-
-    ID_SYMBOL_TABLE* st =  create_id_st(NULL);
-    id_st_populate(st, ast_root);
-    id_st_print(st);
+    GST *st = create_global_st();
+    gst_print(st);
 
     fclose(test_fp);
     fclose(test_parse_fp);
     free(twin_buff);
     free(parse_table);
-
     return 0;
 }
