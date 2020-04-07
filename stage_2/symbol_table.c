@@ -1,260 +1,394 @@
-//                  ,-.                         Group 08                                                    //
-//          ,      ( {o\                        Satvik Golechha :: 2017A7PS0117P                           ///
-//          {`"=,___) (`~                       Bharat Bhargava :: 2017A7PS0025P                          ////
-//           \  ,_.-   )                        Ayush      Jain :: 2017A7PS0093P                         /////
-//      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// gcc symbol_table.c ast.c parser.c lexer.c hash.c bool.c 
 
+#include "symbol_table.h"
+#include "type.h"
+#include<stdlib.h>                                      // int atoi(), char *strcat()
+#include<string.h>                                      // char *strcpy()
+#define ST_ABS(N) ((N<0)?(-N):(N))                      // because of my awesome hashing function
+#define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
-#include<stdio.h>
-#include "ast.h"                // AST *generate_ast()
-#include<stdlib.h>              // malloc() , exit()
-#include<string.h>              // strcmp()
-
-#define FUNC_PARAMS 8             // max number of function parametes (both IO)
-#define ST_SIZE 8                 // max size of symbol table, for testing purposes, change later
-#define MAX_KIDS 8                // max kids of a symbol table, for testing purposes, change later
-#define ST_ABS(N) ((N<0)?(-N):(N))    // because of my awesome hashing function
-#define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }       
-
-// AIM: To create the symbol table from the given AST
-// Please return a single AST *ast
-
-
-/* 
-Theory:
-
-A symbol table is a table of symbols. It is required to:
-- To make sure that when we assign a value to a variable the types are correct (type checking)
-- To make sure that a variable is declared before it is used
-- To pick the right variable from the right scope
-- For debugging (programmer's perspective)
-- For achieving compile time efficiency (plang designer's perspective)
-
-- symbols of erplag can be:
-    - a variable
-        - inside a start and end block
-        - has a fixed datatype
-        - only to be recognized locally inside the block
-        - (blocks might be nested)
-    - a function
-        - has a fixed input and output
-        - input: of type integer, real, boolean, array 
-        - output: of type integer, real, boolean
-        - not to be nested, so globally scoped
-    - and nothing else
-
-- for variables, we should store the name and the type
-- for functions, we should store the name and the type (two lists of types)
-
-- a symbol table can be a hash_table (preferred over linear self-organizing lists and trees), with
-    - key: name of the variable / function (id)
-    - value: the type of the variable / function where the type of a function will be a much elaborate structure
-    - the width and offset (dunno why)
-
-- to create the symbol table(s), we need to traverse the AST, and for each type of AST node, 
-- hardcode rules to add stuff to the ST. 
-*/
-
-// type data for an array
-typedef struct ArRAY_TyPE_DaTA
-{
-    // array[begin..end] of simple
-    unsigned int begin;
-    unsigned int end;
-    unsigned short int simple;                // 1,2,3 for integer, real, boolean
-    // changes here if she allows for nested arrays
-} ARRAY_TYPE_DATA;
-
-// type data for a function
-typedef struct FuNCTION_TyPE_DaTA
-{
-    // a function type has inputs and outputs (as an array)
-    unsigned int num_in, num_out;                        // number of inputs/outputs
-    struct symbol_data *inputs[FUNC_PARAMS];                     // everything else NULL, only for type of parameters with name
-    struct symbol_data *outputs[FUNC_PARAMS];
-} FUNCTION_TYPE_DATA;
-
-// abstract structure to store any given type (insert a good type type pun)
-typedef struct TyPE_InFO
-{
-    unsigned short int simple;                   // 1,2,3,4,5 for integer, real, boolean, array or function
-    ARRAY_TYPE_DATA *arrtype;                   // if array, else NULL
-    FUNCTION_TYPE_DATA *functype;              // if function, else NULL
-} TYPE;
-
-// we define a structure 'symbol' that will store the symbols (entries in the symbol table)
-typedef struct symbol_data
-{
-    char *name;
-    TYPE *type;
-    unsigned int width;
-    unsigned int offset;
-    // anything else add here
-} SYMBOL;
-
-// now we have a hash table structure that stores these symbols
-// we don't want to clash names (insert meme here) so starting with ST
-
-// symbol table entry 
-typedef struct st_entry_list_node
-{
-    SYMBOL *symbol;
-    struct st_entry_list_node *next;            //  chaining for collisions
-} ST_ENTRY;
-
-// now our single, global symbol table (every function/scope has its own ST)
-typedef struct SYMBOL_TABLE
-{
-    struct SYMBOL_TABLE *parent;                // pointer to misogynistic parent, NULL for global symbol table
-    char *fn_name;                              // name of the symbol table, global initially later name of function / block
-    FUNCTION_TYPE_DATA *ftype;                  // type if function, else NULL
-    ST_ENTRY *table[ST_SIZE];                   // ST for variables
-    unsigned short int kid_table_count;         // initially zero
-    struct SYMBOL_TABLE *kid_tables[MAX_KIDS];  // array of kid tables to support nested STs
-} ST;  
-
-// we initialize our symbol table
-void st_initialize(ST *symbol_table, char *name, ST *parent)
-{
-    symbol_table->parent = parent;
-    if (parent != NULL)
-        parent->kid_tables[parent->kid_table_count++] = symbol_table;
-    symbol_table->fn_name = name;
-    for (int iterator=0; iterator<ST_SIZE; ++iterator)
-        symbol_table->table[iterator] = NULL;               // no symbols. Duh!
-    symbol_table->kid_table_count = 0;                  // no kid tables initially
-    for (int iterator=0; iterator<MAX_KIDS; ++iterator)
-        symbol_table->kid_tables[iterator] = NULL;               
-    return;
-}
-
-// hash function: implementing 7vik's hash (unpublished, 2020) Oh we meet again.
-// to save coding effort, I'll just hash on the name
+// hash function: implementing vunDina's hash, patent pending ;)
 int st_hash(char *s261)
 {
     int n261 = 261;
     int h261 = 261;
     while ((n261 = *s261++))
         h261 = (261 - 216 - 16 + 2) * h261 + n261; 
-    return (ST_ABS(h261 % ST_SIZE));
-    return (261 % ST_SIZE);
+    return (ST_ABS(h261 % ST_ID_SIZE));
 }
 
-// now, we insert symbols to our ST
-void st_insert_symbol(SYMBOL *sym, ST *st)
+// we initialize our symbol table of identifiers
+ID_SYMBOL_TABLE *create_id_st(ID_SYMBOL_TABLE *papa)
 {
-    // first, create an entry for the symbol
-    ST_ENTRY *new = (ST_ENTRY *) malloc(sizeof(ST_ENTRY));
-    if (!new)
-        malloc_error
-    new->symbol = sym;              
-    new->next = NULL;
-    // then, calculate the hash to find out where to insert this entry 
-    int key = st_hash(new->symbol->name);
-    // if there is no collision, just add it
-    if (st->table[key] == NULL)
-        st->table[key] = new;
-    // collision resolved by chaining (adding at end of linked list)
-    else
+    ID_SYMBOL_TABLE *id_table = (ID_SYMBOL_TABLE *) malloc(sizeof(ID_SYMBOL_TABLE));   
+    for (int iterator = 0; iterator < ST_ID_SIZE; ++iterator)
+        id_table->id_table[iterator] = NULL;                        // no symbols initially in the table
+    id_table->total_ids = 0;
+    id_table->kid_table_count = 0;
+    for (short int i = 0; i < ST_KID_NUM; ++i)
+        id_table->kid_st[i] = NULL;
+    id_table->id_st_parent = papa;
+    return id_table;
+}
+
+// now, we insert id to our ST of identifiers
+// ID entry should have been populated.
+void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st)
+{
+    int key = st_hash(sym->lexeme);     // calculate the hash to find out where to insert this entry 
+    if (st->id_table[key] == NULL)      // if there is no collision, 
+        st->id_table[key] = sym;        // just add it
+    else                                // collision resolved by 
     {
-        // go to the end
-        ST_ENTRY *temp = st->table[key];
+        ID_TABLE_ENTRY *temp = st->id_table[key];       // going to the end of list
         while (temp->next)
             temp = temp->next;
-        // and add it there
-        temp->next = new;
+        temp->next = sym;                               // and adding it there
     }
+    st->total_ids += 1;
     return;
 }
-// helper function to print a symbol table
-// recursive (oh yeah finally)
-void st_print(ST *st)
+
+char *show_type(TYPE *t)
 {
-    printf("\nPrinting Symbol Table: %s\n\n", st->fn_name);
-    for(int i = 0; i < ST_SIZE; i++)
+    if (t->simple == INTEGER) return "INTEGER";
+    if (t->simple == REAL   ) return "REAL";
+    if (t->simple == BOOLEAN) return "BOOLEAN";
+    if (t->simple == ARRAY  ) 
     {
-        ST_ENTRY *temp = st->table[i];
+        char *array_type_str = (char *) malloc(42);
+        strcpy(array_type_str, "ARRAY [");
+        int length = snprintf(NULL, 0, "%d", t->arrtype->begin);
+        char* str1 = malloc( length + 1 );
+        snprintf( str1, length + 1, "%d", t->arrtype->begin );
+        strcat(array_type_str,str1);
+        free(str1);
+        strcat(array_type_str, "..");
+        length = snprintf(NULL, 0, "%d", t->arrtype->end);
+        str1 = malloc( length + 1 );
+        snprintf( str1, length + 1, "%d", t->arrtype->end );
+        strcat(array_type_str,str1);
+        free(str1);
+        strcat(array_type_str, "] of ");
+        strcat(array_type_str, variables_array[t->arrtype->base_type]);
+        return array_type_str;
+    }
+    return NULL;
+}
+
+// helper function to print a symbol table of identifiers
+void id_st_print(ID_SYMBOL_TABLE *st)
+{
+    if (st == NULL) return;
+    printf("\n\tPrinting ID Symbol Table with %d ids:\n\n", st->total_ids);
+    for(int i = 0; i < ST_ID_SIZE; i++)
+    {
+        ID_TABLE_ENTRY *temp = st->id_table[i];
         printf("symbol_table[%d]-->",i);
         while(temp)
         {
-            printf("[[[ %s %hu %s ]]] -->", temp->symbol->name, temp->symbol->type->simple, temp->symbol->scope->scope);                   
+            printf("[[[ %s %s ]]] -->", temp->lexeme, show_type(temp->datatype));                   
             temp = temp->next;
         }
         printf("NULL\n");
-    }
-    for (int j=0; j<st->kid_table_count; ++j)
-        st_print(st->kid_tables[j]);
+    }     
+    for (int j = 0; j < st->kid_table_count; ++j)
+        id_st_print(st->kid_st[j]);
     return;
 }
 
-// lookup the symbol table for name, and return the symbol if found
-// recursive (oh boy)
-SYMBOL *st_lookup(char *name, ST *st)
+
+// lookup the symbol table of identifiers for name, and return the symbol if found
+ID_TABLE_ENTRY* st_lookup(char *name, ID_SYMBOL_TABLE *st)
 {
-    // first, compute the key where it'd be stored if't'were there
+    // first, compute the key where the variable would be stored
     int key = st_hash(name);
-    ST_ENTRY *temp = st->table[key];
+    ID_TABLE_ENTRY *temp = st->id_table[key];
     while(temp)
     {
-        if(strcmp(temp->symbol->name, name) == 0)   // kudos! symbol found
-            return temp->symbol;                    // return it
+        if(strcmp(temp->lexeme, name) == 0)   // symbol found
+            return temp;                    // return it
         temp = temp->next;
     }
-    if (st->parent == NULL)
+    if (st->id_st_parent == NULL)
         return NULL;                                // not found in any parents
     else
-        return st_lookup(name, st->parent);         // assuming scope only broadens with nesting, uncomment if reqd
+        return st_lookup(name, (ID_SYMBOL_TABLE *)st->id_st_parent);         // assuming scope only broadens with nesting, uncomment as per the requirement
 }
 
-// finally, traverse an AST to populate the symbol table
-void st_populate(ST *symbol_table, astNode *root)
+int get_width(TYPE *t)
 {
-    st_initialize(symbol_table, "global", NULL);
-    // traverse and fill
-    // not possible to write this part of code before AST is finished
-    // we need to call a helper function create_symbol (see below) that will take an AST node and create a symbol out of it
-    return;
+    printf("IN GET WITDH\n");
+   int size = t->simple == INTEGER  ? 4
+            : t->simple == REAL     ? 8
+            : t->simple == BOOLEAN  ? 1
+            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (4 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == REAL   ? (8 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       0
+            : 0;
+    printf("OUT GET WITDH\n");
+    return size;
 }
 
-SYMBOL *create_symbol(char *name, unsigned short int type, char *scope)                 // these params will be replaced by (AST_NODE *node)
+// populating a id symbol table entry
+ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)      
 {
-    SYMBOL *new = (SYMBOL *) malloc(sizeof(SYMBOL));
+    assert(strcmp(node->tree_node->token_name, "ID") == 0);             //this should have ID info
+    ID_TABLE_ENTRY *new = (ID_TABLE_ENTRY *) malloc(sizeof(ID_TABLE_ENTRY));
     if (!new)
-        malloc_error
-    new->name = name;
-    new->type = (TYPE *) malloc(sizeof(TYPE));
-    if (!(new->type))
-        malloc_error
-    new->type->simple = type;
-    new->scope = (SCOPE *) malloc(sizeof(SCOPE));
-    if (!(new->scope))
-        malloc_error
-    new->scope->scope = scope;
+        malloc_error    
+    new->lexeme = node->tree_node->lexeme;
+    new->datatype = type;
+    new->width = get_width(type);
+    new->offset = 0;                             // for now, I am not sure how to handle it
+    new->next = NULL;
+    new->is_declared = false;
     return new;
 }
 
-int main()
+// extract the type out of any AST node
+TYPE *get_type(astNode *ast)              
 {
-    // just to test if it's working
-    ST *symbol_table = (ST *) malloc(sizeof(ST));       // our lovely symbol table
-    if (!symbol_table)
+    printf("IN GET TYPE\n");
+    TYPE *new = (TYPE *) malloc(sizeof(TYPE));
+    if (!new)
+        malloc_error
+    if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
+    {
+        printf("ALL FINE\n");
+        if (ast->sibling == NULL)
+            printf("BOO\n");
+        printf("NO\n");
+        if(ast->sibling == NULL)
+            printf("%s\n", variables_array[ast->parent->node_marker]);
+        new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
+        if (new->simple == ARRAY)                            // it's an array
+        {
+            new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
+            if (! new->arrtype)
+                malloc_error
+            new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
+            new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
+            
+            new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
+        }
+        else
+            new->arrtype = NULL;
+    }
+    // printf("\t\t%s\n", variables_array[new->simple]);
+    printf("OUT GET TYPE\n");
+    return new;
+}
+
+// // this currently just traverse the entire AST and adds the variables to the symbol table
+// // this for testing purposes only and demonstrating the traversal of AST.
+// void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
+// {
+//     astNode* temp = ast;                                    // temp will traverse
+//     if (temp->child == NULL)                                // if it's a leaf node
+//     {
+//         if (strcmp(temp->tree_node->node_symbol, "ID") == 0)            //  and an ID node
+//         {
+//             if (st_lookup(temp->tree_node->lexeme, st) == NULL)         // and if ID is not already there
+//             {
+//                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
+//                 printf("HIIHI\n");
+//                 st_insert_id_entry(table_entry, st);
+//             }
+//         }
+//         return;
+//     }
+//     else  // non terminal
+//     {
+//         // iterate over its child
+//         temp = temp->child; 
+//         while(temp != NULL)
+//         {
+//             id_st_populate(st, temp);
+//             temp = temp->sibling;
+//         }
+//         return;
+//     }
+// }
+
+// traverse the ast, fill the GST (while performing some checks)
+void *traverse_the_multiverse(astNode *node, GST *st)
+{
+    
+    return;
+}
+
+// we initialize our global symbol table
+GST* create_global_st()
+{
+    GST *st = (GST *) malloc(sizeof(GST));
+    if (!st)
+        malloc_error   
+    for (int iterator = 0; iterator < GST_SIZE; ++iterator)
+        st->func_table[iterator] = NULL;                        // no functions in the table
+    st->total_functions = 0;
+    return st;
+}
+
+// now, we insert function table entry to our global ST
+// The corresponding structure 'sym' should have been populated earlier.
+void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
+{
+    int key = st_hash(f->func_name);          // calculate the hash to find out where to insert this entry 
+    if (st->func_table[key] == NULL)      // if there is no collision, 
+        st->func_table[key] = f;        // just add it
+    else                                // collision resolved by 
+    {
+        FUNC_TABLE_ENTRY *temp = st->func_table[key];       // going to the end of list
+        while (temp->next)
+            temp = temp->next;
+        temp->next = f;                               // and adding it there
+    }
+    st->total_functions += 1;
+    return;
+}
+
+// helper function to print the global symbol table
+void gst_print(GST *st)
+{
+    printf("\nPrinting GST with %d functions:\n\n", st->total_functions);
+    for(int i = 0; i < st->total_functions; i++)
+    {
+        FUNC_TABLE_ENTRY *temp = st->func_table[i];
+        while(temp)
+        {
+            printf("\tPrinting Function Table for '%s':\n", temp->func_name);
+	        print_params(temp->in_params);	            // defined below
+	        print_params(temp->out_params);
+            printf("\tThe ID ST for '%s' is:\n\n");
+            id_st_print(temp->local_id_table);
+            temp = temp->next;
+        }
+    } 
+    return;
+}
+
+// helper function to print the parameter lists of global symbol table
+void print_params(PARAMS *list)
+{
+    PARAMS *temp = list;
+    printf("\t\tParams => ")
+    while(temp)
+    {
+        printf("[%s %s] --> ",temp->param_name, show_type(temp->datatype));	
+	    temp = temp->next;
+    }
+    putchar('\n');
+    return;
+}
+ 
+// lookup the global symbol table for function, and return the entry if found
+FUNC_TABLE_ENTRY *global_st_lookup(char *name, GST *st)
+{
+    // first, compute the key where the variable would be stored in GST
+    int key = st_hash(name);
+    FUNC_TABLE_ENTRY *temp = st->func_table[key];
+    while(temp)
+    {
+        if(strcmp(temp->func_name, name) == 0)   // entry found
+            return temp;
+        temp = temp->next;
+    }
+    return NULL;  // function with the specified name not defined (no need to recurse)
+}
+
+// populating a global symbol table entry, will be created when we define a function
+FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_par, ID_SYMBOL_TABLE *st)      
+{
+    assert(strcmp(node->tree_node->token_name, "ID") == 0);             //this should have ID info
+    FUNC_TABLE_ENTRY *new = (FUNC_TABLE_ENTRY *) malloc(sizeof(FUNC_TABLE_ENTRY));
+    if (!new)
         malloc_error    
-    ST *inner_table = (ST *) malloc(sizeof(ST));       // our lovely nested inner table
-    if (!symbol_table)
-        malloc_error    
+    new->func_name = node->tree_node->lexeme;
+    new->in_params = inp_par;
+    new->out_params = out_par;
+    new->width = get_total_width(st);
+    new->local_id_table = st;
+    new->next = NULL;
+    new->is_declared = false;
+    return new;
+}
 
-    st_initialize(symbol_table, "global", NULL);
-    st_initialize(inner_table, "for_loop", symbol_table);
+int get_total_width(ID_SYMBOL_TABLE *st)
+{
+    if(st == NULL)	// No symbol table of identifiers <=> no local variables of function
+	return 0;
 
-    st_insert_symbol(create_symbol("age", 1, "global1"), symbol_table);
-    st_insert_symbol(create_symbol("height", 1, "global2"), symbol_table);
-    st_insert_symbol(create_symbol("weight", 1, "for1"), inner_table);
-    st_insert_symbol(create_symbol("frac31", 2, "for2"), inner_table);
-    st_insert_symbol(create_symbol("married", 3, "global3"), symbol_table);
+    int total = 0;
+    ID_TABLE_ENTRY *temp;
+    for(int i = 0; i < ST_ID_SIZE; i++)	// summing up the widths of each identifier in the current ST.
+    {
+        temp = st->id_table[i];
+        while(temp)
+	{
+	    total += temp->width;
+    	    temp = temp->next;
+        }
+    }
 
-    // st_print(symbol_table);
-    if (st_lookup("married", symbol_table))  printf("%s\n", st_lookup("married", symbol_table)->scope->scope); else printf("NOT FOUND.\n");
-    if (st_lookup("married", inner_table)) printf("%s\n", st_lookup("married", inner_table)->scope->scope); else printf("NOT FOUND.\n");
+    for(int j = 0; j < st->kid_table_count; j++)
+	total += get_total_width(st->kid_st[j]);
+
+    return total;
+}
+
+
+
+// // just a helper function for testing. Comment this out
+// astNode *init_ast_node_par()
+// {
+//     astNode *node = (astNode *)malloc(sizeof(astNode));
+//     node->child = NULL;
+//     node->parent = NULL;
+//     node->sibling = NULL;
+//     node->is_leaf = 1;
+//     node->node_marker = ID;
+//     return node;
+// }
+
+int main(int argc, char* argv[])
+{
+    if(argc != 3)
+    {
+        printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
+        printf("\nAborting Execution!!\n");
+        exit(2);
+    }
+
+    FILE* test_fp = fopen(argv[1], "r");
+    FILE* test_parse_fp = fopen(argv[2], "w");
+    populate_ht(hash_table, KEYWORDS_FILE);
+    int line_count = 1;
+    TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+    init_buffer(test_fp, twin_buff);
+    GRAMMAR* grammar = generate_grammar();
+    first_follow *ff = get_first_follow_table(grammar);
+    TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+    create_parse_table(ff, parse_table, grammar);
+    STACK *stack = NULL;
+    PARSE_TREE *tree;
+    parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+    fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
+    print_parse_tree(tree, test_parse_fp);
+    print_parse_tree_json(tree, "output_parse_tree.json");
+    printf("Printed Parse Tree in file '%s'.\n", argv[2]);
+    astNode* ast_root = buildAST(tree);
+    print_ast_json(ast_root, "output_ast_tree.json");
+
+
+    // Test Symbol table
+    GST *st = create_global_st();
+    gst_print(st);
+
+    fclose(test_fp);
+    fclose(test_parse_fp);
+    free(twin_buff);
+    free(parse_table);
     return 0;
 }
