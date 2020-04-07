@@ -1611,16 +1611,20 @@ astNode* buildAST(PARSE_TREE* root)
             case(102):
             {
                 int certificate = string_to_enum(root->data->node_symbol);
-
+                astNode* node = make_ASTnode(certificate);
+                node->tree_node = root->data;
                 astNode* child0 = buildLeafAST(root->kids[0]);
                 // astNode* child1 = buildAST(root->kids[1]);
                 astNode* child2 = buildLeafAST(root->kids[2]);
+                node->child = child0;
+                child0->parent = node;
+                child2->parent = node;
                 child0->sibling = child2;
 
                 // child0->parent = child1;
                 // child2->parent = child1;
                 //child1->child = child0;
-                return child0;
+                return node;
 
                 break;
             }

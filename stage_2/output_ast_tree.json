@@ -168,8 +168,18 @@
 "children":[]
 }
 ,{
+"text": { "name": "range" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "NUM:1" },
 "children":[]
+}
+,{
+"text": { "name": "NUM:15" },
+"children":[]
+}
+]
 }
 ,{
 "text": { "name": "START:start" },
