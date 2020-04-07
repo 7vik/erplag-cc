@@ -121,6 +121,7 @@ ID_TABLE_ENTRY* st_lookup(char *name, ID_SYMBOL_TABLE *st)
 
 int get_width(TYPE *t)
 {
+    printf("IN GET WITDH\n");
    int size = t->simple == INTEGER  ? 4
             : t->simple == REAL     ? 8
             : t->simple == BOOLEAN  ? 1
@@ -129,6 +130,7 @@ int get_width(TYPE *t)
                                 :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       0
             : 0;
+    printf("OUT GET WITDH\n");
     return size;
 }
 
@@ -151,26 +153,32 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
 // extract the type out of any AST node
 TYPE *get_type(astNode *ast)              
 {
+    printf("IN GET TYPE\n");
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
     if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
     {
+        printf("ALL FINE\n");
+        if (ast->sibling == NULL)
+            printf("BOO\n");
+        printf("NO\n");
         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
-        if (new->simple == datatype)                            // it's an array
+        if (new->simple == ARRAY)                            // it's an array
         {
-            new->simple = ARRAY;
             new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
             if (! new->arrtype)
                 malloc_error
             new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
             new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
+            
             new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
         }
-        // printf("\t\t%s\n", variables_array[new->simple]);
         else
             new->arrtype = NULL;
     }
+    // printf("\t\t%s\n", variables_array[new->simple]);
+    printf("OUT GET TYPE\n");
     return new;
 }
 
@@ -186,6 +194,7 @@ void id_st_populate(ID_SYMBOL_TABLE *st, astNode *ast)
             if (st_lookup(temp->tree_node->lexeme, st) == NULL)         // and if ID is not already there
             {
                 ID_TABLE_ENTRY* table_entry = create_symbol(temp, get_type(ast));
+                printf("HIIHI\n");
                 st_insert_id_entry(table_entry, st);
             }
         }
