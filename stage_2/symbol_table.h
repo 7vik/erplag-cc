@@ -26,6 +26,7 @@ typedef struct ID_TABLE_ENTRY
 typedef struct ID_SYMBOL_TABLE
 {
     struct ID_SYMBOL_TABLE *id_st_parent;               // parent to the ID ST (NULL at top) (not storing FST)
+    struct FUNC_TABLE_ENTRY *primogenitor;                     // the function this ID table belong to
     ID_TABLE_ENTRY *id_table[ST_ID_SIZE];
     int total_ids;
     int kid_table_count;

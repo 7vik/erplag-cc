@@ -30,9 +30,6 @@ etc. (More semantics will be made available in the test cases)
 #include <assert.h>
 #include <stdlib.h>
 
-bool hasSemanticError = false;
-
-
 void semantic_analyser(astNode* root, GST* global_st)
 {
     if(root != NULL)
