@@ -136,21 +136,29 @@ void check_module_semantic(astNode* root, GST* global_st)
     assert(root->node_marker == module || root->node_marker == driverModule);
 
     astNode* temp = root->child;
-    FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
-
-    if (func_entry == NULL)
+    if(temp->node_marker == ID)
     {
-        printf("ERROR in check module, function entry should have been there in symbol table\n");
-        exit(1);
+        FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
+
+        if (func_entry == NULL)
+        {
+            hasSemanticError = true;
+            printf("ERROR in check module, function entry should have been there in symbol table\n");
+        }
     }
 
-
-    check_moduleDef_semantic(temp->sibling->sibling->sibling->sibling, func_entry);
+    if(temp->node_marker == moduleDef)  // we are dealing with driverModule
+        check_moduleDef_semantic(temp, func_entry);
+    else    // it is some other function defined
+        check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
     return; 
 }
 
 void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
+    if(root->node_marker == EPS)
+        return;
+
     assert(root->node_marker == statements);
 
     astNode* temp = root->child;
@@ -185,7 +193,7 @@ void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == declareStmt);
     
-    // no semantic rules required, checks done during type checking
+    // no semantic rules required here as checks done during type checking
     return;
 }
 
@@ -194,7 +202,7 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == ioStmt);
 
-    //no semantic 
+    //no semantic rules required here; to be checked during code generation
     return;
 }
 
