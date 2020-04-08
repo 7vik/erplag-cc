@@ -103,8 +103,10 @@ void check_driverModule_semantic(astNode* root, GST* global_st)
 {
     assert(root->node_marker == driverModule);
 
-    astNode* temp = root->child;
-    check_moduleDef_semantic(temp, global_st);
+    // astNode* temp = root->child;
+    // check_moduleDef_semantic(temp, global_st);
+
+    check_module_semantic(root, global_st);
     
     return;
 }
@@ -124,7 +126,7 @@ void check_moduleDef_semantic(astNode* root, FUNC_TABLE_ENTRY* func_entry)
 
 void check_module_semantic(astNode* root, GST* global_st)
 {
-    assert(root->node_marker == module);
+    assert(root->node_marker == module || root->node_marker == driverModule);
 
     astNode* temp = root->child;
     FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
@@ -156,10 +158,65 @@ void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
             check_assignmentStmt_semantic(temp, id_table);
         else if (temp->node_marker == iterativeStmt)
             check_iterativeStmt_semantic(temp, id_table);
-        else if (temp->node_marker == case)
+        else if (temp->node_marker = conditionalStmt)
+            check_conditionalStmt_semantic(temp, id_table);
+        else if (temp->node_marker == moduleReuseStmt)
+            check_moduleReuseStmt_semantic(temp, id_table);
+        else
+        {
+            printf("ERROR: Unidentified statement: %s\n", variables_array[temp->node_marker]);
+            exit(1);
+        }
             
         temp = temp->sibling;
     }
 
     return; 
+}
+
+void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == declareStmt);
+
+    return;
+}
+
+
+void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == ioStmt);
+
+    return;
+}
+
+
+void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == assignmentStmt);
+
+    return;
+}
+
+
+void check_iterativeStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == iterativeStmt);
+
+    return;
+}
+
+
+void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == conditionalStmt);
+
+    return;
+}
+
+
+void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == moduleReuseStmt);
+
+    return;
 }
