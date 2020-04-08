@@ -313,9 +313,15 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(10)://ret -> EPS -- in case of no output parameter, return a node with no child.
             {
+                //printf("node symbol: %s\n", root->data->node_symbol);
                 astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
                 node->tree_node = root->data;
-                node->is_leaf = 1;
+                //printf("%s %s\n", node->tree_node->lexeme, node->tree_node->token_name);
+                //node->is_leaf = 1;
+
+                astNode* new = buildLeafAST(root->kids[0]);
+                node->child = new;
+                new->parent = node; 
                 return node;     
             }
             
