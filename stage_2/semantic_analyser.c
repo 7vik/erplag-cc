@@ -142,8 +142,8 @@ void check_module_semantic(astNode* root, GST* global_st)
 
         if (func_entry == NULL)
         {
-            hasSemanticError = true;
-            printf("ERROR in check module, function entry should have been there in symbol table\n");
+            //printf("ERROR in check module, function entry should have been there in symbol table\n");
+            return;
         }
     }
 
