@@ -1,8 +1,8 @@
 /************************************
  * Semantic Rules to handle: 
  * 
-1. An identifier cannot be declared multiple times in the same scope.   //declStmt
-2. An identifier must be declared before its use.      //declStmt
+1. An identifier cannot be declared multiple times in the same scope.   //declStmt  -- 7vik
+2. An identifier must be declared before its use.      //declStmt   -- 7vik
 3. The types and the number of parameters returned by a function must be the same as that //stmts
    of the parameters used in invoking the function.
 4. The parameters being returned by a function must be assigned a value. If a parameter does  // module
@@ -56,13 +56,16 @@ void semantic_analyser(astNode* root, GST* global_st)
 
     else
     {
-        printf("ERROR: Root node given to semnatic analyser is NULL\n");
+        printf("ERROR: Root node given to semantic analyser is NULL\n");
         exit(1);
     }
 }
 
 void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
 {
+    if(root->node_marker == EPS)
+        return;
+
     assert(root->node_marker == moduleDeclarations);
 
     astNode* temp = root->child;
@@ -87,6 +90,9 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
 
 void check_otherModules_semantic(astNode* root, GST* global_st)
 {
+    if(root->node_marker == EPS)
+        return;
+        
     assert(root->node_marker == otherModules);
 
     astNode* temp = root->child;
