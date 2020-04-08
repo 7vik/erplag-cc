@@ -276,14 +276,8 @@
 "children":[]
 }
 ,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "ID:index" },
 "children":[]
-}
-]
 }
 ]
 }
@@ -326,14 +320,8 @@
 "children":[]
 }
 ,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "ID:index" },
 "children":[]
-}
-]
 }
 ]
 }

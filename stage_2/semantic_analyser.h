@@ -6,6 +6,7 @@
 
 extern bool hasSemanticError; 
 
+void semantic_analyser(astNode* root, GST* global_st);
 void check_moduleDeclarations_semantic(astNode* root, GST* global_st);
 void check_otherModules_semantic(astNode* root, GST* global_st);
 void check_driverModule_semantic(astNode* root, GST* global_st);

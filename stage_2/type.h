@@ -8,7 +8,8 @@ typedef struct ARRAY_TYPE_DATA
     unsigned int begin;
     unsigned int end;
     unsigned short int base_type;                // enum for integer, real, boolean
-    // changes here if she allows for nested arrays
+    bool is_dynamic; // if array is dynamic
+   // changes here if she allows for nested arrays
 } ARRAY_TYPE_DATA;
 
 // // type data for a function

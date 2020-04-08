@@ -177,7 +177,8 @@ void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == declareStmt);
-
+    
+    // no semantic rules required, checks done during type checking
     return;
 }
 
@@ -186,6 +187,7 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == ioStmt);
 
+    //no semantic 
     return;
 }
 
@@ -194,6 +196,10 @@ void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == assignmentStmt);
 
+    astNode* op_node = root->child->child->sibling;
+
+    check_var_semantic(op_node->child, id_table);
+    check_var_semantic(op_node->child->sibling, id_table);
     return;
 }
 
@@ -218,5 +224,38 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == moduleReuseStmt);
 
+    return;
+}
+
+void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
+{
+    assert(root->node_marker == var);
+
+    // if two nodes, then it is arr, bound checking
+    if(root->child->sibling != NULL)
+    {
+        astNode* var_node = root->child;
+        astNode* index_node = var_node->sibling;
+
+        //finding the id table entry for var
+
+        ID_TABLE_ENTRY* id_entry =  st_lookup(var_node->tree_node->lexeme, id_table);
+
+        if (id_entry == NULL)
+        {
+            printf("SEMANTIC ERROR at line %d: undeclared variable %s", var_node->tree_node->line, var_node->tree_node->lexeme);
+            hasSemanticError = true;
+            return;
+        }
+
+        if(id_entry->datatype->arrtype->is_dynamic == true)
+            return;
+        
+        else  //bound check
+        {
+            // I don'rt know what to do, touba aage kya karun :(
+        }
+        
+    }
     return;
 }
