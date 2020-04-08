@@ -28,6 +28,7 @@ etc. (More semantics will be made available in the test cases)
 
 #include "semantic_analyser.h"
 #include <assert.h>
+#include <stdlib.h>
 
 bool hasSemanticError = false;
 
@@ -109,12 +110,9 @@ void check_otherModules_semantic(astNode* root, GST* global_st)
 void check_driverModule_semantic(astNode* root, GST* global_st)
 {
     assert(root->node_marker == driverModule);
-
-    // astNode* temp = root->child;
-    // check_moduleDef_semantic(temp, global_st);
-
-    check_module_semantic(root, global_st);
-    
+    astNode* temp = root->child;   //moduleDef node
+    FUNC_TABLE_ENTRY* func_entry = global_st_lookup(root->tree_node->lexeme, global_st);
+    check_moduleDef_semantic(temp, func_entry);
     return;
 }
 
@@ -133,24 +131,20 @@ void check_moduleDef_semantic(astNode* root, FUNC_TABLE_ENTRY* func_entry)
 
 void check_module_semantic(astNode* root, GST* global_st)
 {
-    assert(root->node_marker == module || root->node_marker == driverModule);
+    assert(root->node_marker == module);
 
-    astNode* temp = root->child;
-    if(temp->node_marker == ID)
+    astNode* temp = root->child;  //name of function is here
+    FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
+
+    if (func_entry == NULL)
     {
-        FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
-
-        if (func_entry == NULL)
-        {
-            hasSemanticError = true;
-            printf("ERROR in check module, function entry should have been there in symbol table\n");
-        }
+        hasSemanticError = true;
+        return;
+        //printf("ERROR in check module, function entry should have been there in symbol table\n");
     }
+    
 
-    if(temp->node_marker == moduleDef)  // we are dealing with driverModule
-        check_moduleDef_semantic(temp, func_entry);
-    else    // it is some other function defined
-        check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
+    check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
     return; 
 }
 
@@ -206,7 +200,7 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     return;
 }
 
-
+// needs to be chenged, check whatsapp pics
 void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == assignmentStmt);
@@ -258,6 +252,8 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
         if (id_entry == NULL)
         {
+
+            // if satvik handles this, comment out below 2 lines
             printf("SEMANTIC ERROR at line %d: undeclared variable %s", var_node->tree_node->line, var_node->tree_node->lexeme);
             hasSemanticError = true;
             return;
@@ -268,7 +264,24 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         
         else  //bound check
         {
-            // I don'rt know what to do, touba aage kya karun :(
+            if (index_node->node_marker == ID)
+                id_entry->datatype->arrtype->is_dynamic_index = true;
+            else
+            {
+                assert(index_node->node_marker == NUM);
+
+                int low_index = id_entry->datatype->arrtype->begin;
+                int high_index = id_entry->datatype->arrtype->end;
+                int index = atoi(index_node->tree_node->lexeme);
+                if (index < low_index || index > high_index)
+                {
+                    printf("Semantic Error: Out of bound error at line %d - index should lie between %d and %d, got %s\n", index_node->tree_node->line, low_index, high_index, index_node->tree_node->lexeme);
+                    hasSemanticError = true;
+                }
+
+                return;
+            }
+            
         }
         
     }

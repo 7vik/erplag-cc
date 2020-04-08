@@ -24,6 +24,7 @@ start
 		end
 		** no need to increment the value of index as it will be taken care by the semantic rules associated with for construct, but an increment statement does not make its syntax incorrect**
 	end
+	list[17] := 3;
 	print(sum);
 end
 
