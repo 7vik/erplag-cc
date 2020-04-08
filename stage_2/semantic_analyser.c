@@ -77,13 +77,14 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
         if(func == NULL)
         {
             hasSemanticError = true;
-            printf("Semantic error at line %d, No Defination found for declared function %s \n", temp->tree_node->line, temp->tree_node->lexeme);
+            printf("Semantic error at line %d, No definition found for declared function %s \n", temp->tree_node->line, temp->tree_node->lexeme);
         }
         else
         {
             func->is_declared = true;
         }
         
+        temp = temp->sibling;
     }
     return;
 }
@@ -92,7 +93,7 @@ void check_otherModules_semantic(astNode* root, GST* global_st)
 {
     if(root->node_marker == EPS)
         return;
-        
+
     assert(root->node_marker == otherModules);
 
     astNode* temp = root->child;
