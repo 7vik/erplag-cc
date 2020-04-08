@@ -528,7 +528,6 @@ astNode* buildAST(PARSE_TREE* root)
             }
             
             case(25)://moduleDef -> START statements END
-
             {
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* child0 = buildLeafAST(root->kids[0]);
@@ -897,6 +896,33 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->parent = child1;
                 child0->sibling = temp;
 
+                temp = child1->child->sibling->sibling;
+
+                if(temp != NULL)
+                {
+                    astNode* new = make_ASTnode(certificate);
+                    TREE_NODE* new_op = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                    if(new_op == NULL)
+                    {
+                        printf("Malloc error. Terminating.\n\n"); 
+                        exit(5);
+                    }
+                    new_op->node_symbol = "assignNew";
+                    new->tree_node = new_op;
+
+                    child1->child = NULL;
+                    child0->parent = NULL;
+                    child0->sibling->parent = NULL;
+                    child0->sibling->sibling = NULL;
+
+                    new->child = child0;
+                    child0->parent = new;
+                    child0->sibling->parent = new;
+                    new->sibling = temp;
+                    
+                    child1->child = new;
+                    new->parent = child1;
+                }
                 return node;
             }
 
