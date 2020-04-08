@@ -1,8 +1,8 @@
 /************************************
  * Semantic Rules to handle: 
  * 
-1. An identifier cannot be declared multiple times in the same scope.   //declStmt
-2. An identifier must be declared before its use.      //declStmt
+1. An identifier cannot be declared multiple times in the same scope.   //declStmt  -- 7vik
+2. An identifier must be declared before its use.      //declStmt   -- 7vik
 3. The types and the number of parameters returned by a function must be the same as that //stmts
    of the parameters used in invoking the function.
 4. The parameters being returned by a function must be assigned a value. If a parameter does  // module
@@ -28,6 +28,7 @@ etc. (More semantics will be made available in the test cases)
 
 #include "semantic_analyser.h"
 #include <assert.h>
+#include <stdlib.h>
 
 void semantic_analyser(astNode* root, GST* global_st)
 {
@@ -53,13 +54,16 @@ void semantic_analyser(astNode* root, GST* global_st)
 
     else
     {
-        printf("ERROR: Root node given to semnatic analyser is NULL\n");
+        printf("ERROR: Root node given to semantic analyser is NULL\n");
         exit(1);
     }
 }
 
 void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
 {
+    if(root->node_marker == EPS)
+        return;
+
     assert(root->node_marker == moduleDeclarations);
 
     astNode* temp = root->child;
@@ -71,19 +75,23 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
         if(func == NULL)
         {
             hasSemanticError = true;
-            printf("Semantic error at line %d, No Defination found for declared function %s \n", temp->tree_node->line, temp->tree_node->lexeme);
+            printf("Semantic error at line %d, No definition found for declared function %s \n", temp->tree_node->line, temp->tree_node->lexeme);
         }
         else
         {
             func->is_declared = true;
         }
         
+        temp = temp->sibling;
     }
     return;
 }
 
 void check_otherModules_semantic(astNode* root, GST* global_st)
 {
+    if(root->node_marker == EPS)
+        return;
+
     assert(root->node_marker == otherModules);
 
     astNode* temp = root->child;
@@ -99,12 +107,9 @@ void check_otherModules_semantic(astNode* root, GST* global_st)
 void check_driverModule_semantic(astNode* root, GST* global_st)
 {
     assert(root->node_marker == driverModule);
-
-    // astNode* temp = root->child;
-    // check_moduleDef_semantic(temp, global_st);
-
-    check_module_semantic(root, global_st);
-    
+    astNode* temp = root->child;   //moduleDef node
+    FUNC_TABLE_ENTRY* func_entry = global_st_lookup(root->tree_node->lexeme, global_st);
+    check_moduleDef_semantic(temp, func_entry);
     return;
 }
 
@@ -123,24 +128,36 @@ void check_moduleDef_semantic(astNode* root, FUNC_TABLE_ENTRY* func_entry)
 
 void check_module_semantic(astNode* root, GST* global_st)
 {
-    assert(root->node_marker == module || root->node_marker == driverModule);
+    assert(root->node_marker == module);
 
-    astNode* temp = root->child;
+    astNode* temp = root->child;  //name of function is here
     FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
 
+<<<<<<< HEAD
+        if (func_entry == NULL)
+        {
+            //printf("ERROR in check module, function entry should have been there in symbol table\n");
+            return;
+        }
+=======
     if (func_entry == NULL)
     {
-        printf("ERROR in check module, function entry should have been there in symbol table\n");
-        exit(1);
+        hasSemanticError = true;
+        return;
+        //printf("ERROR in check module, function entry should have been there in symbol table\n");
+>>>>>>> af0aa85a40717c1828f9e7ff74aba63fe243adec
     }
+    
 
-
-    check_moduleDef_semantic(temp->sibling->sibling->sibling->sibling, func_entry);
+    check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
     return; 
 }
 
 void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
+    if(root->node_marker == EPS)
+        return;
+
     assert(root->node_marker == statements);
 
     astNode* temp = root->child;
@@ -175,7 +192,7 @@ void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == declareStmt);
     
-    // no semantic rules required, checks done during type checking
+    // no semantic rules required here as checks done during type checking
     return;
 }
 
@@ -184,11 +201,11 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == ioStmt);
 
-    //no semantic 
+    //no semantic rules required here; to be checked during code generation
     return;
 }
 
-
+// needs to be chenged, check whatsapp pics
 void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == assignmentStmt);
@@ -240,6 +257,8 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
         if (id_entry == NULL)
         {
+
+            // if satvik handles this, comment out below 2 lines
             printf("SEMANTIC ERROR at line %d: undeclared variable %s", var_node->tree_node->line, var_node->tree_node->lexeme);
             hasSemanticError = true;
             return;
@@ -250,7 +269,24 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         
         else  //bound check
         {
-            // I don'rt know what to do, touba aage kya karun :(
+            if (index_node->node_marker == ID)
+                id_entry->datatype->arrtype->is_dynamic_index = true;
+            else
+            {
+                assert(index_node->node_marker == NUM);
+
+                int low_index = id_entry->datatype->arrtype->begin;
+                int high_index = id_entry->datatype->arrtype->end;
+                int index = atoi(index_node->tree_node->lexeme);
+                if (index < low_index || index > high_index)
+                {
+                    printf("Semantic Error: Out of bound error at line %d - index should lie between %d and %d, got %s\n", index_node->tree_node->line, low_index, high_index, index_node->tree_node->lexeme);
+                    hasSemanticError = true;
+                }
+
+                return;
+            }
+            
         }
         
     }

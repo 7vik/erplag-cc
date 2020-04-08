@@ -9,6 +9,7 @@ typedef struct ARRAY_TYPE_DATA
     unsigned int end;
     unsigned short int base_type;                // enum for integer, real, boolean
     bool is_dynamic; // if array is dynamic
+    bool is_dynamic_index; // if index variable is dynamic
    // changes here if she allows for nested arrays
 } ARRAY_TYPE_DATA;
 
