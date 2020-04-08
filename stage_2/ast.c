@@ -900,7 +900,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 if(temp != NULL)
                 {
-                    astNode* new = make_ASTnode(certificate);
+                    astNode* new = make_ASTnode(ARRAY);
                     TREE_NODE* new_op = (TREE_NODE*) malloc(sizeof(TREE_NODE));
                     if(new_op == NULL)
                     {
@@ -1862,7 +1862,7 @@ void print_parse_tree_json(PARSE_TREE* tree,  char *outputfile)
     printf("Parse tree output to %s\n",outputfile);
     fflush(fp);
 }
-/*
+
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1901,4 +1901,3 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
-*/
