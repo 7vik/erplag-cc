@@ -290,6 +290,20 @@
 ]
 }
 ,{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:please" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
 "text": { "name": "assignmentStmt" },
 "collapsed": true,
 "children": [
@@ -475,6 +489,95 @@
 }
 ]
 }
+<<<<<<< HEAD
+,{
+"text": { "name": "module" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:satvik" },
+"children":[]
+}
+,{
+"text": { "name": "input_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "input_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:sat" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ret" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "output_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:vik" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:viksat" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+=======
+>>>>>>> 2afe90367ba1aba29a92ddb60bb28783734ec593
 ,{
 "text": { "name": "module" },
 "collapsed": true,
@@ -1476,7 +1579,15 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:god" },
+=======
 "text": { "name": "ID:t" },
+>>>>>>> 2afe90367ba1aba29a92ddb60bb28783734ec593
 "children":[]
 }
 ,{
@@ -1486,7 +1597,11 @@
 ]
 }
 ,{
+<<<<<<< HEAD
+"text": { "name": "ioStmt" },
+=======
 "text": { "name": "assignmentStmt" },
+>>>>>>> 2afe90367ba1aba29a92ddb60bb28783734ec593
 "collapsed": true,
 "children": [
 {

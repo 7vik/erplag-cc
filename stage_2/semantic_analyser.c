@@ -30,9 +30,6 @@ etc. (More semantics will be made available in the test cases)
 #include <assert.h>
 #include <stdlib.h>
 
-bool hasSemanticError = false;
-
-
 void semantic_analyser(astNode* root, GST* global_st)
 {
     if(root != NULL)
@@ -136,11 +133,19 @@ void check_module_semantic(astNode* root, GST* global_st)
     astNode* temp = root->child;  //name of function is here
     FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
 
+<<<<<<< HEAD
+        if (func_entry == NULL)
+        {
+            //printf("ERROR in check module, function entry should have been there in symbol table\n");
+            return;
+        }
+=======
     if (func_entry == NULL)
     {
         hasSemanticError = true;
         return;
         //printf("ERROR in check module, function entry should have been there in symbol table\n");
+>>>>>>> af0aa85a40717c1828f9e7ff74aba63fe243adec
     }
     
 
