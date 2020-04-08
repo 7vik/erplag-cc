@@ -207,8 +207,17 @@ void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     astNode* op_node = root->child->child->sibling;
 
-    check_var_semantic(op_node->child, id_table);
-    check_var_semantic(op_node->child->sibling, id_table);
+    // OPERATOR CASE 
+    if(op_node->child != NULL)
+    {
+        check_var_semantic(op_node->child, id_table);
+        check_var_semantic(op_node->child->sibling, id_table);
+    }
+
+    // array assignment
+    
+
+    
     return;
 }
 
