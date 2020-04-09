@@ -313,9 +313,15 @@ astNode* buildAST(PARSE_TREE* root)
             
             case(10)://ret -> EPS -- in case of no output parameter, return a node with no child.
             {
+                //printf("node symbol: %s\n", root->data->node_symbol);
                 astNode* node = make_ASTnode(string_to_enum(root->data->node_symbol));
                 node->tree_node = root->data;
-                node->is_leaf = 1;
+                //printf("%s %s\n", node->tree_node->lexeme, node->tree_node->token_name);
+                //node->is_leaf = 1;
+
+                astNode* new = buildLeafAST(root->kids[0]);
+                node->child = new;
+                new->parent = node; 
                 return node;     
             }
             
@@ -528,7 +534,6 @@ astNode* buildAST(PARSE_TREE* root)
             }
             
             case(25)://moduleDef -> START statements END
-
             {
                 int certificate = string_to_enum(root->data->node_symbol);
                 astNode* child0 = buildLeafAST(root->kids[0]);
@@ -897,6 +902,33 @@ astNode* buildAST(PARSE_TREE* root)
                 child0->parent = child1;
                 child0->sibling = temp;
 
+                temp = child1->child->sibling->sibling;
+
+                if(temp != NULL)
+                {
+                    astNode* new = make_ASTnode(ARRAY);
+                    TREE_NODE* new_op = (TREE_NODE*) malloc(sizeof(TREE_NODE));
+                    if(new_op == NULL)
+                    {
+                        printf("Malloc error. Terminating.\n\n"); 
+                        exit(5);
+                    }
+                    new_op->node_symbol = "assignNew";
+                    new->tree_node = new_op;
+
+                    child1->child = NULL;
+                    child0->parent = NULL;
+                    child0->sibling->parent = NULL;
+                    child0->sibling->sibling = NULL;
+
+                    new->child = child0;
+                    child0->parent = new;
+                    child0->sibling->parent = new;
+                    new->sibling = temp;
+                    
+                    child1->child = new;
+                    new->parent = child1;
+                }
                 return node;
             }
 
@@ -1836,7 +1868,7 @@ void print_parse_tree_json(PARSE_TREE* tree,  char *outputfile)
     printf("Parse tree output to %s\n",outputfile);
     fflush(fp);
 }
-/*
+
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1875,4 +1907,3 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
-*/
