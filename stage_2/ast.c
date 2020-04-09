@@ -1111,8 +1111,9 @@ astNode* buildAST(PARSE_TREE* root)
             case(59):
             {
                 astNode* child0 = buildLeafAST(root->kids[0]);
+                child0->is_leaf = 0;
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
+                child0->child = child1;
                 return child0;
             }
 
@@ -1120,9 +1121,10 @@ astNode* buildAST(PARSE_TREE* root)
             case(60):
             {
                 astNode* child0 = buildLeafAST(root->kids[0]);
+                child0->is_leaf = 0;
                 astNode* child1 = buildAST(root->kids[1]);
-                child0->sibling = child1;
-                return child0;    
+                child0->child = child1;
+                return child0;   
             }
 
             // unary_opt -> BO arithmeticExpr BC
