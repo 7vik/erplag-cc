@@ -17,3 +17,8 @@ This project is part of our course requirement for CS-F363 "Compiler Constructio
 - make 
 - ./stage2exe t5.txt test.txt
 - This will print the symbol table on console
+
+# Resources for NASM
+
+- Excellent tutorial: https://cs.lmu.edu/~ray/notes/nasmtutorial/
+- Official documentation: https://www.nasm.us/doc/
