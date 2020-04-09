@@ -231,10 +231,111 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == conditionalStmt);
 
+    astNode* temp = root->child;
+
+    ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_table);
+
+    if(id_entry->datatype->simple == ARRAY) // How can the switch variable be an array variable?
+    {
+        printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, temp->tree_node->lexeme);
+        hasSemanticError = true;
+    }
+
+    else if(id_entry->datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
+    {
+        printf("SEMANTIC ERROR at line %d: %s is a variable of type real.\n", temp->tree_node->line, temp->tree_node->lexeme);
+        hasSemanticError = true;
+    }
+    // I assume Satvik would handle the remaining cases associated with type for identifier.
+    // Comment out anything from the above if-else if construct which is redundant.
+
+    temp = temp->sibling;
+
+    // now, we are on START
+    ID_SYMBOL_TABLE* id_child_table = id_table->kid_st[id_table->visited];
+    temp = temp->sibling;
+    
+    // we are now on caseStmts
+    check_caseStmts_semantic(temp, id_child_table, id_entry);
+    temp = temp->sibling;
+
+    // we are now on default_nt
+    check_default_nt_semantic(temp, id_child_table, id_entry);
+    temp = temp->sibling;
+
+    // we are now on END
+    id_table->visited += 1;
+
     return;
 }
 
+void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
+{
+    assert(root->node_marker == caseStmts);
 
+    astNode* temp = root->child;
+    while(temp != NULL)
+    {
+        check_caseStmt_semantic(temp, id_child_table, id_entry);
+        temp = temp->sibling;
+    }
+
+    return;
+}
+
+void check_caseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
+{
+    assert(root->node_marker == caseStmt);
+
+    astNode* temp = root->child;
+
+    // ARRAY!
+    if(id_entry->datatype->simple == ARRAY)
+    {
+        printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, id_entry->lexeme);
+        hasSemanticError = true;
+    }
+
+    // Type mismatch condition(s)
+    else if(((id_entry->datatype->simple == INTEGER) && (temp->node_marker != NUM)) || ((id_entry->datatype->simple == BOOLEAN) && (temp->node_marker == NUM)))
+    {
+        printf("SEMANTIC ERROR at line %d: Types of switch variable %s and case entry %s mismatch.\n", temp->tree_node->line, id_entry->lexeme, temp->tree_node->lexeme);
+        hasSemanticError = true;
+    }
+
+    temp = temp->sibling;   //we're on statements node
+    check_statements_semantic(temp, id_child_table);
+
+    return;
+}
+
+void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
+{
+    if(id_entry->datatype->simple == ARRAY) // ARRAY!
+    {
+        printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", root->tree_node->line, id_entry->lexeme);
+        hasSemanticError = true;
+    }
+
+    // Now, the type of switch variable is integer, but node marker says default not present
+    else if(root->node_marker == EPS && id_entry->datatype->simple == INTEGER)
+    {
+        printf("SEMANTIC ERROR at line %d: A default statement must have been present here.\n", root->tree_node->line);
+        hasSemanticError = true;
+    }
+
+    assert(root->node_marker == default_nt);
+
+    if(id_entry->datatype->simple == BOOLEAN)   // Now, why default?
+    {
+        printf("SEMANTIC ERROR at line %d: A default statement shouldn't have been present here.\n", root->tree_node->line);
+        hasSemanticError = true;
+    }
+
+    check_statements_semantic(root->child, id_child_table);
+
+    return;
+}
 void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == moduleReuseStmt);
