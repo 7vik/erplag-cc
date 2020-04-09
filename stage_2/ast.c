@@ -1428,14 +1428,14 @@ astNode* buildAST(PARSE_TREE* root)
 
                 node->tree_node = root->data;
 		
-		astNode* temp = child1;
-		while(temp->node_marker != EPS)
-		{
-		    temp->parent = node;
-		    temp = temp->sibling;
-		}
+		        astNode* temp = child1;
+		        while(temp->node_marker != EPS)
+		        {
+		            temp->parent = node;
+		            temp = temp->sibling;
+		        }
                 
-		temp->parent = node;
+		        temp->parent = node;
 
                 child3->parent = node;
                 temp->sibling = child3;
@@ -1875,7 +1875,7 @@ void print_parse_tree_json(PARSE_TREE* tree,  char *outputfile)
     printf("Parse tree output to %s\n",outputfile);
     fflush(fp);
 }
-/*
+
 int main(int argc, char* argv[])          // driver
 {
     if(argc != 3)
@@ -1914,4 +1914,3 @@ int main(int argc, char* argv[])          // driver
     free(parse_table);
     return 0;
 }
-*/
