@@ -1427,13 +1427,20 @@ astNode* buildAST(PARSE_TREE* root)
                 astNode* node = make_ASTnode(certificate);
 
                 node->tree_node = root->data;
-                child1->parent = node;
+		
+		astNode* temp = child1;
+		while(temp->node_marker != EPS)
+		{
+		    temp->parent = node;
+		    temp = temp->sibling;
+		}
+                
+		temp->parent = node;
+
                 child3->parent = node;
-                child1->sibling = child3;
+                temp->sibling = child3;
                 node->child = child1;
                 return node;
-
-                break;
             }
 
             // value -> NUM
