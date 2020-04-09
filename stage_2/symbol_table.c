@@ -193,29 +193,6 @@ TYPE *get_type(astNode *n)          // temporary, delete it
     if (!new)
         malloc_error
     new->simple = string_to_enum(n->sibling->tree_node->node_symbol);
-    // printf("AAA:%s\n", variables_array[new->simple]);
-    // if (
-    //     new->simple == LT || 
-    //     new->simple == LE || 
-    //     new->simple == GT || 
-    //     new->simple == GE || 
-    //     new->simple == EQ || 
-    //     new->simple == NE 
-    //     )
-    // {
-    //     printf("YGA1\n");
-    //     new->simple = BOOLEAN;
-    //     printf("YGA2\n");
-    // }
-    // if (
-    //     new->simple == PLUS  || 
-    //     new->simple == MINUS || 
-    //     new->simple ==  MUL  || 
-    //     new->simple ==  DIV   
-    //     )
-    // {
-    //     new->simple = REAL;
-    // }
     if (new->simple == ARRAY)                            // it's an array
     {
         new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
@@ -246,126 +223,160 @@ PARAMS *param_lookup(PARAMS *plist, char *var)
     return param_lookup(plist->next, var);
 }
 
+int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
+{
+    if (ex->node_marker == ID)
+    {
+        ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
+        if (i == NULL)
+        {
+            PARAMS *p1 = param_lookup(id_st->primogenitor->in_params ,ex->tree_node->lexeme);
+            PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
+            if (p1 == NULL && p2 == NULL)
+                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->tree_node->lexeme);
+            else if (p1 != NULL) return p1->datatype->simple; 
+            else if (p2 != NULL) return p2->datatype->simple;
+        }
+        else
+            return i->datatype->simple;
+    }
+    if (ex->node_marker == RNUM)
+        return REAL;
+    if (ex->node_marker == NUM)
+        return INTEGER;
+    if (ex->node_marker == TRUE || ex->node_marker == FALSE)
+        return BOOLEAN;
+    if (
+        ex->node_marker ==  LE||
+        ex->node_marker ==  GE||
+        ex->node_marker ==  LT||
+        ex->node_marker ==  GT||
+        ex->node_marker ==  EQ||
+        ex->node_marker ==  NE||0
+        )
+    {
+        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+            printf("Semantic Error on line %d. Expected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+        else
+            return BOOLEAN;
+    }
+    if (
+        ex->node_marker ==  PLUS    ||
+        ex->node_marker ==  MINUS   ||
+        ex->node_marker ==  DIV     ||
+        ex->node_marker ==  MUL     ||0
+        )
+    {
+        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+            printf("Semantic Error on line %d. Exprected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+        else
+            return get_type_expr(ex->child, id_st);
+    }
+    if (ex->node_marker == var)
+    {
+        if (ex->child->sibling == NULL)
+            return get_type_expr(ex->child, id_st);
+        else
+        {
+
+            ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
+            if (i == NULL)
+            {
+                PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
+                if (p == NULL)
+                    printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                else if (p->datatype->simple != ARRAY)
+                    printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
+                    printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+                else
+                    return p->datatype->arrtype->base_type;
+            }
+            else if (i->datatype->simple != ARRAY)
+                    printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+            else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
+                printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+            else
+                return i->datatype->arrtype->base_type;            
+        }
+    }
+    return 0;    
+}
+
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
     // printf("aaya1\n");
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
+    {
         for(astNode *temp = n->child; temp; temp = temp->sibling)
+        {
+            // printf("DD%s\n", temp->tree_node->node_symbol);
             traverse_the_universe(temp, id_st);
+        }
+    }
     if (is(n, "declareStmt"))
     {
-        ID_TABLE_ENTRY *id = create_symbol(n->child, get_type(n->child));
-        st_insert_id_entry(id, id_st);
+        astNode *temp = n->child;
+        while(temp->node_marker != EPS) temp = temp->sibling;
+        TYPE *t = get_type(temp);
+        for(temp = n->child; temp->node_marker != EPS; temp = temp->sibling)
+        {    
+            ID_TABLE_ENTRY *id = create_symbol(temp, t);
+            st_insert_id_entry(id, id_st);
+        }
     }
     if (is(n, "assignmentStmt"))
         traverse_the_universe(n->child, id_st);
     if (is(n, "ASSIGNOP"))
     {
-        printf("AAYA\n");
+        // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
         // printf("WOW %s\n", rhs->tree_node->node_symbol);
-        PARAMS *p = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
-        ID_TABLE_ENTRY *i = st_lookup(lhs->tree_node->lexeme, id_st);
-        printf("FAST1\t%s\n", lhs->tree_node->lexeme);
-        if (p == NULL && i == NULL)
-            printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
+        // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
+        if (lhs->node_marker == ARRAY)
+        {
+            // has to be in the ID table or input
+            PARAMS *p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
+            ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
+            if (i == NULL && p==NULL)
+                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
+            // and type must match before assignment
+            if (i != NULL && (i->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[i->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+            if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[p->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+        }
+        else    // not an array
+        {       
+            PARAMS *p = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
+            ID_TABLE_ENTRY *i = st_lookup(lhs->tree_node->lexeme, id_st);
+        
+            if (p == NULL && i == NULL)
+                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
 
-        if (p == NULL || i != NULL)
-        {
-            // types must match before assignment
-            if (i->datatype->simple == INTEGER && string_to_enum(rhs->tree_node->node_symbol) != NUM)
+            if (p == NULL || i != NULL)
             {
-                if (
-                    is(rhs, "PLUS") ||
-                    is(rhs, "MINUS")||
-                    is(rhs, "MUL")  ||
-                    is(rhs, "DIV")  ||
-                    is(rhs, "ID")   ||
-                    is(rhs, "NUM")  ||0
-                    );
+                // types must match before assignment
+                if (i->datatype->simple != get_type_expr(rhs, id_st))
+                        printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
                 else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
+                    printf("");
             }
-            if (i->datatype->simple == REAL && string_to_enum(rhs->tree_node->node_symbol) != RNUM)
+            if (p != NULL || i == NULL)
             {
-                if (
-                    is(rhs, "PLUS") ||
-                    is(rhs, "MINUS")||
-                    is(rhs, "MUL")  ||
-                    is(rhs, "DIV")  ||
-                    is(rhs, "ID")   ||
-                    is(rhs, "RNUM") ||0
-                    );
+                // types must match before assignment
+                if (p->datatype->simple != get_type_expr(rhs, id_st))
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[p->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
                 else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
+                    printf("");
             }
-            if (i->datatype->simple == BOOLEAN) 
+            if (p != NULL && i != NULL)
             {
-                if (
-                    is(rhs, "LE") ||
-                    is(rhs, "GE") ||
-                    is(rhs, "EQ")  ||
-                    is(rhs, "NE")  ||
-                    is(rhs, "LT")   ||
-                    is(rhs, "GT")   ||
-                    is(rhs, "TRUE")  ||
-                    is(rhs, "FALSE") ||0
-                    );
-                else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
+                ; // ask bharat how to handle this
             }
-        }
-        if (p != NULL || i == NULL)
-        {
-            // types must match before assignment
-            if (p->datatype->simple == INTEGER && string_to_enum(rhs->tree_node->node_symbol) != NUM)
-            {
-                if (
-                    is(rhs, "PLUS") ||
-                    is(rhs, "MINUS")||
-                    is(rhs, "MUL")  ||
-                    is(rhs, "DIV")  ||
-                    is(rhs, "ID")   ||
-                    is(rhs, "NUM")  ||0
-                    );
-                else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
-            }
-            if (p->datatype->simple == REAL && string_to_enum(rhs->tree_node->node_symbol) != RNUM)
-            {
-                if (
-                    is(rhs, "PLUS") ||
-                    is(rhs, "MINUS")||
-                    is(rhs, "MUL")  ||
-                    is(rhs, "DIV")  ||
-                    is(rhs, "ID")   ||
-                    is(rhs, "RNUM") ||0
-                    );
-                else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
-            }
-            if (p->datatype->simple == BOOLEAN) 
-            {
-                if (
-                    is(rhs, "LE") ||
-                    is(rhs, "GE") ||
-                    is(rhs, "EQ")  ||
-                    is(rhs, "NE")  ||
-                    is(rhs, "LT")   ||
-                    is(rhs, "GT")   ||
-                    is(rhs, "TRUE")  ||
-                    is(rhs, "FALSE") ||0
-                    );
-                else
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type(lhs)->simple]);
-            }
-        }
-        if (p != NULL && i != NULL)
-        {
-            ; // ask bharat how to handle this
         }
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
@@ -468,17 +479,23 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     // }
 }
 
+void lite()
+{
+    return;
+}
+
 // traverse the ast, fill the GST (while performing some checks)
 void traverse_the_multiverse(astNode *n, GST *st)
 {
-    // printf("aaya1\n");
+    // printf("aaya1%s\n", n->tree_node->node_symbol);
     if (is(n,"program"))                
         for(astNode *temp = n->child; temp; temp = temp->sibling)
             traverse_the_multiverse(temp,st);
 
     if (is(n, "moduleDeclarations"))
         for (astNode *temp = n->child; temp; temp = temp->sibling)
-            st_insert_func_entry(create_function(temp, NULL, NULL, NULL), st);
+            // st_insert_func_entry(create_function(temp, NULL, NULL, NULL), st);
+            lite();
         
     if (is(n, "otherModules") && n->sibling != NULL)
     {
@@ -492,37 +509,35 @@ void traverse_the_multiverse(astNode *n, GST *st)
             traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
         }
     }
+    
     if (is(n, "driverModule"))
     {
         ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
         FUNC_TABLE_ENTRY *fnew = create_function(NULL, NULL, NULL, id_st);
         st_insert_func_entry(fnew, st);
+        // printf("mil\n");
         traverse_the_universe(n->child, id_st);
+        // printf("gaya\n");
     }
     if (is(n, "otherModules") && n->sibling == NULL)
     {
         for (astNode *m = n->child; m; m = m->sibling)
         {
-            FUNC_TABLE_ENTRY *temp = global_st_lookup(m->child->tree_node->lexeme, st);
-            if (!temp)
-            {
-                printf("Semantic Error: Module '%s' defined without declaration.", m->child->tree_node->lexeme);
-            }
+            PARAMS *p1 = create_param(m->child->sibling->child);
+            // printf("aaya2\n");
+            PARAMS *p2;
+            if (m->child->sibling->sibling->child->node_marker == EPS)  // no output
+                p2 = NULL;
             else
-            {
-                PARAMS *p1 = create_param(m->child->sibling->child);
-                PARAMS *p2 = create_param(m->child->sibling->child);    // change later
-                ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-                temp->in_params = p1;
-                temp->out_params = p2;
-                temp->local_id_table = id_st;
-                id_st->primogenitor = temp;
-                traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
-            }
+                p2 = create_param(m->child->sibling->sibling->child);
+            ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
+            st_insert_func_entry(create_function(m->child, p1, p2, id_st), st);
+            traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
         }
     }
     if (is(n, "EPS"))
         return;         // bliss
+    
     return;
 }
 
