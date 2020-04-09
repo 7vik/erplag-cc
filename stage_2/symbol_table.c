@@ -263,14 +263,16 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         traverse_the_universe(n->child, id_st);
     if (is(n, "ASSIGNOP"))
     {
-        // printf("AAYA\n");
+        printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
         // printf("WOW %s\n", rhs->tree_node->node_symbol);
         PARAMS *p = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
         ID_TABLE_ENTRY *i = st_lookup(lhs->tree_node->lexeme, id_st);
+        printf("FAST1\t%s\n", lhs->tree_node->lexeme);
         if (p == NULL && i == NULL)
             printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
+
         if (p == NULL || i != NULL)
         {
             // types must match before assignment
