@@ -8,8 +8,36 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "moduleDeclaration" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "MODULE:module" },
+"children":[]
+}
+,{
+"text": { "name": "ID:compute" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "moduleDeclarations" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
 }
 ]
 }
@@ -72,7 +100,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:x" },
+"text": { "name": "ID:var_1_" },
 "children":[]
 }
 ,{
@@ -84,7 +112,7 @@
 "children":[]
 }
 ,{
-"text": { "name": "ID:y" },
+"text": { "name": "ID:var_2_" },
 "children":[]
 }
 ,{
@@ -96,7 +124,7 @@
 "children":[]
 }
 ,{
-"text": { "name": "ID:z" },
+"text": { "name": "ID:var_3_" },
 "children":[]
 }
 ,{
@@ -128,78 +156,6 @@
 "children":[]
 }
 ]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "GET_VALUE:get_value" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "ID:x" },
-"children":[]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "GET_VALUE:get_value" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "ID:y" },
-"children":[]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
 }
 ,{
 "text": { "name": "SEMICOL:;" },
@@ -230,19 +186,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "idList_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "COMMA:," },
-"children":[]
-}
-,{
-"text": { "name": "ID:value" },
+"text": { "name": "ID:R1_abc" },
 "children":[]
 }
 ,{
@@ -254,6 +198,62 @@
 "children":[]
 }
 ]
+}
+]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BOOLEAN:boolean" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:r2_ABC" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
 }
 ]
 }
@@ -290,67 +290,23 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "simpleStmt" },
+"text": { "name": "declareStmt" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:z" },
+"text": { "name": "DECLARE:declare" },
 "children":[]
 }
 ,{
-"text": { "name": "whichStmt" },
+"text": { "name": "idList" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "lvalueIDStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP::=" },
+"text": { "name": "ID:R3_abc" },
 "children":[]
 }
 ,{
-"text": { "name": "expression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticOrBooleanExpression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "opt_expr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticExpr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:19" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
+"text": { "name": "idList_lr" },
 "collapsed": true,
 "children": [
 {
@@ -362,808 +318,18 @@
 ]
 }
 ,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "one_more_opt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "opt_expr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "simpleStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
+"text": { "name": "COLON::" },
 "children":[]
 }
 ,{
-"text": { "name": "whichStmt" },
+"text": { "name": "datatype" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "lvalueIDStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP::=" },
-"children":[]
-}
-,{
-"text": { "name": "expression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticOrBooleanExpression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "opt_expr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticExpr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
+"text": { "name": "REAL:real" },
 "children":[]
 }
 ]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op2" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MUL:*" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:20" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MINUS:-" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:y" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op2" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MUL:*" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:4" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "PLUS:+" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:17" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MINUS:-" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:z" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "one_more_opt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "opt_expr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "simpleStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:value" },
-"children":[]
-}
-,{
-"text": { "name": "whichStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "lvalueIDStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP::=" },
-"children":[]
-}
-,{
-"text": { "name": "expression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticOrBooleanExpression" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "opt_expr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "arithmeticExpr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "PLUS:+" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:z" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op2" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MUL:*" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:2" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MINUS:-" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op2" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "MUL:*" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:y" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "one_more_opt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "opt_expr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "PRINT:print" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:sum" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
 }
 ,{
 "text": { "name": "SEMICOL:;" },
@@ -1186,7 +352,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "PRINT:print" },
+"text": { "name": "GET_VALUE:get_value" },
 "children":[]
 }
 ,{
@@ -1194,30 +360,8 @@
 "children":[]
 }
 ,{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:value" },
+"text": { "name": "ID:var_1_" },
 "children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
 }
 ,{
 "text": { "name": "BC:)" },
@@ -1236,10 +380,424 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:var_2_" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:10" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "EPS:EPS" },
 "children":[]
 }
 ]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:var_3_" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "unaryExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "MINUS:-" },
+"children":[]
+}
+,{
+"text": { "name": "unary_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:6" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "moduleReuseStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "optional" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "SQBO:[" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:R1_abc" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:r2_ABC" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:R3_abc" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SQBC:]" },
+"children":[]
+}
+,{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "USE:use" },
+"children":[]
+}
+,{
+"text": { "name": "MODULE:module" },
+"children":[]
+}
+,{
+"text": { "name": "ID:compute" },
+"children":[]
+}
+,{
+"text": { "name": "WITH:with" },
+"children":[]
+}
+,{
+"text": { "name": "PARAMETERS:parameters" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:var_1_" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:var_2_" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:var_34" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
 }
 ]
 }
@@ -1272,8 +830,2460 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "module" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DEF:<<" },
+"children":[]
+}
+,{
+"text": { "name": "MODULE:module" },
+"children":[]
+}
+,{
+"text": { "name": "ID:compute" },
+"children":[]
+}
+,{
+"text": { "name": "ENDDEF:>>" },
+"children":[]
+}
+,{
+"text": { "name": "TAKES:takes" },
+"children":[]
+}
+,{
+"text": { "name": "INPUT:input" },
+"children":[]
+}
+,{
+"text": { "name": "SQBO:[" },
+"children":[]
+}
+,{
+"text": { "name": "input_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "input_plist_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "input_plist_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:c" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "input_plist_lr" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SQBC:]" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+,{
+"text": { "name": "ret" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "RETURNS:returns" },
+"children":[]
+}
+,{
+"text": { "name": "SQBO:[" },
+"children":[]
+}
+,{
+"text": { "name": "output_plist" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_1" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "type" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BOOLEAN:boolean" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "output_plist_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:res_2_a" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "type" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "output_plist_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:res_2__b" },
+"children":[]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "type" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "REAL:real" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "output_plist_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SQBC:]" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BOOLEAN:boolean" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_2_a" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "unaryExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "MINUS:-" },
+"children":[]
+}
+,{
+"text": { "name": "unary_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op2" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "MUL:*" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op1" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "MINUS:-" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:c" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op2" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DIV:/" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:5" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_2__b" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_2_a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op1" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "PLUS:+" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op2" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "MUL:*" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:12" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op1" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "PLUS:+" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "RNUM:22.34E-2" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "op2" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DIV:/" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:13" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "LE:<=" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "AND:AND" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:c" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GE:>=" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "OR:OR" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "LT:<" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:0" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "AND:AND" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "booleanConst" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "FALSE:false" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_1" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "booleanConst" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "TRUE:true" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "AND:AND" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:c" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EQ:==" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "OR:OR" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:b" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GT:>" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:p" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "logicalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "AND:AND" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "LE:<=" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:c" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "PRINT:print" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "printOpt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:res_1" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "otherModules" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
 }
 ]
 }
