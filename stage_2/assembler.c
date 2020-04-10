@@ -9,23 +9,18 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
     {
         case assignmentStmt:
             generate_code_assignmentStmt(root, symbol_table, fp);
-            generate_code(root->sibling, symbol_table, fp);
             break;
         case printOpt:
             generate_code_printStmt(root, symbol_table, fp);
-            generate_code(root->sibling, symbol_table, fp);
             break;
         case GET_VALUE:
             generate_code_inputStmt(root, symbol_table, fp);
-            generate_code(root->sibling, symbol_table, fp);
             break;
         case iterativeStmt:
             generate_code_iterativeStmt(root, symbol_table, fp);
-            generate_code(root->sibling, symbol_table, fp);
             break;
         case conditionalStmt:
             generate_code_conditionalStmt(root, symbol_table, fp);
-            generate_code(root->sibling, symbol_table, fp);
             break;
         default:
         {
@@ -36,6 +31,7 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
                 temp = temp->sibling;
 
             }
+            break;
         }
 
     }

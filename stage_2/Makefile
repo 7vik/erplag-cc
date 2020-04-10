@@ -50,7 +50,7 @@ semantic_analyser.o: semantic_analyser.c
 	gcc -c semantic_analyser.c
 
 assembler.o: assembler.c
-	gcc -c assembler.o
+	gcc -c assembler.c
 
 symbol_table_ayush.o: symbol_table_ayush.c
 	gcc -c symbol_table_ayush.c
