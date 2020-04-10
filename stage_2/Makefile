@@ -24,6 +24,10 @@ hellor: bool.o parser.o lexer.o hash.o ast.o symbol_table.o semantic_analyser.o
 ast: bool.o parser.o lexer.o hash.o ast.o
 	gcc -o stage2exe bool.o ast.o parser.o lexer.o hash.o
 
+assembler: bool.o parser.o lexer.o hash.o ast.o assembler.o symbol_table_ayush.o
+	gcc -o stage2exe assembler.o bool.o ast.o parser.o lexer.o hash.o symbol_table_ayush.o
+
+
 bool.o : bool.c
 	gcc -c bool.c
 
@@ -44,6 +48,12 @@ symbol_table.o: symbol_table.c
 
 semantic_analyser.o: semantic_analyser.c
 	gcc -c semantic_analyser.c
+
+assembler.o: assembler.c
+	gcc -c assembler.o
+
+symbol_table_ayush.o: symbol_table_ayush.c
+	gcc -c symbol_table_ayush.c
 
 clean:
 	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o
