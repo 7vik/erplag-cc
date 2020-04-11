@@ -22,5 +22,6 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table);
 void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry);
 void check_caseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry);
 void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry);
+void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table);
 
 #endif
