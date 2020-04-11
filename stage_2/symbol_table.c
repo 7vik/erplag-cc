@@ -454,12 +454,36 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {
         // no output!
-
+        FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
+        if (f == NULL)
+            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+        else
+        {
+             PARAMS *p = f->in_params;
+            for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+        }
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
     {
         // there's output!
-
+        FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
+        if (f == NULL)
+            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+        else
+        {
+            PARAMS *p = f->in_params;
+            // check for input parameters
+            for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+            // and output parameters
+            p = f->out_params;
+            for(astNode *temp = n->child->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function output.\n", n->child->child->tree_node->line);
+        }
     }
     return;
 }
@@ -473,9 +497,20 @@ void lite()
 void traverse_the_multiverse(astNode *n, GST *st)
 {
     // printf("aaya1%s\n", n->tree_node->node_symbol);
-    if (is(n,"program"))                
+    if (is(n,"program"))
+    {
+        astNode *d;                
         for(astNode *temp = n->child; temp; temp = temp->sibling)
+        {
+            if (is(temp, "driverModule"))
+            {
+                d = temp;       // run driver at last
+                continue;
+            }
             traverse_the_multiverse(temp,st);
+        }
+        traverse_the_multiverse(d, st);
+    }
 
     if (is(n, "moduleDeclarations"))
         for (astNode *temp = n->child; temp; temp = temp->sibling)
@@ -568,6 +603,7 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
         temp->next = f;                               // and adding it there
     }
     st->total_functions += 1;
+    f->procreator = st;
     return;
 }
 
