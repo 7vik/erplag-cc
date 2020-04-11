@@ -246,32 +246,22 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         return INTEGER;
     if (ex->node_marker == TRUE || ex->node_marker == FALSE)
         return BOOLEAN;
-    if (
-        ex->node_marker ==  LE||
-        ex->node_marker ==  GE||
-        ex->node_marker ==  LT||
-        ex->node_marker ==  GT||
-        ex->node_marker ==  EQ||
-        ex->node_marker ==  NE||0
-        )
+    if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE||0)
     {
         if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
             printf("Semantic Error on line %d. Expected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
         else
             return BOOLEAN;
     }
-    if (
-        ex->node_marker ==  PLUS    ||
-        ex->node_marker ==  MINUS   ||
-        ex->node_marker ==  DIV     ||
-        ex->node_marker ==  MUL     ||0
-        )
+    if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL     ||0 )
     {
         if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
             printf("Semantic Error on line %d. Exprected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
         else
             return get_type_expr(ex->child, id_st);
     }
+    if (ex->node_marker == MINUS && ex->child->sibling == NULL)
+        return  get_type_expr(ex->child, id_st);
     if (ex->node_marker == var)
     {
         if (ex->child->sibling == NULL)
@@ -305,7 +295,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("aaya1\n");
+    // printf("aaya1%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -319,6 +309,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     if (is(n, "declareStmt"))
     {
         astNode *temp = n->child;
+        ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
+        if (i != NULL)
+            printf("Semantic Error at line %d. Variable '%s' redeclared.", n->child->tree_node->line, n->child->tree_node->lexeme);
         while(temp->node_marker != EPS) temp = temp->sibling;
         TYPE *t = get_type(temp);
         for(temp = n->child; temp->node_marker != EPS; temp = temp->sibling)
@@ -421,11 +414,11 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     }
     if (is(n, "ioStmt"))
     {
-        if (is(n->child, "ID"))
+        if (n->child->node_marker == GET_VALUE)
         {
             // it's a get_value, so must have been declared beforehand
-            ID_TABLE_ENTRY *i1 = st_lookup(n->child->tree_node->lexeme, id_st);
-            PARAMS *p = param_lookup(id_st->primogenitor->out_params ,n->child->tree_node->lexeme);
+            ID_TABLE_ENTRY *i1 = st_lookup(n->child->child->tree_node->lexeme, id_st);
+            PARAMS *p = param_lookup(id_st->primogenitor->out_params ,n->child->child->tree_node->lexeme);
             if (i1 == NULL && p == NULL)
                 printf("Semantic Error on line %d. Input variable '%s' not declared beforehand.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
         }
@@ -458,25 +451,41 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             traverse_the_universe(temp, id_st);
     if (is(n, "caseStmt"))
         traverse_the_universe(n->child->sibling, id_st);
+    if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
+    {
+        // no output!
+        FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
+        if (f == NULL)
+            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+        else
+        {
+             PARAMS *p = f->in_params;
+            for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+        }
+    }
+    if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
+    {
+        // there's output!
+        FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
+        if (f == NULL)
+            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+        else
+        {
+            PARAMS *p = f->in_params;
+            // check for input parameters
+            for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+            // and output parameters
+            p = f->out_params;
+            for(astNode *temp = n->child->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
+                if (get_type_expr(temp, id_st) != p->datatype->simple)
+                    printf("Semantic Error at line %d. Wrong type given to function output.\n", n->child->child->tree_node->line);
+        }
+    }
     return;
-    // astNode* temp = node;
-    // if (temp->child == NULL)                                //  terminal
-    // {    
-    //     if (is(temp, "ID"))            //  and an ID node
-    //     {
-    //         if (st_lookup(temp->tree_node->lexeme, id_st) == NULL)         // and if ID is not already there
-    //         {
-    //             TYPE *t = get_type(temp);
-    //             ID_TABLE_ENTRY *e = create_symbol(temp, t);
-    //             st_insert_id_entry(e, id_st);
-    //         }
-    //     }
-    // }
-    // else  // non terminal
-    // {    
-    //     for(temp = temp->child; temp; temp = temp->sibling)
-    //         traverse_the_universe(temp, id_st);
-    // }
 }
 
 void lite()
@@ -488,9 +497,20 @@ void lite()
 void traverse_the_multiverse(astNode *n, GST *st)
 {
     // printf("aaya1%s\n", n->tree_node->node_symbol);
-    if (is(n,"program"))                
+    if (is(n,"program"))
+    {
+        astNode *d;                
         for(astNode *temp = n->child; temp; temp = temp->sibling)
+        {
+            if (is(temp, "driverModule"))
+            {
+                d = temp;       // run driver at last
+                continue;
+            }
             traverse_the_multiverse(temp,st);
+        }
+        traverse_the_multiverse(d, st);
+    }
 
     if (is(n, "moduleDeclarations"))
         for (astNode *temp = n->child; temp; temp = temp->sibling)
@@ -583,6 +603,7 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
         temp->next = f;                               // and adding it there
     }
     st->total_functions += 1;
+    f->procreator = st;
     return;
 }
 

@@ -38,29 +38,84 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
 
 }
 
+void initialise_file(FILE* fp)
+{
+    fprintf(fp, "\t\tglobal _start\n");
+    fprintf(fp, "\t\textern printf\n");
+    fprintf(fp, "\t\textern puts\n");
+    fprintf(fp, "\t\textern scanf\n");
+    fprintf(fp, "section .data\n");
+
+    //figure out what to put in data section
+
+    fprintf(fp, "section .text\n");
+    fprintf(fp, "_start:\n");
+
+    return;   
+}
+
+// a lot of things remaining
 void generate_code_assignmentStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
+    //assignOP
+    astNode* temp_node = root->child;
+
+    //haven't handled var as Array
+    //needs to be modified for assembly
+
+    //base case
+    if ((temp_node->child == var || temp_node->child == NUM || temp_node->child == RNUM)
+                && (temp_node->child->sibling == var || temp_node->child->sibling == NUM || temp_node->child->sibling == RNUM))
+    {
+        char* s1, s2;
+        if(temp_node->child == var)
+            s1 = temp_node->child->child->tree_node->lexeme;
+        else
+            s1 = temp_node->child->tree_node->lexeme;
+        
+        if(temp_node->child->sibling == var)
+            s2 = temp_node->child->sibling->child->tree_node->lexeme;
+        else
+            s2 = temp_node->child->sibling->tree_node->lexeme;
+
+        if(temp_node->node_marker == MUL)
+            fprintf(fp, "\t\tmul %s, %s\n", s1, s2);
+        else if(temp_node->node_marker == PLUS)
+            fprintf(fp, "\t\tadd %s, %s\n", s1, s2);
+        else if(temp_node->node_marker == MINUS)
+            fprintf(fp, "\t\tsub %s, %s\n", s1, s2);
+        else
+            fprintf(fp, "\t\teq %s, %s\n", s1, s2);
+        
+    }
+
     return;
 }
 void generate_code_printStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
+    assert(root->node_marker == printOpt);
     return;
 }
 void generate_code_inputStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
+    assert(root->node_marker == GET_VALUE);
+
     return;
 }
 void generate_code_iterativeStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
+    assert(root->node_marker == iterativeStmt);
     return;
 }
 void generate_code_conditionalStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
+    assert(root->node_marker == conditionalStmt);
     return;
 }
 
 int main(int argc, char* argv[])          // driver
 {
+    printf("global main\nextern printf\nextern scanf\nextern puts\nsection .data\nMEM: times 1000 db 0\narr:  times 2 db 0\nmen:  db \"Value is %%d \",10,0\ninputFormat: db \"%%d\",10,0\nvar: times 8 db 0\n\nsection .text\nmain:\n\n");
     if(argc != 4)
     {
         printf("Invalid argument count. Expected 4 arguments as in './executable testcase parse_outfile code.asm'.");
@@ -96,6 +151,7 @@ int main(int argc, char* argv[])          // driver
 
     printf("Starting code generation\n");
     FILE* code_fp = fopen(argv[3], "w");
+    initialise_file(code_fp);
     generate_code(ast_root, symbol_table, code_fp); 
 
 

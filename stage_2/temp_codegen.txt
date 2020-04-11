@@ -1,0 +1,5 @@
+<<<driver program>>>
+start
+	declare x:integer;
+	get_value(x);
+end

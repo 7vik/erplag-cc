@@ -51,6 +51,7 @@ typedef struct FUNC_TABLE_ENTRY
     ID_SYMBOL_TABLE *local_id_table;                    // nested ID table for each function
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
     bool is_declared;                                   // to check if it is declared (semantix)
+    struct FUNC_SYMBOL_TABLE *procreator;               // link to GST
 }FUNC_TABLE_ENTRY;
 
 typedef struct FUNC_SYMBOL_TABLE                        // the final beautiful ST
