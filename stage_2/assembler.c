@@ -38,6 +38,22 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
 
 }
 
+void initialise_file(FILE* fp)
+{
+    fprintf(fp, "\t\tglobal _start\n");
+    fprintf(fp, "\t\textern printf\n");
+    fprintf(fp, "\t\textern puts\n");
+    fprintf(fp, "\t\textern scanf\n");
+    fprintf(fp, "section .data\n");
+
+    //figure out what to put in data section
+
+    fprintf(fp, "section .text\n");
+    fprintf(fp, "_start:\n");
+
+    return;   
+}
+
 // a lot of things remaining
 void generate_code_assignmentStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
@@ -83,7 +99,7 @@ void generate_code_printStmt(astNode* root, GST* symbol_table, FILE* fp)
 void generate_code_inputStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
     assert(root->node_marker == GET_VALUE);
-    
+
     return;
 }
 void generate_code_iterativeStmt(astNode* root, GST* symbol_table, FILE* fp)
@@ -99,6 +115,7 @@ void generate_code_conditionalStmt(astNode* root, GST* symbol_table, FILE* fp)
 
 int main(int argc, char* argv[])          // driver
 {
+    printf("global main\nextern printf\nextern scanf\nextern puts\nsection .data\nMEM: times 1000 db 0\narr:  times 2 db 0\nmen:  db \"Value is %%d \",10,0\ninputFormat: db \"%%d\",10,0\nvar: times 8 db 0\n\nsection .text\nmain:\n\n");
     if(argc != 4)
     {
         printf("Invalid argument count. Expected 4 arguments as in './executable testcase parse_outfile code.asm'.");
@@ -134,6 +151,7 @@ int main(int argc, char* argv[])          // driver
 
     printf("Starting code generation\n");
     FILE* code_fp = fopen(argv[3], "w");
+    initialise_file(code_fp);
     generate_code(ast_root, symbol_table, code_fp); 
 
 
