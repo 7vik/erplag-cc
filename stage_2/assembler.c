@@ -44,11 +44,11 @@ void initialise_file(FILE* fp)
     fprintf(fp, "\t\textern printf\n");
     fprintf(fp, "\t\textern puts\n");
     fprintf(fp, "\t\textern scanf\n");
-    fprintf(fp, "section .data\n");
+    fprintf(fp, "\t\tsection .data\n");
 
     //figure out what to put in data section
 
-    fprintf(fp, "section .text\n");
+    fprintf(fp, "\t\tsection .text\n");
     fprintf(fp, "_start:\n");
 
     return;   
@@ -64,30 +64,30 @@ void generate_code_assignmentStmt(astNode* root, GST* symbol_table, FILE* fp)
     //needs to be modified for assembly
 
     //base case
-    if ((temp_node->child == var || temp_node->child == NUM || temp_node->child == RNUM)
-                && (temp_node->child->sibling == var || temp_node->child->sibling == NUM || temp_node->child->sibling == RNUM))
-    {
-        char* s1, s2;
-        if(temp_node->child == var)
-            s1 = temp_node->child->child->tree_node->lexeme;
-        else
-            s1 = temp_node->child->tree_node->lexeme;
+    // if ((temp_node->child == var || temp_node->child == NUM || temp_node->child == RNUM)
+    //             && (temp_node->child->sibling == var || temp_node->child->sibling == NUM || temp_node->child->sibling == RNUM))
+    // {
+    //     char* s1, s2;
+    //     if(temp_node->child == var)
+    //         s1 = temp_node->child->child->tree_node->lexeme;
+    //     else
+    //         s1 = temp_node->child->tree_node->lexeme;
         
-        if(temp_node->child->sibling == var)
-            s2 = temp_node->child->sibling->child->tree_node->lexeme;
-        else
-            s2 = temp_node->child->sibling->tree_node->lexeme;
+    //     if(temp_node->child->sibling == var)
+    //         s2 = temp_node->child->sibling->child->tree_node->lexeme;
+    //     else
+    //         s2 = temp_node->child->sibling->tree_node->lexeme;
 
-        if(temp_node->node_marker == MUL)
-            fprintf(fp, "\t\tmul %s, %s\n", s1, s2);
-        else if(temp_node->node_marker == PLUS)
-            fprintf(fp, "\t\tadd %s, %s\n", s1, s2);
-        else if(temp_node->node_marker == MINUS)
-            fprintf(fp, "\t\tsub %s, %s\n", s1, s2);
-        else
-            fprintf(fp, "\t\teq %s, %s\n", s1, s2);
+    //     if(temp_node->node_marker == MUL)
+    //         fprintf(fp, "\t\tmul %s, %s\n", s1, s2);
+    //     else if(temp_node->node_marker == PLUS)
+    //         fprintf(fp, "\t\tadd %s, %s\n", s1, s2);
+    //     else if(temp_node->node_marker == MINUS)
+    //         fprintf(fp, "\t\tsub %s, %s\n", s1, s2);
+    //     else
+    //         fprintf(fp, "\t\teq %s, %s\n", s1, s2);
         
-    }
+    // }
 
     return;
 }

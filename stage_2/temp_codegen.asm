@@ -1,9 +1,13 @@
-        global main
-        extern 
+        global _start
+        extern printf
+        extern scanf
+        extern puts
+
+        section .data
 
         section .text
 
-main: 
+_start: 
 
         section .data
 
