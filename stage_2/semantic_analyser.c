@@ -3,12 +3,12 @@
  * 
 1. An identifier cannot be declared multiple times in the same scope.   //declStmt  -- 7vik
 2. An identifier must be declared before its use.      //declStmt   -- 7vik
-3. The types and the number of parameters returned by a function must be the same as that //stmts
+3. The types and the number of parameters returned by a function must be the same as that // moduleReusetmt
    of the parameters used in invoking the function.
 4. The parameters being returned by a function must be assigned a value. If a parameter does  // module
     not get a value assigned within the function definition, it should be reported as an error.
 5. The function that does not return any value, must be invoked appropriately. // stmt
-6. Function input parameters passed while invoking it should be of the same type as those used in the function definition. //stmt
+6. Function input parameters passed while invoking it should be of the same type as those used in the function definition. // moduleReuseStmt
 7. A switch statement with an integer typed identifier associated with it, //caseStmt
    can have case statement with case keyword followed by an integer only and the case statements must be followed by a default statement.
 8. A switch statement with an identifier of type real is not valid and an error should be reported. //caseStmt
@@ -223,6 +223,36 @@ void check_iterativeStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == iterativeStmt);
 
+    astNode* temp = root->child;
+
+    ID_SYMBOL_TABLE* id_child_table = NULL;
+    
+    if(temp->node_marker == ID) // it's for construct
+    {
+        temp = temp->sibling;   // temp points to range
+
+        temp = temp->sibling;   // temp points to START
+        id_child_table = id_table->kid_st[id_table->visited];
+    
+        temp = temp->sibling;   // temp points to statements construct
+        check_statements_semantic(temp, id_child_table);
+
+        temp = temp->sibling;   // temp points to END
+        id_table->visited += 1;
+    }
+
+    else    // it's while construct
+    {
+        temp = temp->sibling;   // temp points to START
+        id_child_table = id_table->kid_st[id_table->visited];
+    
+        temp = temp->sibling;   // temp points to statements construct
+        check_statements_semantic(temp, id_child_table);
+
+        temp = temp->sibling;   // temp points to END
+        id_table->visited += 1;
+    }
+
     return;
 }
 
@@ -336,10 +366,113 @@ void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, I
 
     return;
 }
+
 void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == moduleReuseStmt);
 
+    astNode* temp = root->child;
+
+    GST* global_table = id_table->primogenitor->procreator;
+    FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->sibling->tree_node->lexeme, global_table);
+
+    if(func_entry == NULL)  // what if the function is not defined?
+    {
+        printf("SEMANTIC ERROR at line %d: Function '%s' not defined.\n", temp->sibling->tree_node->line, temp->sibling->tree_node->lexeme);
+        hasSemanticError = true;
+        return;
+    }
+
+    // now, the node marker for temp is either ASSIGNOP or EPS
+    if(temp->node_marker == EPS && func_entry->out_params != NULL)  // the function returns some value(s)
+    {
+        printf("SEMANTIC ERROR at line %d: Function '%s' returns some value(s).\n", temp->tree_node->line, func_entry->func_name);
+        hasSemanticError = true;
+    }
+    else if(temp->node_marker != EPS && func_entry->out_params == NULL)  // the function does not return any value
+    {
+        printf("SEMANTIC ERROR at line %d: Function '%s' does not return any value.\n", temp->tree_node->line, func_entry->func_name);
+        hasSemanticError = true;
+    }
+
+    astNode* trav1 = temp->child;
+    int count_ret1 = 0;
+
+    PARAMS* trav2 = func_entry->out_params;
+    int count_ret2 = 0;
+
+    ID_TABLE_ENTRY* lookup_id;
+
+    while(trav1 != NULL && trav1->node_marker != EPS)
+    {
+        count_ret1++;
+        lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
+        if(lookup_id->datatype->simple == ARRAY)
+        {
+            printf("SEMANTIC ERROR at line %d: Return actual parameter %s has type array.\n", trav1->tree_node->line, trav1->tree_node->lexeme);
+            hasSemanticError = true;
+        }
+        trav1 = trav1->sibling;
+    }
+    while(trav2 != NULL)  // might need a modification in the condition here!
+    {
+        count_ret2++;
+        trav2 = trav2->next;
+    }
+
+    if(count_ret1 != count_ret2)
+    {
+        printf("SEMANTIC ERROR at line %d: Mismatch in the number of return values in definition and usage of function '%s'.\n", temp->tree_node->line, func_entry->func_name);
+        hasSemanticError = true;
+    }
+    else if(count_ret1 != 0 && count_ret2 != 0) /* count_ret1 equals count_ret2, now traverse again and match the types */
+    {
+        trav1 = temp->child;
+        trav2 = func_entry->out_params;
+        while(trav2 != NULL)
+        {
+            lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
+            if(lookup_id->datatype->simple != trav2->datatype->simple)
+            {
+                printf("SEMANTIC ERROR at line %d: Variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
+                hasSemanticError = true;
+            }
+            trav1 = trav1->sibling;
+            trav2 = trav2->next;
+        }
+    }
+
+    // moving on to the list of input parameters.
+    temp = temp->sibling->sibling;
+
+    trav1 = temp->child;
+    int count_inp1 = 0;
+
+    trav2 = func_entry->in_params;
+    int count_inp2 = 0;
+
+    while(trav1 != NULL && trav1->node_marker != EPS && trav2 != NULL)
+    {
+        lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
+        if(lookup_id->datatype->simple != trav2->datatype->simple)
+        {
+            printf("SEMANTIC ERROR at line %d: Variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
+            hasSemanticError = true;
+        }
+        count_inp1++;
+        count_inp2++;
+        trav1 = trav1->sibling;
+        trav2 = trav2->next;
+    }
+
+    if(count_inp1 != count_inp2)
+    {
+        printf("SEMANTIC ERROR at line %d: Mismatch in the number of input values in definition and usage of function '%s'.\n", temp->tree_node->line, func_entry->func_name);
+        hasSemanticError = true;
+    }
+
+    // Rest of the semantics should be dealt with during type checking phase.
+    // Comment out any check if already dealt with previously.
     return;
 }
 
