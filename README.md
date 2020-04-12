@@ -22,3 +22,6 @@ This project is part of our course requirement for CS-F363 "Compiler Constructio
 
 - Excellent tutorial: https://cs.lmu.edu/~ray/notes/nasmtutorial/
 - Official documentation: https://www.nasm.us/doc/
+- Use of scanf: https://stackoverflow.com/questions/10973650/how-to-use-scanf-in-nasm 3rd answer, very helpful
+- Use of printf: https://stackoverflow.com/questions/20808039/print-a-string-out-by-letter-in-assembler-nasm first answer
+- Excellent sample programs, highly commented. https://www.csee.umbc.edu/portal/help/nasm/sample.shtml
