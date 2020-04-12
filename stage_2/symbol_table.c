@@ -355,16 +355,16 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // types must match before assignment
                 if (i->datatype->simple != get_type_expr(rhs, id_st))
                         printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
-                else
-                    printf("");
+                else;
+                    //printf("");
             }
             if (p != NULL || i == NULL)
             {
                 // types must match before assignment
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
                     printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[p->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
-                else
-                    printf("");
+                else;
+                    //printf("");
             }
             if (p != NULL && i != NULL)
             {
