@@ -3,7 +3,8 @@ arr_inMsg:    db        "Enter %d elements of %s type for array range %d to %d",
 lower_bound   dd        5
 upper_bound   dd        10
 type          db        "integer", 0
-intFormat     db        "%d", 0
+intFormat_in  db        "%d", 0
+intFormat_out db        "%d", 10, 0
 int2Format    db        "r12: %d r13: %d", 10, 0
 arr_outMsg:   db        "Printing array: ", 10, 0
 
@@ -34,50 +35,54 @@ mov r8, [upper_bound]
 call printf
 
 ; stores the count
-mov r12, [upper_bound]
-mov r13, [lower_bound]
-sub r12, r13
+xor r12, r12
+xor r13, r13
+mov r12d, [upper_bound]
+mov r13d, [lower_bound]
+sub r12d, r13d
+
+;mov r12, 5
 xor r13, r13
 
 array_input_loop:
 
-lea rdi, [intFormat]
-lea rsi, [array + r13]
+lea rdi, [intFormat_in]
+lea rsi, [array + r13d * 4] ;really important to scale it by sizeof(array element)
 call scanf
 
 
 inc r13
 
 ; for debugging purposes
-lea rdi, [int2Format]
-mov rsi, r12
-mov rdx, r13
-call printf
+;lea rdi, [int2Format]
+;mov rsi, r12
+;mov rdx, r13
+;call printf
 
 
 
-cmp r13, r12
+cmp r13d, r12d
 jne array_input_loop
 
 
 ;printing out the array
 
-lea rdi, [array_output_loop]
+lea rdi, [arr_outMsg]
 call printf
 
-mov rcx, [upper_bound]
-mov rbx, [lower_bound]
-sub rcx, rbx
-xor rbx, rbx
+mov r12d, [upper_bound]
+mov r13d, [lower_bound]
+sub r12d, r13d
+xor r13d, r13d
 
 array_output_loop:
 
-lea rdi, [intFormat]
-mov rsi, [array + rbx]
+lea rdi, [intFormat_out]
+mov rsi, [array + r13d * 4]
 call printf
 
-inc rbx
-cmp rbx, rcx
+inc r13d
+cmp r13d, r12d
 jnz array_output_loop
 
 
