@@ -21,7 +21,11 @@ void print_data_section(FILE* fp)
     fprintf(fp, "bool_inMsg:   db        \"Enter a boolean value\", 10, 0\n");
     fprintf(fp, "arr_inMsg:    db        \"Enter %%d elements for array range %%d to %%d\", 10, 0\n");
     fprintf(fp, "intFormat     db        \"%%d\", 0\n");
-
+    fprintf(fp, "type_int      db        \"integer\", 0\n");
+    fprintf(fp, "type_real     db        \"real\", 0\n");
+    fprintf(fp, "type_bool     db        \"boolean\", 0\n");    
+    fprintf(fp, "intFormat_in  db        \"%%d\", 0\n");
+    fprintf(fp, "intFormat_out db        \"%%d\", 10, 0\n");
     fprintf(fp, "\n\n\n");
     return;
 }
@@ -115,6 +119,19 @@ void ask_for_int(FILE* fp)
     fprintf(fp, "mov rdi, int_inMsg\n");
     fprintf(fp, "call printf\n");
     fprintf(fp, "pop rbp\n\n");
+}
+
+void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num)
+{
+    fprintf(fp, "mov rcx, [lower_bound]\n");
+    fprintf(fp, "mov r8, [upper_bound]\n");
+    fprintf(fp, "mov rsi, r8\n");
+    fprintf(fp, "sub rsi, rcx\n");
+    fprintf(fp, "mov rdi, arr_inMsg\n");
+    fprintf(fp, "mov rdx, type\n");
+    fprintf(fp, "mov rcx, [lower_bound]\n");
+    fprintf(fp, "mov r8, [upper_bound]\n");
+    fprintf(fp, "call printf\n");
 }
 
 void print_return(FILE* fp)

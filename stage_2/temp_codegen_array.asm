@@ -2,15 +2,17 @@
 arr_inMsg:    db        "Enter %d elements of %s type for array range %d to %d", 10, 0
 lower_bound   dd        5
 upper_bound   dd        10
-type          db        "integer", 0
+type_int      db        "integer", 0
+type_real     db        "real", 0
+type_bool     db        "boolean", 0    
 intFormat_in  db        "%d", 0
 intFormat_out db        "%d", 10, 0
-int2Format    db        "r12: %d r13: %d", 10, 0
+;int2Format    db        "r12: %d r13: %d", 10, 0
 arr_outMsg:   db        "Printing array: ", 10, 0
 
     section     .bss
 
-array         resd        5
+array         resd        100
 
 
 global main
