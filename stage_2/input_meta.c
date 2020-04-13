@@ -20,7 +20,7 @@ void print_data_section(FILE* fp)
     fprintf(fp, "int_inMsg    db        \"Enter an integer value\" , 10, 0\n"); 
     fprintf(fp, "real_inMsg   db        \"Enter a real value\", 10, 0\n");
     fprintf(fp, "bool_inMsg   db        \"Enter a boolean value\", 10, 0\n");
-    fprintf(fp, "arr_inMsg    db        \"Enter %%d elements for array range %%d to %%d\", 10, 0\n");
+    fprintf(fp, "arr_inMsg    db        \"Enter %%d elements of %%s type for array range %%d to %%d\", 10, 0\n");
     fprintf(fp, "intFormat     db        \"%%d\", 0\n");
     fprintf(fp, "type_int      db        \"integer\", 0\n");
     fprintf(fp, "type_real     db        \"real\", 0\n");
@@ -30,8 +30,9 @@ void print_data_section(FILE* fp)
     fprintf(fp, "realFormat_in db        \"%%lf\", 10, 0\n");
     fprintf(fp, "realFormat_out db       \"%%lf\", 0\n");
     fprintf(fp, "arr_outMsg   db        \"Printing array: \", 0\n");
-    fprintf(fp, "var1         db        7\n");
-    fprintf(fp, "var2         db        14\n");
+    fprintf(fp, "new_line       db       10, 0\n");
+    fprintf(fp, "var1         dd        7\n");
+    fprintf(fp, "var2         dd        14\n");
     fprintf(fp, "\n\n\n");
 
     return;
@@ -211,6 +212,11 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 {
     
     fprintf(fp, "push rbp\n");
+
+    fprintf(fp, "; printing array\n");
+    fprintf(fp, "lea rdi, [arr_outMsg]\n");
+    fprintf(fp, "call printf\n");
+
     fprintf(fp, "; stores the count\n\n");
     fprintf(fp, "xor r12, r12\n");
     fprintf(fp, "xor r13, r13\n");
@@ -250,6 +256,10 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "inc r13d\n");
     fprintf(fp, "cmp r13d, r12d\n");
     fprintf(fp, "jne array_output_loop\n");
+
+    fprintf(fp, "lea rdi, [new_line]\n");
+    fprintf(fp, "call printf\n");
+
     fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
 

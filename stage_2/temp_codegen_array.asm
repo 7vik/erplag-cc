@@ -9,6 +9,7 @@ intFormat_in  db        "%d", 0
 intFormat_out db        "%d ", 0
 realFormat_in db        "%lf", 10, 0
 realFormat_out db       "%lf", 0
+new_line       db       10, 0
 ;int2Format    db        "r12: %d r13: %d", 10, 0
 arr_outMsg:   db        "Printing array: ", 0
 
@@ -30,14 +31,16 @@ main:
 
 push rbp
 
+xor rcx, rcx
+xor r8, r8
 mov ecx, [lower_bound]
 mov r8d, [upper_bound]
 mov esi, r8d
 sub esi, ecx
 mov rdi, arr_inMsg
 mov rdx, type
-mov rcx, [lower_bound]
-mov r8, [upper_bound]
+mov ecx, [lower_bound]
+mov r8d, [upper_bound]
 call printf
 
 ; stores the count
@@ -73,7 +76,7 @@ jne array_input_loop
 
 ;printing out the array
 
-lea rdi, [arr_outMsg]
+lea rdi, arr_outMsg
 call printf
 
 mov r12d, [upper_bound]
@@ -91,6 +94,8 @@ inc r13d
 cmp r13d, r12d
 jnz array_output_loop
 
+lea rdi, new_line
+call printf
 
 
 pop rbp

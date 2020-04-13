@@ -13,8 +13,9 @@ intFormat_out db        "%d ", 0
 realFormat_in db        "%lf", 10, 0
 realFormat_out db       "%lf", 0
 arr_outMsg   db        "Printing array: ", 0
-var1         db        7
-var2         db        14
+new_line       db       10, 0
+var1         dd        7
+var2         dd        14
 
 
 
@@ -71,6 +72,9 @@ pop rbp
 
 
 push rbp
+; printing array
+lea rdi, [arr_outMsg]
+call printf
 ; stores the count
 
 xor r12, r12
@@ -89,6 +93,8 @@ call printf
 inc r13d
 cmp r13d, r12d
 jne array_output_loop
+lea rdi, [new_line]
+call printf
 pop rbp
 
 
