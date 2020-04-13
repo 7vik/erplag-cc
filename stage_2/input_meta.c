@@ -88,6 +88,16 @@ void take_int_input(FILE* fp, int input_var_num)
     fprintf(fp, "pop rbp\n\n");
 }
 
+
+void take_real_input(FILE* fp, int input_var_num)
+{
+    fprintf(fp, "push rbp\n");
+    fprintf(fp, "mov rdi, realFormat\n");
+    fprintf(fp, "mov rsi, vard%d\n", input_var_num);
+    fprintf(fp, "call scanf\n");
+    fprintf(fp, "pop rbp\n\n");
+}
+
 void print_int_output(FILE* fp, int output_var_num)
 {
     // for int
