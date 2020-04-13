@@ -1,6 +1,18 @@
 # erplag-cc
 
-ERPLAG-CC is a compiler for the language "**ER**adicate **PLAG**iarism" (see language specifications), written in C.
+ERPLAG-CC is a compiler for the language "ERPLAG". (see language specifications), written in C.
+
+ERPLAG is derived from names of these 6 Turing Award Winners:
+
+```
+E = Edsger W Dijkstra (1972)
+R = Ritchie, Dennis (1983)
+P = Patterson, David (2017)
+L = Lamport, Leslie (2013)
+A = Allen, Elizabeth (2006)
+G = Geoffrey Hinton (2018)
+```
+
 This project is part of our course requirement for CS-F363 "Compiler Construction", and mentored by Prof. Vandana Agarwal. 
 
 # References:
@@ -13,7 +25,7 @@ This project is part of our course requirement for CS-F363 "Compiler Constructio
 
 # How to build ID symbol table
 
-- observe symbol_table_id.c and symbol_table_id.h on ayush_branch. Don't delete the other two symbol table files.
+- observe symbol_table_id.c and symbol_table_id.h on ayush_branch.
 - make 
 - ./stage2exe t5.txt test.txt
 - This will print the symbol table on console
