@@ -12,6 +12,10 @@ intFormat_in  db        "%d", 0
 intFormat_out db        "%d ", 0
 realFormat_in db        "%lf", 10, 0
 realFormat_out db       "%lf", 0
+strFormat_in   db       "%s", 0
+strFormat_out   db       "%s", 10, 0
+true_label     db        "true ", 0
+false_label     db        "false ", 0
 arr_outMsg   db        "Printing array: ", 0
 new_line       db       10, 0
 var1         dd        7
@@ -45,7 +49,7 @@ mov r8, [var2]
 mov rsi, r8
 sub rsi, rcx
 mov rdi, arr_inMsg
-mov rdx, type_int
+mov rdx, type_bool
 mov rcx, [var1]
 mov r8, [var2]
 call printf
@@ -62,7 +66,7 @@ xor r13, r13
 
 array_input_loop:
 lea rdi, [intFormat_in]
-lea rsi, [int_array + r13d * 4]
+lea rsi, [bool_array + r13d * 1]
 call scanf
 
 inc r13d
@@ -86,8 +90,18 @@ sub r12d, r13d
 xor r13, r13
 
 array_output_loop:
-lea rdi, [intFormat_out]
-mov rsi, [int_array + r13d * 4]
+lea rdi, [strFormat_in]
+mov sil, [bool_array + r13d * 1]
+
+cmp sil, 0
+jz false
+lea rsi, [true_label]
+jmp print
+
+false: 
+lea rsi, [false_label]
+
+print: 
 call printf
 
 inc r13d

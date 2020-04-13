@@ -29,6 +29,10 @@ void print_data_section(FILE* fp)
     fprintf(fp, "intFormat_out db        \"%%d \", 0\n");
     fprintf(fp, "realFormat_in db        \"%%lf\", 10, 0\n");
     fprintf(fp, "realFormat_out db       \"%%lf\", 0\n");
+    fprintf(fp, "strFormat_in   db       \"%%s\", 0\n");
+    fprintf(fp, "strFormat_out   db       \"%%s\", 10, 0\n");
+    fprintf(fp, "true_label     db        \"true \", 0\n");
+    fprintf(fp, "false_label     db        \"false \", 0\n");
     fprintf(fp, "arr_outMsg   db        \"Printing array: \", 0\n");
     fprintf(fp, "new_line       db       10, 0\n");
     fprintf(fp, "var1         dd        7\n");
@@ -241,8 +245,18 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 
     else if(type == BOOLEAN)
     {
-        fprintf(fp, "lea rdi, [intFormat_out]\n");
-        fprintf(fp, "mov rsi, [bool_array + r13d * 1]\n");
+        fprintf(fp, "lea rdi, [strFormat_in]\n");
+        fprintf(fp, "mov sil, [bool_array + r13d * 1]\n\n");
+
+        fprintf(fp, "cmp sil, 0\n");
+        fprintf(fp, "jz false\n");
+        fprintf(fp, "lea rsi, [true_label]\n");
+        fprintf(fp, "jmp print\n\n");
+        fprintf(fp, "false: \n");
+        fprintf(fp, "lea rsi, [false_label]\n\n");
+
+        fprintf(fp, "print: \n");
+
     }
 
     else
@@ -291,8 +305,8 @@ int main(void)
     // take_int_input(fp, 1);
     // print_int_output(fp, 1);
   
-    ask_for_array(fp, 1, 2, INTEGER);
-    print_array(fp, 1, 2, INTEGER);
+    ask_for_array(fp, 1, 2, BOOLEAN);
+    print_array(fp, 1, 2, BOOLEAN);
     print_return(fp);
 
     fclose(fp);
