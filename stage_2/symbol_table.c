@@ -812,44 +812,44 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-int main(int argc, char* argv[])
-{
-    if(argc != 3)
-    {
-        printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
-        printf("\nAborting Execution!!\n");
-        exit(2);
-    }
+// int main(int argc, char* argv[])
+// {
+//     if(argc != 3)
+//     {
+//         printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
+//         printf("\nAborting Execution!!\n");
+//         exit(2);
+//     }
 
-    FILE* test_fp = fopen(argv[1], "r");
-    FILE* test_parse_fp = fopen(argv[2], "w");
-    populate_ht(hash_table, KEYWORDS_FILE);
-    int line_count = 1;
-    TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
-    init_buffer(test_fp, twin_buff);
-    GRAMMAR* grammar = generate_grammar();
-    first_follow *ff = get_first_follow_table(grammar);
-    TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
-    create_parse_table(ff, parse_table, grammar);
-    STACK *stack = NULL;
-    PARSE_TREE *tree;
-    parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
-    fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
-    print_parse_tree(tree, test_parse_fp);
-    print_parse_tree_json(tree, "output_parse_tree.json");
-    printf("Printed Parse Tree in file '%s'.\n", argv[2]);
-    astNode* ast_root = buildAST(tree);
-    print_ast_json(ast_root, "output_ast_tree.json");
+//     FILE* test_fp = fopen(argv[1], "r");
+//     FILE* test_parse_fp = fopen(argv[2], "w");
+//     populate_ht(hash_table, KEYWORDS_FILE);
+//     int line_count = 1;
+//     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+//     init_buffer(test_fp, twin_buff);
+//     GRAMMAR* grammar = generate_grammar();
+//     first_follow *ff = get_first_follow_table(grammar);
+//     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+//     create_parse_table(ff, parse_table, grammar);
+//     STACK *stack = NULL;
+//     PARSE_TREE *tree;
+//     parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+//     fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
+//     print_parse_tree(tree, test_parse_fp);
+//     print_parse_tree_json(tree, "output_parse_tree.json");
+//     printf("Printed Parse Tree in file '%s'.\n", argv[2]);
+//     astNode* ast_root = buildAST(tree);
+//     print_ast_json(ast_root, "output_ast_tree.json");
 
 
-    // Test Symbol table
-    GST *st = create_global_st();
-    traverse_the_multiverse(ast_root, st);
-    gst_print(st);
+//     // Test Symbol table
+//     GST *st = create_global_st();
+//     traverse_the_multiverse(ast_root, st);
+//     gst_print(st);
 
-    fclose(test_fp);
-    fclose(test_parse_fp);
-    free(twin_buff);
-    free(parse_table);
-    return 0;
-}
+//     fclose(test_fp);
+//     fclose(test_parse_fp);
+//     free(twin_buff);
+//     free(parse_table);
+//     return 0;
+// }

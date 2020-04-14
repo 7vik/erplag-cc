@@ -350,7 +350,7 @@ void initialise_file(FILE* fp)
 void generate_code_assignmentStmt(astNode* root, GST* symbol_table, FILE* fp)
 {
     //assignOP
-    astNode* temp_node = root->child;
+    // astNode* temp_node = root->child;
 
     //haven't handled var as Array
     //needs to be modified for assembly
@@ -443,7 +443,8 @@ int main(int argc, char* argv[])          // driver
 
     //EMPTY SYMBOL TABLE FOR NOW
     GST* symbol_table = create_global_st();
-
+    //GST *st = create_global_st();
+    traverse_the_multiverse(ast_root, symbol_table);
     printf("Starting code generation\n");
     FILE* code_fp = fopen(argv[3], "w");
     initialise_file(code_fp);

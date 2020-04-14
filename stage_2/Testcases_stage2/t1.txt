@@ -7,6 +7,7 @@ takes input [x:integer, w: boolean, p:real];
 returns [m:integer, n:integer, u: boolean];
 start
 	declare a,b:integer;
+	declare A:array[1:5] of type integer;
 	a:= 5;
 	get_value(b);
 	declare value, q, r: real;

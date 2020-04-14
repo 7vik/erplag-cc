@@ -200,22 +200,46 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 // needs to be chenged, check whatsapp pics
 void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
-    assert(root->node_marker == assignmentStmt);
+    //assert(root->node_marker == assignmentStmt);
 
-    astNode* op_node = root->child->child->sibling;
-
-    // OPERATOR CASE 
-    if(op_node->child != NULL)
+    astNode* temp;
+    if (root->node_marker == assignmentStmt)
     {
-        check_var_semantic(op_node->child, id_table);
-        check_var_semantic(op_node->child->sibling, id_table);
+        temp = temp->child;
+        check_assignmentStmt_semantic(temp, id_table);
+        return;
     }
 
+    else
+    {
+        if (root->node_marker == var || root->node_marker == ARRAY)
+        {
+            if (root->child->sibling != NULL)
+            {
+                check_var_semantic(root, id_table);
+            }
+        }
+        temp = root->child;
+        
+        if(temp == NULL)
+            return;
+        else
+        {
+            while(temp->sibling != NULL)
+            {
+                check_assignmentStmt_semantic(temp, id_table);
+                temp = temp->sibling;
+            }
+        }
+        
+    }
+    
+    
+
+    return;
     // array assignment
     
 
-    
-    return;
 }
 
 
