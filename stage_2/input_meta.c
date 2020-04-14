@@ -173,11 +173,8 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "mov r12d, [var%d]\n", upper_var_num);
     fprintf(fp, "mov r13d, [var%d]\n", lower_var_num);
     fprintf(fp, "sub r12d, r13d\n");
-<<<<<<< HEAD
-=======
     fprintf(fp, "inc r12d\n");
     fprintf(fp, ";mov r12, 5\n");
->>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
     fprintf(fp, "xor r13, r13\n\n");  
     fprintf(fp, "array_input_loop:\n");
 
@@ -232,11 +229,8 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "mov r12d, [var%d]\n", upper_var_num);
     fprintf(fp, "mov r13d, [var%d]\n", lower_var_num);
     fprintf(fp, "sub r12d, r13d\n");
-<<<<<<< HEAD
-=======
     fprintf(fp, "inc r12d\n");
     fprintf(fp, ";mov r12, 5\n");
->>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
     fprintf(fp, "xor r13, r13\n\n");  
     fprintf(fp, "array_output_loop:\n");
 
