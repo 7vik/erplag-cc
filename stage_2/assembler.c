@@ -390,6 +390,7 @@ void generate_code_printStmt(astNode* root, GST* symbol_table, FILE* fp)
 }
 void generate_code_inputStmt(astNode* root, ID_SYMBOL_TABLE *st, FILE* fp)
 {
+    // print_array(fp, offset_start, offset_end, type, scope_num);
     assert(root->node_marker == GET_VALUE);
     ask_for_array(fp, 1, 2, BOOLEAN);
     print_array(fp, 1, 2, BOOLEAN);
