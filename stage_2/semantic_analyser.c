@@ -596,6 +596,7 @@ int main(int argc, char* argv[])
     first_follow *ff = get_first_follow_table(grammar);
     TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
     create_parse_table(ff, parse_table, grammar);
+
     STACK *stack = NULL;
     PARSE_TREE *tree;
     parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
@@ -612,9 +613,7 @@ int main(int argc, char* argv[])
     traverse_the_multiverse(ast_root, st);
     gst_print(st);
 
-    printf("enhgvgfcfrfcghfvtgfctrvghvfcfgdcgfcfcrgfdrtcfgcfxrdd\n");
     semantic_analyser(ast_root, st);
-    printf("end\n");
     fclose(test_fp);
     fclose(test_parse_fp);
     free(twin_buff);

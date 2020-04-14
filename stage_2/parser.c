@@ -754,9 +754,9 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
     active->kids[active->num_of_kids]->data->node_symbol = rule->variable;
     active->kids[active->num_of_kids]->data->parent_node_pointer = active;
     active->kids[active->num_of_kids]->data->token_name = NULL;
+    active->kids[active->num_of_kids]->num_of_kids = 0;
     active->kids[active->num_of_kids]->data->value_if_number = NULL;
     active->num_of_kids++;
-
     pushr(active, st, rule->next);
     push(st, string_to_enum(rule->variable));
 }
@@ -764,10 +764,6 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
 void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
 {
     
-    printf("Lo, ho gayi parsing error at line %d\n", *line_no);
-    // LEXEME *lex = get_token(f, twin_buff, line_no);
-    // while(strcmp(lex->token,"SEMICOL") != 0)
-    //     lex = get_token(f, twin_buff, line_no);
 
     return;
 }
@@ -791,29 +787,21 @@ void next_active(PARSE_TREE *tree, PARSE_TREE **active)
 {
     if ((*active) == tree) 
         return;
-    // printf("%s\n", (*active)->data->node_symbol);
     PARSE_TREE *parent = (*active)->data->parent_node_pointer;
     int index_of_active = 0;
 
     while(parent->kids[index_of_active] != (*active))
     {
         index_of_active++;
-        // printf("%d\n", index_of_active);
     }
-    // printf("%s \n", (*active)->data->node_symbol);
     *active = parent;
-    // printf("%s \n", (*active)->data->node_symbol);
     if (index_of_active < (parent->num_of_kids)-1)  
     {
         *active = parent->kids[index_of_active + 1];
-        // printf("%s \n", (*active)->data->node_symbol);
-        // printf("LOLOL++_+_ %s\n", (*active)->data->node_symbol);
     }
     else 
     {
         next_active(tree, active);
-        // printf("%s \n", (*active)->data->node_symbol);
-        // printf("IN IELSW+_ %s\n", (*active)->data->node_symbol);
         return;
     }
 }
@@ -913,8 +901,9 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
             pushr(active, &st, g->rules[rule_id]->next);
             active = active->kids[0];
         }
-        X = top(st);        
+        X = top(st);  
     }
+
     if (num_errors == 0)
         printf("Input source code is syntactically correct..........\n");
     else 
