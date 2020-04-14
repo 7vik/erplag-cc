@@ -48,6 +48,7 @@ mov rcx, [var1]
 mov r8, [var2]
 mov rsi, r8
 sub rsi, rcx
+inc rsi
 mov rdi, arr_inMsg
 mov rdx, type_bool
 mov rcx, [var1]
@@ -61,6 +62,7 @@ xor r13, r13
 mov r12d, [var2]
 mov r13d, [var1]
 sub r12d, r13d
+inc r12d
 ;mov r12, 5
 xor r13, r13
 
@@ -86,6 +88,7 @@ xor r13, r13
 mov r12d, [var2]
 mov r13d, [var1]
 sub r12d, r13d
+inc r12d
 ;mov r12, 5
 xor r13, r13
 
