@@ -43,20 +43,27 @@ void semantic_analyser(astNode* root, GST* global_st)
             printf("%s\n",variables_array[temp->node_marker]);
             check_moduleDeclarations_semantic(temp, global_st);
             temp = temp->sibling;
+            printf("b\n");
         }
         if(temp->node_marker == otherModules)
         {
+            printf("oth\n");
             check_otherModules_semantic(temp, global_st);
+            printf("h2\n");
             temp = temp->sibling;
+            printf("h3\n");
         }
         if(temp->node_marker == driverModule)
         {
+            printf("dro\n");
             check_driverModule_semantic(temp, global_st);
             temp = temp->sibling;
         }
         if(temp->node_marker == otherModules)
+        {
+            printf("OTEHR M\n");
             check_otherModules_semantic(temp, global_st);
-
+        }
         return;
 
     }
@@ -70,7 +77,7 @@ void semantic_analyser(astNode* root, GST* global_st)
 
 void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
 {
-    //printf("Entered this zone");
+    //printf("Entered this zone\n");
     if(root->node_marker == EPS)
         return;
 
@@ -81,7 +88,6 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
     while(temp != NULL)
     {
         FUNC_TABLE_ENTRY* func = global_st_lookup(temp->tree_node->lexeme, global_st);
-
         if(func == NULL)
         {
             hasSemanticError = true;
@@ -94,7 +100,6 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
         
         temp = temp->sibling;
     }
-    //printf("We're successful!");
     return;
 }
 
@@ -598,8 +603,9 @@ int main(int argc, char* argv[])
     traverse_the_multiverse(ast_root, st);
     gst_print(st);
 
+    printf("enhgvgfcfrfcghfvtgfctrvghvfcfgdcgfcfcrgfdrtcfgcfxrdd\n");
     semantic_analyser(ast_root, st);
-
+    printf("end\n");
     fclose(test_fp);
     fclose(test_parse_fp);
     free(twin_buff);
