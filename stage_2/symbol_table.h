@@ -17,8 +17,8 @@ typedef struct ID_TABLE_ENTRY
 {
     char *lexeme;                               //variable name from lexer, hash on this
     TYPE *datatype;                             //structure of datatype
-    int width;
-    int offset;
+    unsigned int width;
+    unsigned int offset;
     bool is_declared;
     struct ID_TABLE_ENTRY *next;                // for chaining
 } ID_TABLE_ENTRY;
