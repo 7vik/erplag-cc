@@ -248,7 +248,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
             if (p1 == NULL && p2 == NULL)
             {
-                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->tree_node->lexeme);
+                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->lexeme);
                 hasSemanticError = true;
             }
             else if (p1 != NULL) return p1->datatype->simple;

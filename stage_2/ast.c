@@ -908,7 +908,7 @@ astNode* buildAST(PARSE_TREE* root)
 
                 if(temp != NULL)
                 {
-                    astNode* new = make_ASTnode(ARRAY);
+                    astNode* new = make_ASTnode(var);
                     TREE_NODE* new_op = (TREE_NODE*) malloc(sizeof(TREE_NODE));
                     if(new_op == NULL)
                     {

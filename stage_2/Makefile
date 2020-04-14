@@ -16,7 +16,7 @@
 # 	gcc -c hash.c
 
 
-all: hellos
+all: hellor
 
 hellor: bool.o parser.o lexer.o hash.o ast.o symbol_table.o semantic_analyser.o
 	gcc -o stage2exe symbol_table.o ast.o bool.o parser.o lexer.o hash.o semantic_analyser.o
