@@ -17,8 +17,8 @@ typedef struct ID_TABLE_ENTRY
 {
     char *lexeme;                               //variable name from lexer, hash on this
     TYPE *datatype;                             //structure of datatype
-    int width;
-    int offset;
+    unsigned int width;
+    unsigned int offset;
     bool is_declared;
     struct ID_TABLE_ENTRY *next;                // for chaining
 } ID_TABLE_ENTRY;
@@ -77,7 +77,7 @@ FUNC_TABLE_ENTRY *global_st_lookup(char *, GST *);
 FUNC_TABLE_ENTRY *create_function(astNode *ast_node, PARAMS *in, PARAMS *out, ID_SYMBOL_TABLE *id_st);
 int get_total_width(ID_SYMBOL_TABLE *st);
 PARAMS *create_param(astNode *plist);
-
+void gst_print(GST *st);
 void traverse_the_multiverse(astNode *node, GST *st);
 int is(astNode *node, char *comp);
 void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);
