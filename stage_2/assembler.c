@@ -386,8 +386,9 @@ void generate_code_printStmt(astNode* root, GST* symbol_table, FILE* fp)
 void generate_code_inputStmt(astNode* root, ID_SYMBOL_TABLE *st, FILE* fp)
 {
     assert(root->node_marker == GET_VALUE);
-    ask_for_array(fp, 1, 2, BOOLEAN);
-    print_array(fp, 1, 2, BOOLEAN);
+    ID_TABLE_ENTRY *id = st_lookup(root->child->tree_node->lexeme, st);
+    ask_for_array(fp, 1, 2, id->datatype->simple);
+    print_array(fp, 1, 2, id->datatype->arrtype->);
     print_return(fp);
     return;
 }
