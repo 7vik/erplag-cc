@@ -766,7 +766,7 @@ FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_pa
         malloc_error
     if (node == NULL)       // for the driver function
     {
-        new->func_name = "driver";
+        new->func_name = "driverModule";
         new->in_params = NULL;
         new->out_params = NULL;
         new->local_id_table = st;
