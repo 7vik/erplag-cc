@@ -5,7 +5,7 @@ start
 	get_value(v_1_2_3);
 	declare result_:integer;
 	[result_]:=use module square with parameters v_1_2_3;
-	print(result_);
+	print(result);
 end
 
 <<module square>>
