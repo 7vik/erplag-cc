@@ -33,6 +33,12 @@ main:
 	mov rsi, end
 	call scanf
 	
+
+	find_rbp:
+	
+	;mov ebx, [rbp + offset_start]
+	;mov ecx, [rbp + offset_end]
+
 	mov ebx, [start]
 	mov ecx, [end]
 	sub ecx, ebx
