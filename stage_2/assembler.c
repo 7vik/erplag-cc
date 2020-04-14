@@ -298,18 +298,23 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
     switch (root->node_marker)
     {
         case assignmentStmt:
+            printf("%s\n", variables_array[root->node_marker]);
             generate_code_assignmentStmt(root, symbol_table, fp);
             break;
         case printOpt:
+            printf("%s\n", variables_array[root->node_marker]);
             generate_code_printStmt(root, symbol_table, fp);
             break;
         case GET_VALUE:
+            printf("%s\n", variables_array[root->node_marker]);
             generate_code_inputStmt(root, symbol_table, fp);
             break;
         case iterativeStmt:
+            printf("%s\n", variables_array[root->node_marker]);
             generate_code_iterativeStmt(root, symbol_table, fp);
             break;
         case conditionalStmt:
+            printf("%s\n", variables_array[root->node_marker]);
             generate_code_conditionalStmt(root, symbol_table, fp);
             break;
         default:

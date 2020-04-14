@@ -27,8 +27,8 @@ void print_data_section(FILE* fp)
     fprintf(fp, "type_bool     db        \"boolean\", 0\n");    
     fprintf(fp, "intFormat_in  db        \"%%d\", 0\n");
     fprintf(fp, "intFormat_out db        \"%%d \", 0\n");
-    fprintf(fp, "realFormat_in db        \"%%lf\", 10, 0\n");
-    fprintf(fp, "realFormat_out db       \"%%lf\", 0\n");
+    fprintf(fp, "realFormat_in db        \"%%E\", 0\n");
+    fprintf(fp, "realFormat_out db       \"%%E\", 0\n");
     fprintf(fp, "strFormat_in   db       \"%%s\", 0\n");
     fprintf(fp, "strFormat_out   db       \"%%s\", 10, 0\n");
     fprintf(fp, "true_label     db        \"true \", 0\n");
@@ -76,7 +76,7 @@ void print_bss_section(FILE* fp, VARS vars)
     }
 
     fprintf(fp, "int_array:         resd        100\n");
-    fprintf(fp, "real_array:        resq        100\n");
+    fprintf(fp, "real_array:        resd        100\n");
     fprintf(fp, "bool_array:        resb        100\n");
 
     fprintf(fp, "\n\n");
@@ -187,7 +187,7 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_in]\n");
-        fprintf(fp, "lea rsi, [real_array + r13d * 8]\n");
+        fprintf(fp, "lea rsi, [real_array + r13d * 4]\n");
     }
 
     else if(type == BOOLEAN)
@@ -243,7 +243,7 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_out]\n");
-        fprintf(fp, "mov rsi, [real_array + r13d * 8]\n");
+        fprintf(fp, "mov rsi, [real_array + r13d * 4]\n");
     }
 
     else if(type == BOOLEAN)
@@ -308,8 +308,8 @@ int main(void)
     // take_int_input(fp, 1);
     // print_int_output(fp, 1);
   
-    ask_for_array(fp, 1, 2, BOOLEAN);
-    print_array(fp, 1, 2, BOOLEAN);
+    ask_for_array(fp, 1, 2, REAL);
+    print_array(fp, 1, 2, REAL);
     print_return(fp);
 
     fclose(fp);
