@@ -12,7 +12,11 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "DECLARE:declare" },
+=======
+"text": { "name": "EPS:EPS" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "children":[]
 }
 ,{
@@ -46,6 +50,7 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "module" },
 "collapsed": true,
 "children": [
@@ -153,15 +158,28 @@
 }
 ,{
 "text": { "name": "input_plist_lr" },
+=======
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "collapsed": true,
 "children": [
 {
 "text": { "name": "COMMA:," },
 "children":[]
 }
+<<<<<<< HEAD
 ,{
 "text": { "name": "ID:n" },
 "children":[]
+=======
+]
+}
+]
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 }
 ,{
 "text": { "name": "COLON::" },
@@ -192,6 +210,7 @@
 ]
 }
 ,{
+<<<<<<< HEAD
 "text": { "name": "SQBC:]" },
 "children":[]
 }
@@ -263,11 +282,21 @@
 "text": { "name": "START:start" },
 "children":[]
 }
+=======
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 ,{
 "text": { "name": "statements" },
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "statement" },
 "collapsed": true,
 "children": [
@@ -309,10 +338,14 @@
 "children": [
 {
 "text": { "name": "INTEGER:integer" },
+=======
+"text": { "name": "EPS:EPS" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "children":[]
 }
 ]
 }
+<<<<<<< HEAD
 ,{
 "text": { "name": "SEMICOL:;" },
 "children":[]
@@ -3063,6 +3096,8 @@
 }
 ]
 }
+=======
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 ]
 }
 ]

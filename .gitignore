@@ -2,4 +2,6 @@
 Compiler-ERPLAG-master/
 *.out
 *.exe
-*.o 
+*.o
+stage2exe
+*.json 

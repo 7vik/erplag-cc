@@ -4,7 +4,15 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "moduleDeclarations" },
+=======
+"text": { "name": "driverModule" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "moduleDef" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "collapsed": true,
 "children": [
 {
@@ -14,6 +22,7 @@
 ]
 }
 ,{
+<<<<<<< HEAD
 "text": { "name": "otherModules" },
 "collapsed": true,
 "children": [
@@ -69,17 +78,36 @@
 "children": [
 {
 "text": { "name": "ID:n" },
+=======
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "EPS:EPS" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "children":[]
 }
 ,{
 "text": { "name": "INTEGER:integer" },
 "children":[]
+<<<<<<< HEAD
 }
 ]
+=======
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 }
 ]
 }
 ,{
+<<<<<<< HEAD
 "text": { "name": "ret" },
 "collapsed": true,
 "children": [
@@ -219,10 +247,22 @@
 "children": [
 {
 "text": { "name": "ID:index" },
+=======
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 "children":[]
 }
 ]
 }
+<<<<<<< HEAD
 ,{
 "text": { "name": "var" },
 "collapsed": true,
@@ -937,6 +977,8 @@
 }
 ]
 }
+=======
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 ]
 }
 ]

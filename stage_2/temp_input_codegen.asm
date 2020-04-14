@@ -48,6 +48,7 @@ mov rcx, [var1]
 mov r8, [var2]
 mov rsi, r8
 sub rsi, rcx
+inc rsi
 mov rdi, arr_inMsg
 mov rdx, type_real
 mov rcx, [var1]
@@ -61,6 +62,11 @@ xor r13, r13
 mov r12d, [var2]
 mov r13d, [var1]
 sub r12d, r13d
+<<<<<<< HEAD
+=======
+inc r12d
+;mov r12, 5
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 xor r13, r13
 
 array_input_loop:
@@ -89,6 +95,11 @@ xor r13, r13
 mov r12d, [var2]
 mov r13d, [var1]
 sub r12d, r13d
+<<<<<<< HEAD
+=======
+inc r12d
+;mov r12, 5
+>>>>>>> a88f1bdce93ddcb991e8f824856ed87f55aa322c
 xor r13, r13
 
 
