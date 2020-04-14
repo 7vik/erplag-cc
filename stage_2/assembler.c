@@ -34,8 +34,8 @@ void print_data_section(FILE* fp)
     fprintf(fp, "false_label     db        \"false \", 0\n");
     fprintf(fp, "arr_outMsg   db        \"Printing array: \", 0\n");
     fprintf(fp, "new_line       db       10, 0\n");
-    fprintf(fp, "var1         dd        7\n");
-    fprintf(fp, "var2         dd        14\n");
+    fprintf(fp, "var1         dd        3\n");
+    fprintf(fp, "var2         dd        6\n");
     fprintf(fp, "\n\n\n");
 
     return;
@@ -392,9 +392,9 @@ void generate_code_inputStmt(astNode* root, ID_SYMBOL_TABLE *st, FILE* fp)
 {
     // print_array(fp, offset_start, offset_end, type, scope_num);
     assert(root->node_marker == GET_VALUE);
-    ID_TABLE_ENTRY *id = st_lookup(root->child->tree_node->lexeme, st);
-    ask_for_array(fp, 1, 2, id->datatype->simple);
-    print_array(fp, 1, 2, id->datatype->arrtype->);
+    unsigned int type = get_type_expr(root->child, st);
+    ask_for_array(fp, 1, 2, type);
+    print_array(fp, 1, 2, type);
     print_return(fp);
     return;
 }
