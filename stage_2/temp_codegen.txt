@@ -1,5 +1,5 @@
 <<<driver program>>>
 start
-	declare x:integer;
-	get_value(x);c
+	declare x : array[3..6] of integer;
+	get_value(x);
 end

@@ -4,4 +4,7 @@ Compiler-ERPLAG-master/
 *.exe
 *.o
 stage2exe
-*.json 
+stage2/*.json
+stage2/stage2exe
+stage2/*.out
+stage2/*.o 

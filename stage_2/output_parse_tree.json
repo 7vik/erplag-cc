@@ -8,6 +8,35 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
+=======
+"text": { "name": "moduleDeclaration" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "MODULE:module" },
+"children":[]
+}
+,{
+"text": { "name": "ID:readArr" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "moduleDeclarations" },
+"collapsed": true,
+"children": [
+{
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "text": { "name": "EPS:EPS" },
 "children":[]
 }
@@ -142,7 +171,11 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "INTEGER:integer" },
+=======
+"text": { "name": "BOOLEAN:boolean" },
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "children":[]
 }
 ]
@@ -355,6 +388,7 @@
 }
 ]
 }
+<<<<<<< HEAD
 ,{
 "text": { "name": "SEMICOL:;" },
 "children":[]
@@ -391,6 +425,8 @@
 "text": { "name": "BC:)" },
 "children":[]
 }
+=======
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 ,{
 "text": { "name": "SEMICOL:;" },
 "children":[]

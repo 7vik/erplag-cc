@@ -1,7 +1,7 @@
 declare module readArr;
 **the following function computes the sum of first n elements of the array**
 <<module arraySum>>
-takes input[list:array[1..15] of    real, n:integer];
+takes input[list:array[1..15] of    boolean, n:integer];
 returns  [sum:real];
 start
 	declare index:integer;

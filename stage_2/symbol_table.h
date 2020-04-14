@@ -67,6 +67,7 @@ void id_st_print(ID_SYMBOL_TABLE *st);
 ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st);
 int get_width(TYPE *datatype);
 ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type);
+int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st);
 
 GST *create_global_st();
 void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *gst);

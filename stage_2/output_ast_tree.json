@@ -4,11 +4,15 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "otherModules" },
 "collapsed": true,
 "children": [
 {
 "text": { "name": "module" },
+=======
+"text": { "name": "moduleDeclarations" },
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "collapsed": true,
 "children": [
 {
@@ -16,7 +20,11 @@
 "children":[]
 }
 ,{
+<<<<<<< HEAD
 "text": { "name": "input_plist" },
+=======
+"text": { "name": "otherModules" },
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "collapsed": true,
 "children": [
 {
@@ -60,7 +68,11 @@
 ]
 }
 ,{
+<<<<<<< HEAD
 "text": { "name": "INTEGER:integer" },
+=======
+"text": { "name": "BOOLEAN:boolean" },
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "children":[]
 }
 ]
@@ -72,6 +84,7 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "ID:p" },
 "children":[]
 }
@@ -92,16 +105,30 @@
 "collapsed": true,
 "children": [
 {
+=======
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "text": { "name": "ID:n" },
 "children":[]
 }
 ,{
 "text": { "name": "INTEGER:integer" },
 "children":[]
+<<<<<<< HEAD
+=======
+}
+]
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 }
 ]
 }
 ,{
+<<<<<<< HEAD
+=======
+"text": { "name": "ret" },
+"collapsed": true,
+"children": [
+{
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 "text": { "name": "output_plist" },
 "collapsed": true,
 "children": [
@@ -226,6 +253,7 @@
 "collapsed": true,
 "children": [
 {
+<<<<<<< HEAD
 "text": { "name": "ID:m" },
 "children":[]
 }
@@ -257,6 +285,13 @@
 "text": { "name": "ID:p" },
 "children":[]
 }
+=======
+"text": { "name": "ID:index" },
+"children":[]
+}
+]
+}
+>>>>>>> a1c70f2a833e6ddb5bb5673b58a4f488ce7d59e4
 ,{
 "text": { "name": "var" },
 "collapsed": true,
