@@ -40,10 +40,10 @@ void generate_code(astNode* root, GST* symbol_table, FILE* fp)
 
 void initialise_file(FILE* fp)
 {
-    fprintf(fp, "\t\tglobal _start\n");
-    fprintf(fp, "\t\textern printf\n");
-    fprintf(fp, "\t\textern puts\n");
-    fprintf(fp, "\t\textern scanf\n");
+    fprintf(fp, "\t\tglobal  _start\n");
+    fprintf(fp, "\t\textern  printf\n");
+    fprintf(fp, "\t\textern  puts\n");
+    fprintf(fp, "\t\textern  scanf\n");
     fprintf(fp, "\t\tsection .data\n");
 
     //figure out what to put in data section
