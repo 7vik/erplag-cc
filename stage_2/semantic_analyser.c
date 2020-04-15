@@ -294,12 +294,14 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
+	return;
     }
 
     else if(id_entry->datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
     {
         printf("SEMANTIC ERROR at line %d: %s is a variable of type real.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
+	return;
     }
     // I assume Satvik would handle the remaining cases associated with type for identifier.
     // Comment out anything from the above if-else if construct which is redundant.
