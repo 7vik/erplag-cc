@@ -86,9 +86,9 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
             hasSemanticError = true;
             printf("Semantic error at line %d, No definition found for declared function %s \n", temp->tree_node->line, temp->tree_node->lexeme);
         }
-        else
+        else    // the function is already defined later.
         {
-            func->is_declared = true;
+            func->is_declared += 1;
         }
         
         temp = temp->sibling;
@@ -145,6 +145,10 @@ void check_module_semantic(astNode* root, GST* global_st)
         hasSemanticError = true;
         return;
         //printf("ERROR in check module, function entry should have been there in symbol table\n");
+    }
+    else // the function is defined
+    {
+        func_entry->is_declared += 1;
     }
     
     check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
@@ -294,14 +298,14 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
-	return;
+	    return;
     }
 
     else if(id_entry->datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
     {
         printf("SEMANTIC ERROR at line %d: %s is a variable of type real.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
-	return;
+	    return;
     }
     // I assume Satvik would handle the remaining cases associated with type for identifier.
     // Comment out anything from the above if-else if construct which is redundant.
@@ -406,6 +410,25 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         hasSemanticError = true;
         return;
     }
+    // we reach here <=> the function is defined
+    else if(func_entry->is_declared == 2) // the function is both defined and declared before the call- an error!
+    {
+        printf("SEMANTIC ERROR at line %d: Function '%s' has a redundant declaration.\n", temp->sibling->tree_node->line, temp->sibling->tree_node->lexeme);
+        hasSemanticError = true;
+    }
+
+    else if(func_entry->is_declared == 0) // function neither declared nor defined before the call- an error!
+    {
+        printf("SEMANTIC ERROR at line %d: Function '%s' should have had a declaration before.\n", temp->sibling->tree_node->line, temp->sibling->tree_node->lexeme);
+        hasSemanticError = true;
+    }
+
+    /*
+    func_entry->is_declared == 1 with function entry non-NULL in GST => the following possible cases:
+    1. The function is just declared before the call; its definition is about to come.
+    2. Only the definition of the function is given before the call.
+    Both of them are valid as per the specifications.
+    */
 
     // now, the node marker for temp is either ASSIGNOP or EPS
     if(temp->node_marker == EPS && func_entry->out_params != NULL)  // the function returns some value(s)
