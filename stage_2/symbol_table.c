@@ -730,7 +730,7 @@ FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_pa
         if (st != NULL)
             st->primogenitor = new;
         new->next = NULL;
-        // new->is_declared = true;
+        new->is_declared = 1;
     }
     else
     {
