@@ -42,8 +42,9 @@ section  .text
 
 main:
 
-push rbp
-mov rbp, rsp
+	push rbp
+	mov rbp, rsp
+	
 	mov rdi, int_inMsg
 call printf
 	mov rdi, intFormat_in
