@@ -63,9 +63,24 @@ char *show_type(TYPE *t)
     if (t->simple == ARRAY  )
     {
         char *array_type_str = (char *) malloc(42);
-        strcpy(array_type_str, "ARRAY");
-        strcat(array_type_str, " of ");
+        strcpy(array_type_str, "ARRAY {");
+        //
+        int x1 = t->arrtype->begin_offset;
+        int x2 = t->arrtype->end_offset;
+        int l1 = snprintf( NULL, 0, "%d", x1);
+        int l2 = snprintf( NULL, 0, "%d", x2);
+        char* str1 = malloc( l1 + 1 );
+        char* str2 = malloc( l2 + 1 );
+        snprintf( str1, l1 + 1, "%d", x1);
+        snprintf( str2, l2 + 1, "%d", x2);
+        //
+        strcat(array_type_str, str1);
+        strcat(array_type_str, ",");
+        strcat(array_type_str, str2);
+        strcat(array_type_str, "} of ");
         strcat(array_type_str, variables_array[t->arrtype->base_type]);
+        free(str1);
+        free(str2);
         return array_type_str;
     }
     return NULL;
@@ -84,7 +99,7 @@ void id_st_print(ID_SYMBOL_TABLE *st)
         ID_TABLE_ENTRY *temp = st->id_table[i];
         while(temp)
         {
-            printf("\t\t%s\t:\t%s\t:\t%d\n", temp->lexeme, show_type(temp->datatype), temp->offset);
+            printf("\t\t%s\t:\t%s\t:%d\n", temp->lexeme, show_type(temp->datatype), temp->offset);
             temp = temp->next;
         }
     }
@@ -228,14 +243,11 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL     ||0 )
     {
-        printf("DOD5\n");
         int t1 = get_type_expr(ex->child, id_st);
-        printf("DOD6\n");
         int t2 = get_type_expr(ex->child->sibling, id_st); 
-        printf("DOD7\n");
         if (t1 != t2)
         {
-            printf("Semantic Error on line %d. Exprected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
             hasSemanticError = true;
         }
         else
@@ -245,40 +257,33 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         return  get_type_expr(ex->child, id_st);
     if (ex->node_marker == var)
     {
-        printf("MEW1\n");
-        if (ex->child->sibling == NULL)
+        if (ex->child->sibling == NULL)     // not an array
             return get_type_expr(ex->child, id_st);
-        else
+        else                                // array
         {
-            printf("MEW2\n");
+            // printf("WHYTHO2?\n");
             ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
-            printf("MEW2.5\n");
             if (i == NULL)
             {
-                printf("MEW2.6\n");
                 PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
-                printf("MEW2.7\n");
                 if (p == NULL)
                 {
-                    printf("MEW3\n");
                     printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
                     hasSemanticError = true;
                 }
                 else if (p->datatype->simple != ARRAY)
                 {
-                    printf("MEW4\n");
                     printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
                     hasSemanticError = true;
                 }
                 else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
                 {
-                    printf("MEW5\n");
+                    // printf("MEW5\n");
                     printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
                     hasSemanticError = true;
                 }
                 else
                 {
-                    printf("MEW6\n");
                     return p->datatype->arrtype->base_type;
                 }
             }
@@ -293,15 +298,18 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 hasSemanticError = true;
             }
             else
+            {
+                printf("WHYTHO?\n");
                 return i->datatype->arrtype->base_type;
+            }
         }
     }
-    return 0;
+    return 42;      // hopefully never
 }
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    printf("aaya2%s\n", n->tree_node->node_symbol);
+    // printf("aaya2%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -326,6 +334,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         temp = temp->sibling->child;        // at rangeArr
         if (t->simple == ARRAY)
         {
+            t->arrtype->base_type = temp->sibling->node_marker;
             if (temp->child->node_marker != NUM || temp->child->sibling->node_marker != NUM)
                 t->arrtype->is_dynamic = true;                  // it's a dynamic array
             else
@@ -350,7 +359,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
-        printf("WOW %s\n", rhs->tree_node->node_symbol);
+        // printf("WOW %s\n", rhs->tree_node->node_symbol);
         // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
@@ -588,7 +597,7 @@ void lite()
 // traverse the ast, fill the GST (while performing some checks)
 void traverse_the_multiverse(astNode *n, GST *st)
 {
-    printf("aaya1%s\n", n->tree_node->node_symbol);
+    // printf("aaya1%s\n", n->tree_node->node_symbol);
     if (is(n,"program"))
     {
         astNode *d;
@@ -664,18 +673,13 @@ PARAMS *create_param(astNode *plist)
     astNode *temp = plist->child->sibling->child;       // rangeArr
     if (t->simple == ARRAY)
     {
-        printf("GFF1\n");
-        printf("R%s\n", variables_array[temp->node_marker]);
+        t->arrtype->base_type = temp->sibling->node_marker;
         if (temp->child->node_marker != NUM || temp->child->sibling->node_marker != NUM)
             t->arrtype->is_dynamic = true;                  // it's a dynamic array
         else
         {
-            printf("GFF2\n");
             t->arrtype->is_dynamic = false;                 // static array
-            printf("ASD\n");
-            printf("RRR%d\n", temp->child->node_marker);
             t->arrtype->begin = atoi(temp->child->tree_node->lexeme);
-            printf("GFF3\n");
             t->arrtype->end = atoi(temp->child->sibling->tree_node->lexeme);
         }
         t->arrtype->begin_offset = current_offset++;            // in any case, 
