@@ -335,7 +335,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("aaya1%s\n", n->tree_node->node_symbol);
+    // printf("aaya2%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -372,7 +372,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         astNode *rhs = n->child->sibling;
         // printf("WOW %s\n", rhs->tree_node->node_symbol);
         // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
-        if (lhs->node_marker == ARRAY)
+        if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
             // has to be in the ID table or input
             PARAMS *p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
