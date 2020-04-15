@@ -870,7 +870,11 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
 
                     continue;
                 }
-                continue;
+                
+                if (temp1 == DOLLAR)
+                    break;
+                else
+                    continue;
         }
         else if (table->matrix[X][string_to_enum(a->token) - num_nt] == -1)  // else if M[X,a] is an error entry, 
         {       ///////////////////////////////////////////////////////////////////////////
@@ -888,11 +892,15 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
                 a = get_token(f, twin_buff, line_no);
                 while (table->matrix[X][(temp1 = string_to_enum(a->token)) - num_nt] == -1)
                 {
+                    printf("nfnfj\n");
                     if (temp1 == DOLLAR)
                         break; break;
                     continue;
                 }
-                continue;
+                if (temp1 == DOLLAR)
+                    break;
+                else
+                    continue;
         }
         else if (rule_id != -1)
         {
