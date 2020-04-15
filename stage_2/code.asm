@@ -51,20 +51,23 @@ main:
 	
 	mov rdi, intFormat_in
 	xor rax, rax
+	;mov r12, rbp
+	;sub r12, 800
+	;mov rsi, r12
 	mov rsi, vard1
 	call scanf
 
 	xor r12, r12
 	mov r12d, dword[vard1]
-	mov [rbp - 800], r12
+	mov qword[rbp - 800], r12
 	
-	mov r12, rbp
-	sub r12, 800
+	;mov r12, rbp
+	;sub r12, 800
 
 	;push rbp
 	mov rdi, intFormat_out
 	xor rax, rax
-	mov rsi, [r12]
+	mov rsi, [rbp - 800]
 	call printf
 
 	pop rbp
