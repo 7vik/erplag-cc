@@ -9,6 +9,7 @@
 
 bool hasSemanticError = false;
 unsigned int current_offset = 100;
+unsigned int error_line = 0;
 
 // hash function: implementing vunDina's hash, patent pending ;)
 int st_hash(char *s261)
@@ -216,7 +217,9 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
             if (p1 == NULL && p2 == NULL)
             {
-                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->tree_node->lexeme);
+                if (error_line < ex->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->tree_node->line, ex->tree_node->lexeme);
+                error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
             else if (p1 != NULL) return p1->datatype->simple;
@@ -235,7 +238,21 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     {
         if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
         {
-            printf("Semantic Error on line %d. Expected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Expected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+        }
+        else
+            return BOOLEAN;
+    }
+    if (ex->node_marker == AND ||ex->node_marker == OR||0)
+    {
+        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Expnected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
         else
@@ -247,7 +264,9 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         int t2 = get_type_expr(ex->child->sibling, id_st); 
         if (t1 != t2)
         {
-            printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
         else
@@ -268,18 +287,23 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
                 if (p == NULL)
                 {
-                    printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                    if (ex->tree_node->line > error_line)
+                        printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                    error_line = ex->tree_node->line;
                     hasSemanticError = true;
                 }
                 else if (p->datatype->simple != ARRAY)
                 {
-                    printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                    if (ex->tree_node->line > error_line)
+                        printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                    error_line = ex->tree_node->line;
                     hasSemanticError = true;
                 }
                 else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
                 {
-                    // printf("MEW5\n");
-                    printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+                    if (ex->tree_node->line > error_line)
+                        printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+                    error_line = ex->tree_node->line;
                     hasSemanticError = true;
                 }
                 else
@@ -289,17 +313,20 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             }
             else if (i->datatype->simple != ARRAY)
             {
-                printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                if (ex->tree_node->line > error_line)
+                    printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+                error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
             else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
             {
-                printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+                if (ex->tree_node->line > error_line)
+                    printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+                error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
             else
             {
-                printf("WHYTHO?\n");
                 return i->datatype->arrtype->base_type;
             }
         }
@@ -325,7 +352,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         ID_TABLE_ENTRY *i = st_lookup_nr(n->child->tree_node->lexeme, id_st);
         if (i != NULL)
         {
-            printf("Semantic Error at line %d. Variable '%s' redeclared.", n->child->tree_node->line, n->child->tree_node->lexeme);
+            if (error_line < n->child->tree_node->line)
+                printf("Semantic Error at line %d. Variable '%s' redeclared.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+            error_line = n->child->tree_node->line;
             hasSemanticError = true;
         }
         while(temp->node_marker != EPS) temp = temp->sibling;
@@ -367,18 +396,24 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
             if (i == NULL && p==NULL)
             {
-                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
             // and type must match before assignment
             if (i != NULL && (i->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
-                printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[i->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[i->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
             if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
-                printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[p->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[p->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
         }
@@ -401,7 +436,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             }
             if (p == NULL && i == NULL)
             {
-                printf("Semantic Error on line %d. Variable '%s' not declared before assignment.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
+                if (error_line < lhs->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
+                error_line = lhs->tree_node->line;
                 hasSemanticError = true;
             }
 
@@ -410,7 +447,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // types must match before assignment
                 if (i->datatype->simple != get_type_expr(rhs, id_st))
                 {
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                    if (error_line < lhs->tree_node->line)
+                        printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                    error_line = lhs->tree_node->line;
                     hasSemanticError = true;
                 }
                 else;
@@ -421,7 +460,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // types must match before assignment
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
                 {
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[p->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                    if (error_line < lhs->tree_node->line)
+                        printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[p->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                    error_line = lhs->tree_node->line;
                     hasSemanticError = true;
                 }
                 else;
@@ -439,7 +480,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
         if (i == NULL)
         {
-            printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+            if (error_line < n->child->tree_node->line)
+                printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+            error_line = n->child->tree_node->line;
             hasSemanticError = true;
         }
         else
@@ -450,18 +493,24 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // if both are static, they must be positive and all
                 if (atoi(n->child->sibling->child->tree_node->lexeme) < 0)
                 {
-                    printf("Semantic Error on line %d. For loop begin bound is negative.\n", n->child->tree_node->line);
+                    if (error_line < n->child->tree_node->line)
+                        printf("Semantic Error on line %d. For loop begin bound is negative.\n", n->child->tree_node->line);
+                    error_line = n->child->tree_node->line;
                     hasSemanticError = true;
                 }
                 if (atoi(n->child->sibling->child->tree_node->lexeme) > atoi(n->child->sibling->child->sibling->tree_node->lexeme))
                 {
-                    printf("Semantic Error on line %d. For loop index must end after it starts.\n", n->child->tree_node->line);
+                    if (error_line < n->child->tree_node->line)
+                        printf("Semantic Error on line %d. For loop index must end after it starts.\n", n->child->tree_node->line);
+                    error_line = n->child->tree_node->line;
                     hasSemanticError = true;
                 }
             }
             else
             {
-                printf("Semantic Error on line %d. For loop bounds must be NUMs.\n", n->child->tree_node->line);
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. For loop bounds must be NUMs.\n", n->child->tree_node->line);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
             // create a new ID ST
@@ -479,7 +528,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             ID_TABLE_ENTRY *i2 = st_lookup(n->child->child->sibling->child->tree_node->lexeme, id_st);
             if (i1 == NULL && i2 == NULL)
             {
-                printf("Semantic Error on line %d. While loop variables not declared beforehand.\n", n->child->tree_node->line);
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. While loop variables not declared.\n", n->child->tree_node->line);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
         }
@@ -497,7 +548,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             ID_TABLE_ENTRY *i1 = st_lookup(n->child->child->tree_node->lexeme, id_st);
             if (i1 == NULL && p == NULL)
             {
-                printf("Semantic Error on line %d. Input variable '%s' not declared beforehand.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", n->child->tree_node->line, n->child->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
         }
@@ -509,7 +562,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
             if (i1 == NULL && p1 == NULL && p2 == NULL)
             {
-                printf("Semantic Error on line %d. Output variable '%s' not declared beforehand.\n", n->child->child->child->tree_node->line, n->child->child->child->tree_node->lexeme);
+                printf("Semantic Error on line %d. Variable '%s' not declared.\n", n->child->child->child->tree_node->line, n->child->child->child->tree_node->lexeme);
                 hasSemanticError = true;
             }
         }
@@ -520,7 +573,9 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
         if (i == NULL)
         {
-            printf("Semantic Error on line %d. Switch '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+            if (error_line < n->child->tree_node->line)
+                printf("Semantic Error on line %d. Switch '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+            error_line = n->child->tree_node->line;
             hasSemanticError = true;
         }
         else
@@ -538,11 +593,10 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {
-        // no output!
         FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
         if (f == NULL)
         {
-            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+            // printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
             hasSemanticError = true;
         }
         else
@@ -551,18 +605,19 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
                 if (get_type_expr(temp, id_st) != p->datatype->simple)
                 {
-                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+                    // printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
                     hasSemanticError = true;
                 }
         }
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
     {
-        // there's output!
         FUNC_TABLE_ENTRY *f = global_st_lookup(n->child->sibling->tree_node->lexeme, id_st->primogenitor->procreator);
         if (f == NULL)
         {
-            printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+            if (error_line < n->child->sibling->tree_node->line)
+                printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+            error_line = n->child->sibling->tree_node->line;
             hasSemanticError = true;
         }
         else
@@ -572,7 +627,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             for(astNode *temp = n->child->sibling->sibling->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
                 if (get_type_expr(temp, id_st) != p->datatype->simple)
                 {
-                    printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
+                    // printf("Semantic Error at line %d. Wrong type given to function input.\n", n->child->sibling->sibling->child->tree_node->line);
                     hasSemanticError = true;
                 }
             // and output parameters
@@ -580,7 +635,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             for(astNode *temp = n->child->child; p != NULL && temp != NULL; p = p->next, temp = temp->sibling)
                 if (get_type_expr(temp, id_st) != p->datatype->simple)
                 {
-                    printf("Semantic Error at line %d. Wrong type given to function output.\n", n->child->child->tree_node->line);
+                    // printf("Semantic Error at line %d. Wrong type given to function output.\n", n->child->child->tree_node->line);
                     hasSemanticError = true;
                 }
         }
