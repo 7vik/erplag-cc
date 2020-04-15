@@ -557,7 +557,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         else  //bound check
         {
             if (index_node->node_marker == ID)
-                id_entry->datatype->arrtype->is_dynamic_index = true;
+                return;
             else
             {
                 if(index_node->node_marker != NUM)
