@@ -105,17 +105,18 @@ void initialise_file(FILE* fp)
 void take_input(FILE* fp, int type, int offset)
 {
     // for int
+    int temp = offset * 8;
     if(type == INTEGER)
     {
         fprintf(fp, "\tmov rdi, intFormat_in\n");
-        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall scanf\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "\tmov rdi, realFormat_in\n");
-        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall scanf\n");
     }
     
@@ -150,6 +151,27 @@ void prompt_user(FILE* fp, int type)
     
     fprintf(fp, "call printf\n");
     // fprintf(fp, "pop rbp\n\n");
+}
+
+
+void print_id(FILE* fp, int type, int offset)
+{
+    // for int
+    int temp = offset * 8;
+    if(type == INTEGER)
+    {
+        fprintf(fp, "\tmov rdi, intFormat_out\n");
+        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\tcall printf\n");
+    }
+
+    else if(type == REAL)
+    {
+        fprintf(fp, "\tmov rdi, realFormat_out\n");
+        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\tcall printf\n");
+    }
+    
 }
 
 // type is enum in this case
@@ -341,6 +363,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         prompt_user(fp, id_entry->datatype->simple);       
         take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+        print_id(fp,  id_entry->datatype->simple, id_entry->offset);
 
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
@@ -394,6 +417,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
+        fprintf(fp, "mov rbp, rsp\n");
         generate_the_universe(n->child, f->local_id_table, fp);
     }
     if (is(n, "otherModules") && n->sibling == NULL)

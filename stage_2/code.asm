@@ -45,17 +45,13 @@ main:
 push rbp
 mov rbp, rsp
 	mov rdi, int_inMsg
-	xor rax, rax
 call printf
 	mov rdi, intFormat_in
-	sub rbp, 8
-	lea rsi, [rbp]
-	xor rax, rax
+	lea rsi, [rbp - 800]
 	call scanf
-
-
-push rbp
-	mov rdi, int_inMsg
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 800]
+	call printf
 pop rbp
 mov rax, 0
 ret
