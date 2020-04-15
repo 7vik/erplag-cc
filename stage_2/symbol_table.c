@@ -63,23 +63,11 @@ char *show_type(TYPE *t)
     if (t->simple == ARRAY  )
     {
         char *array_type_str = (char *) malloc(42);
-        strcpy(array_type_str, "ARRAY [");
-        int length = snprintf(NULL, 0, "%d", t->arrtype->begin);
-        char* str1 = malloc( length + 1 );
-        snprintf( str1, length + 1, "%d", t->arrtype->begin );
-        strcat(array_type_str,str1);
-        free(str1);
-        strcat(array_type_str, "..");
-        length = snprintf(NULL, 0, "%d", t->arrtype->end);
-        str1 = malloc( length + 1 );
-        snprintf( str1, length + 1, "%d", t->arrtype->end );
-        strcat(array_type_str,str1);
-        free(str1);
-        strcat(array_type_str, "] of ");
+        strcpy(array_type_str, "ARRAY");
+        strcat(array_type_str, " of ");
         strcat(array_type_str, variables_array[t->arrtype->base_type]);
         return array_type_str;
     }
-        // printf("SHOW ME AAYA\n");
     return NULL;
 }
 
@@ -169,57 +157,12 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     return new;
 }
 
-// // extract the type out of any AST node
-// TYPE *get_type(astNode *ast)
-// {
-//     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
-//     if (!new)
-//         malloc_error
-//     if (ast == NULL)    printf("BAS1\n");
-//     if (ast->tree_node == NULL)    printf("BAS2\n");
-//     if (strcmp(ast->tree_node->node_symbol, "ID") == 0)                 // if it's an ID
-//     {
-//         printf("Save: %s\n", ast->tree_node->lexeme);
-//         if (ast->sibling == NULL || is(ast->sibling, "idList") || is(ast->sibling, "ID"))
-//         {
-//             printf("FASgaya\n");
-//             new->simple = INTEGER;      // change later
-//             new->arrtype = NULL;
-//             return new;
-//         }
-//         new->simple = string_to_enum(ast->sibling->tree_node->node_symbol);
-//         if (new->simple == ARRAY)                            // it's an array
-//         {
-//             new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
-//             if (! new->arrtype)
-//                 malloc_error
-//             new->arrtype->base_type = string_to_enum(ast->sibling->child->sibling->tree_node->node_symbol);
-//             new->arrtype->begin = atoi(ast->sibling->child->child->tree_node->lexeme);
-//             new->arrtype->end = atoi(ast->sibling->child->child->sibling->tree_node->lexeme);
-//         }
-//         else
-//             new->arrtype = NULL;
-//     }
-//     return new;
-// }
-
-TYPE *get_type(astNode *n)          // temporary, delete it
+TYPE *get_type(astNode *n)          
 {
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
     new->simple = string_to_enum(n->sibling->tree_node->node_symbol);
-    if (new->simple == ARRAY)                            // it's an array
-    {
-        new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
-        if (! new->arrtype)
-            malloc_error
-        new->arrtype->base_type = string_to_enum(n->sibling->child->sibling->tree_node->node_symbol);
-        new->arrtype->begin = atoi(n->sibling->child->child->tree_node->lexeme);
-        new->arrtype->end = atoi(n->sibling->child->child->sibling->tree_node->lexeme);
-    }
-    else
-        new->arrtype = NULL;
     return new;
 }
 
@@ -335,7 +278,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("aaya2%s\n", n->tree_node->node_symbol);
+    printf("aaya2%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -357,6 +300,20 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         }
         while(temp->node_marker != EPS) temp = temp->sibling;
         TYPE *t = get_type(temp);
+        temp = temp->sibling->child;        // at rangeArr
+        if (t->simple == ARRAY)
+        {
+            if (temp->child->node_marker != NUM || temp->child->sibling->node_marker != NUM)
+                t->arrtype->is_dynamic = true;                  // it's a dynamic array
+            else
+            {
+                t->arrtype->is_dynamic = false;                 // static array
+                t->arrtype->begin = atoi(temp->child->tree_node->lexeme);
+                t->arrtype->end = atoi(temp->child->sibling->tree_node->lexeme);
+            }
+            t->arrtype->begin_offset = current_offset++;            // in any case, 
+            t->arrtype->end_offset   = current_offset++;            // fill the offsets
+        }
         for(temp = n->child; temp->node_marker != EPS; temp = temp->sibling)
         {
             ID_TABLE_ENTRY *id = create_symbol(temp, t);
@@ -370,7 +327,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
-        // printf("WOW %s\n", rhs->tree_node->node_symbol);
+        printf("WOW %s\n", rhs->tree_node->node_symbol);
         // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
@@ -773,7 +730,7 @@ FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_pa
         if (st != NULL)
             st->primogenitor = new;
         new->next = NULL;
-        new->is_declared = true;
+        // new->is_declared = true;
     }
     else
     {
@@ -786,7 +743,7 @@ FUNC_TABLE_ENTRY *create_function(astNode *node, PARAMS *inp_par, PARAMS *out_pa
         if (st != NULL)
             st->primogenitor = new;
         new->next = NULL;
-        new->is_declared = false;
+        // new->is_declared = false;
     }
     return new;
 }

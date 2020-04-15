@@ -50,7 +50,7 @@ typedef struct FUNC_TABLE_ENTRY
     int width;                                          // total size of all local variables (why tho?)
     ID_SYMBOL_TABLE *local_id_table;                    // nested ID table for each function
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
-    bool is_declared;                                   // to check if it is declared (semantix)
+    int is_declared;                                   // to check if it is declared (semantix)
     struct FUNC_SYMBOL_TABLE *procreator;               // link to GST
 }FUNC_TABLE_ENTRY;
 
