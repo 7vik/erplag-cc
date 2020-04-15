@@ -27,7 +27,7 @@ void print_bss_section(FILE* fp, VARS vars);
 void print_externs(FILE* fp);
 void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type);
 void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type);
-void ask_for_int(FILE* fp);
+void prompt_user(FILE* fp, int type);
 void print_int_output(FILE* fp, int output_var_num);
 void take_real_input(FILE* fp, int input_var_num);
 void take_int_input(FILE* fp, int input_var_num);

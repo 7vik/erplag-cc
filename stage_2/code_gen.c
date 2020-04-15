@@ -8,6 +8,7 @@ VARS vars;
 
 void print_return(FILE* fp)
 {
+    fprintf(fp, "pop rbp\n");
     fprintf(fp, "mov rax, 0\n");
     fprintf(fp, "ret\n");
 }
@@ -101,51 +102,61 @@ void initialise_file(FILE* fp)
     return;   
 }
 
-void take_int_input(FILE* fp, int input_var_num)
+void take_input(FILE* fp, int type, int offset)
 {
     // for int
+    if(type == INTEGER)
+    {
+        fprintf(fp, "\tmov rdi, intFormat_in\n");
+        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tcall scanf\n");
+    }
 
-    fprintf(fp, "push rbp\n");
-    fprintf(fp, "mov rdi, intFormat\n");
-    fprintf(fp, "mov rsi, vard%d\n", input_var_num);
-    fprintf(fp, "call scanf\n");
-    fprintf(fp, "pop rbp\n\n");
+    else if(type == REAL)
+    {
+        fprintf(fp, "\tmov rdi, realFormat_in\n");
+        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tcall scanf\n");
+    }
+    
 }
 
+// void print_int_output(FILE* fp, int output_var_num)
+// {
+//     // for int
 
-void take_real_input(FILE* fp, int input_var_num)
+//     fprintf(fp, "push rbp\n");
+//     fprintf(fp, "mov rdi, intFormat\n");
+//     fprintf(fp, "mov rsi, [vard%d]\n", output_var_num);
+//     fprintf(fp, "call printf\n");
+//     fprintf(fp, "pop rbp\n\n");
+// }
+
+void prompt_user(FILE* fp, int type)
 {
-    fprintf(fp, "push rbp\n");
-    fprintf(fp, "mov rdi, realFormat\n");
-    fprintf(fp, "mov rsi, vard%d\n", input_var_num);
-    fprintf(fp, "call scanf\n");
-    fprintf(fp, "pop rbp\n\n");
-}
+    // fprintf(fp, "push rbp\n");
 
-void print_int_output(FILE* fp, int output_var_num)
-{
-    // for int
-
-    fprintf(fp, "push rbp\n");
-    fprintf(fp, "mov rdi, intFormat\n");
-    fprintf(fp, "mov rsi, [vard%d]\n", output_var_num);
+    if (type == INTEGER)
+        fprintf(fp, "\tmov rdi, int_inMsg\n");
+    else if (type == BOOLEAN)
+        fprintf(fp, "\tmov rdi, bool_inMsg\n");
+    else if (type == REAL)
+        fprintf(fp, "\tmov rdi, real_inMsg\n");
+    else
+    {
+        printf("ERROR\n");
+        exit(1);
+    }
+    
     fprintf(fp, "call printf\n");
-    fprintf(fp, "pop rbp\n\n");
-}
-
-void ask_for_int(FILE* fp)
-{
-    fprintf(fp, "push rbp\n");
-    fprintf(fp, "mov rdi, int_inMsg\n");
-    fprintf(fp, "call printf\n");
-    fprintf(fp, "pop rbp\n\n");
+    // fprintf(fp, "pop rbp\n\n");
 }
 
 // type is enum in this case
 void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 {
 
-    fprintf(fp, "push rbp\n");
+    // fprintf(fp, "push rbp\n");
     fprintf(fp, "; prompts user for input\n");
     fprintf(fp, "mov rcx, [var%d]\n", lower_var_num);
     fprintf(fp, "mov r8, [var%d]\n", upper_var_num);
@@ -211,7 +222,7 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "inc r13d\n");
     fprintf(fp, "cmp r13d, r12d\n");
     fprintf(fp, "jne array_input_loop\n");
-    fprintf(fp, "pop rbp\n");
+    // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
 
 
@@ -221,7 +232,7 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 {
     
-    fprintf(fp, "push rbp\n");
+    // fprintf(fp, "push rbp\n");
 
     fprintf(fp, "; printing array\n");
     fprintf(fp, "lea rdi, [arr_outMsg]\n");
@@ -281,7 +292,7 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "lea rdi, [new_line]\n");
     fprintf(fp, "call printf\n");
 
-    fprintf(fp, "pop rbp\n");
+    // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
 
 
@@ -326,7 +337,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ioStmt") && n->child->node_marker == GET_VALUE)
     {
-        
+        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->tree_node->lexeme, id_st);
+
+        prompt_user(fp, id_entry->datatype->simple);       
+        take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
@@ -378,6 +393,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         // printf("mil\n");
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
         fprintf(fp, "main:\n\n");
+        fprintf(fp, "push rbp\n");
         generate_the_universe(n->child, f->local_id_table, fp);
     }
     if (is(n, "otherModules") && n->sibling == NULL)
@@ -426,7 +442,7 @@ int main(int argc, char* argv[])
     FILE* code_fp = fopen(argv[3], "w");
     initialise_file(code_fp);
     generate_the_multiverse(ast_root, st, code_fp);
-
+    print_return(code_fp);
     fclose(test_fp);
     fclose(test_parse_fp);
     free(twin_buff);

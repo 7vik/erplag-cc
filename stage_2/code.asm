@@ -42,3 +42,12 @@ section  .text
 
 main:
 
+push rbp
+	mov rdi, int_inMsg
+call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp + 100 * 8]
+	call scanf
+pop rbp
+mov rax, 0
+ret
