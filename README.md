@@ -38,3 +38,4 @@ This project is part of our course requirement for CS-F363 "Compiler Constructio
 - Use of printf: https://stackoverflow.com/questions/20808039/print-a-string-out-by-letter-in-assembler-nasm first answer
 - Excellent sample programs, highly commented. https://www.csee.umbc.edu/portal/help/nasm/sample.shtml
 - Debugging guide: https://www.cs.umb.edu/~cheungr/cs341/Using_gdb_for_Assembly.pdf
+- Floating: https://www.reddit.com/r/learnprogramming/comments/2sv4x1/assembly_x8664_homework_float_inputs_reading/
