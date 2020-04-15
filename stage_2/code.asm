@@ -43,11 +43,19 @@ section  .text
 main:
 
 push rbp
+mov rbp, rsp
 	mov rdi, int_inMsg
+	xor rax, rax
 call printf
 	mov rdi, intFormat_in
-	lea rsi, [rbp + 100 * 8]
+	sub rbp, 8
+	lea rsi, [rbp]
+	xor rax, rax
 	call scanf
+
+
+push rbp
+	mov rdi, int_inMsg
 pop rbp
 mov rax, 0
 ret
