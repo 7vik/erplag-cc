@@ -831,7 +831,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -873,4 +873,3 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/
