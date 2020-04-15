@@ -40,26 +40,21 @@ void semantic_analyser(astNode* root, GST* global_st)
         //printf("%s\n",variables_array[temp->node_marker]);
         if(temp->node_marker == moduleDeclarations)
         {
-            printf("%s\n",variables_array[temp->node_marker]);
             check_moduleDeclarations_semantic(temp, global_st);
             temp = temp->sibling;
-            printf("b\n");
         }
         if(temp->node_marker == otherModules)
         {
-            printf("oth\n");
             check_otherModules_semantic(temp, global_st);
             temp = temp->sibling;
         }
         if(temp->node_marker == driverModule)
         {
-            printf("dro\n");
             check_driverModule_semantic(temp, global_st);
             temp = temp->sibling;
         }
         if(temp->node_marker == otherModules)
         {
-            printf("OTEHR M\n");
             check_otherModules_semantic(temp, global_st);
         }
         return;
@@ -120,7 +115,6 @@ void check_otherModules_semantic(astNode* root, GST* global_st)
 
 void check_driverModule_semantic(astNode* root, GST* global_st)
 {
-    printf("%s\n", variables_array[root->node_marker]);
     assert(root->node_marker == driverModule);
     astNode* temp = root->child;   //moduleDef node
     FUNC_TABLE_ENTRY* func_entry = global_st_lookup(root->tree_node->node_symbol, global_st);
@@ -131,7 +125,6 @@ void check_driverModule_semantic(astNode* root, GST* global_st)
 void check_moduleDef_semantic(astNode* root, FUNC_TABLE_ENTRY* func_entry)
 {
     assert(root->node_marker == moduleDef);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp = root->child;
 
     ID_SYMBOL_TABLE* id_table = func_entry->local_id_table;
@@ -154,7 +147,6 @@ void check_module_semantic(astNode* root, GST* global_st)
         //printf("ERROR in check module, function entry should have been there in symbol table\n");
     }
     
-    printf("H3\n");
     check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
 
     return; 
@@ -162,7 +154,6 @@ void check_module_semantic(astNode* root, GST* global_st)
 
 void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
-    printf("%s\n", variables_array[root->node_marker]);
     if(root->node_marker == EPS)
         return;
 
@@ -199,7 +190,6 @@ void check_statements_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == declareStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     // no semantic rules required here as checks done during type checking
     return;
 }
@@ -208,7 +198,6 @@ void check_declareStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == ioStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     //no semantic rules required here; to be checked during code generation
     return;
 }
@@ -216,16 +205,14 @@ void check_ioStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 // needs to be chenged, check whatsapp pics
 void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
-    return;
 
     if (root == NULL)
         return;
     //assert(root->node_marker == assignmentStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp;
     if (root->node_marker == assignmentStmt)
     {
-        temp = temp->child->child;
+        temp = root->child;
         check_assignmentStmt_semantic(temp, id_table);
         return;
     }
@@ -239,13 +226,10 @@ void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
                 check_var_semantic(root, id_table);
             }
         }
-        temp = root->child;
-        
-        if(temp == NULL)
-            return;
         else
         {
-            while(temp->sibling != NULL)
+            temp = root->child;
+            while(temp != NULL)
             {
                 check_assignmentStmt_semantic(temp, id_table);
                 temp = temp->sibling;
@@ -265,7 +249,6 @@ void check_assignmentStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_iterativeStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == iterativeStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp = root->child;
 
     ID_SYMBOL_TABLE* id_child_table = NULL;
@@ -303,7 +286,6 @@ void check_iterativeStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == conditionalStmt);
-    printf("%s %s %d\n", variables_array[root->node_marker], root->tree_node->node_symbol, root->tree_node->line);
     astNode* temp = root->child;
 
     ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_table);
@@ -312,12 +294,14 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
+	return;
     }
 
     else if(id_entry->datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
     {
         printf("SEMANTIC ERROR at line %d: %s is a variable of type real.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
+	return;
     }
     // I assume Satvik would handle the remaining cases associated with type for identifier.
     // Comment out anything from the above if-else if construct which is redundant.
@@ -345,7 +329,6 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
 {
     assert(root->node_marker == caseStmts);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp = root->child;
     while(temp != NULL)
     {
@@ -359,7 +342,6 @@ void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID
 void check_caseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
 {
     assert(root->node_marker == caseStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp = root->child;
 
     // ARRAY!
@@ -384,7 +366,6 @@ void check_caseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_
 
 void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
 {
-    printf("%s\n", variables_array[root->node_marker]);
     if(id_entry->datatype->simple == ARRAY) // ARRAY!
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", root->tree_node->line, id_entry->lexeme);
@@ -414,7 +395,6 @@ void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, I
 void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == moduleReuseStmt);
-    printf("%s\n", variables_array[root->node_marker]);
     astNode* temp = root->child;
 
     GST* global_table = id_table->primogenitor->procreator;
@@ -454,7 +434,6 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
         if(lookup_id != NULL && lookup_id->datatype->simple == ARRAY)
         {
-            printf("ghfb\n");
             printf("SEMANTIC ERROR at line %d: Return actual parameter %s has type array.\n", trav1->tree_node->line, trav1->tree_node->lexeme);
             hasSemanticError = true;
         }
@@ -528,7 +507,6 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == var);
-    printf("%s\n", variables_array[root->node_marker]);
     // if two nodes, then it is arr, bound checking
     if(root->child->sibling != NULL)
     {
@@ -542,9 +520,11 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         if (id_entry == NULL)
         {
 
-            // if satvik handles this, comment out below 2 lines
-            printf("SEMANTIC ERROR at line %d: undeclared variable %s", var_node->tree_node->line, var_node->tree_node->lexeme);
-            hasSemanticError = true;
+            // // if satvik handles this, comment out below 2 lines
+            // printf("SEMANTIC ERROR at line %d: undeclared variable %s", var_node->tree_node->line, var_node->tree_node->lexeme);
+            // hasSemanticError = true;
+
+            // won't check if array not declared
             return;
         }
 
@@ -557,7 +537,12 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
                 id_entry->datatype->arrtype->is_dynamic_index = true;
             else
             {
-                assert(index_node->node_marker == NUM);
+                if(index_node->node_marker != NUM)
+                {
+                    printf("Semantic Error: Array index should be a number at line %d - found %s\n", index_node->tree_node->line, variables_array[index_node->node_marker]);
+                    hasSemanticError = true;
+                    return;
+                }
 
                 int low_index = id_entry->datatype->arrtype->begin;
                 int high_index = id_entry->datatype->arrtype->end;
