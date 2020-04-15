@@ -1,4 +1,5 @@
-// gcc code_gen.c symbol_table.c ast.c parser.c lexer.c hash.c bool.c
+// make assember
+// ./stage2exe t5.txt new.new code.asm
 
 #include "code_gen.h"
 
@@ -22,7 +23,6 @@ void print_externs(FILE* fp)
     fprintf(fp, "\nsection  .text\n\n");
 
     return;
-
 }
 
 void print_data_section(FILE* fp)
@@ -63,28 +63,24 @@ void print_bss_section(FILE* fp, VARS vars)
     {
         sprintf(buff, "varb%d:   resb    1\n", i + 1);
         fprintf(fp, "%s\n", buff);
-
     }
 
     for(int i = 0; i < vars.num_double_vars; i++)
     {
         sprintf(buff, "vard%d:   resd    1\n", i + 1);
         fprintf(fp, "%s\n", buff);
-
     }
 
     for(int i = 0; i < vars.num_quad_words; i++)
     {
         sprintf(buff, "varq%d:   resq    1\n", i + 1);
         fprintf(fp, "%s\n", buff);
-
     }
 
     for(int i = 0; i < vars.num_word_vars; i++)
     {
         sprintf(buff, "varw%d:   resw    1\n", i + 1);
         fprintf(fp, "%s\n", buff);
-
     }
 
     fprintf(fp, "int_array:         resd        100\n");
@@ -102,8 +98,6 @@ void initialise_file(FILE* fp)
     vars.num_double_vars++;
     print_bss_section(fp, vars);
     print_externs(fp);
-
-    fprintf(fp, "main:\n\n");
     return;   
 }
 
@@ -294,116 +288,101 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 }
 
 
-// traverse a single function and generate the ASM code
+// trav a single function and generate the ASM code
 void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 {
+    // printf("aasdfasdf\n");
+    printf("SMALL\t%s\n", variables_array[n->node_marker]);
     if (is(n, "moduleDef"))
     {
-        return;
+        generate_the_universe(n->child->sibling, id_st, fp);
     }
     if (is(n, "statements"))
     {
-        return;
+        for(astNode *temp = n->child; temp; temp = temp->sibling)
+        {
+            generate_the_universe(temp, id_st, fp);
+        }
     }
     if (is(n, "declareStmt"))
     {
-        while(n->node_marker != EPS)
-        {
-            ID_TABLE_ENTRY* id_entry = st_lookup(n->tree_node->lexeme, id_st);
-
-            if(id_entry->datatype->simple == ARRAY)
-            {
-                // static array: populate the stack offsets
-                if(id_entry->datatype->arrtype->is_dynamic == FALSE)
-                {
-                    // A [5..6]
-                    fprintf("mov rax, %d\n", id_entry->datatype->arrtype->begin);
-                    fprintf("mov [rbp + %d*8], rax\n", id_entry->datatype->arrtype->begin_offset);
-
-                    fprintf("mov rax, %d\n", id_entry->datatype->arrtype->end);
-                    fprintf("mov [rbp + %d*8], rax\n", id_entry->datatype->arrtype->end_offset);
-
-                }
-
-                else
-                {
-                    // A [x..b]
-                    // A [5..b] A[b..5]
-
-                    if
-                }
-                
-            }
-            n = n->sibling;
-        }   
-        return;
+        ;
     }
     if (is(n, "assignmentStmt"))
     {
-        return;
+        
     }
     if (is(n, "ASSIGNOP"))
     {
-       return;
+       
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {
-        return;
+        
     }
     if (is(n, "iterativeStmt") && (1 - is(n->child, "ID")))   // while lup
     {
-       return;
+       
     }
-    if (is(n, "ioStmt"))
+    if (is(n, "ioStmt") && n->child->node_marker == GET_VALUE)
     {
-        return;
+        
+    }
+    if (is(n, "ioStmt") && n->child->node_marker == printOpt)
+    {
+        
     }
     if (is(n, "conditionalStmt"))
     {
-        return;
+        
     }
     if (is(n, "caseStmts"))
     {
-        return;
+        
     }
     if (is(n, "caseStmt"))
     {
-        return;
+        
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {
-        return;
+        
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
     {
-       return;
+       
     }
     return;
 }
 
 
-// traverse the ast and create ASM code 
+// trav the ast and create ASM code 
 void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 {
+    printf("BIG\t%s\n", variables_array[n->node_marker]);
     if (is(n,"program"))
     {
-        return;
+        for(astNode *temp = n->child; temp; temp = temp->sibling)
+        {
+            generate_the_multiverse(temp,st, fp);
+        }
     }
+
     if (is(n, "moduleDeclarations"))
-    {
-        return;
-    }
+        ;
+
     if (is(n, "otherModules") && n->sibling != NULL)
-    {
-        return;
-    }
+        ;
     if (is(n, "driverModule"))
     {
-        return;
+        // printf("mil\n");
+        FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
+        fprintf(fp, "main:\n\n");
+        generate_the_universe(n->child, f->local_id_table, fp);
     }
     if (is(n, "otherModules") && n->sibling == NULL)
     {
-        return;
+        ;
     }
     if (is(n, "EPS"))
         return;         // bliss

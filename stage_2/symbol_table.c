@@ -8,7 +8,7 @@
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
 bool hasSemanticError = false;
-unsigned int current_offset = 0;
+unsigned int current_offset = 100;
 
 // hash function: implementing vunDina's hash, patent pending ;)
 int st_hash(char *s261)
@@ -316,7 +316,6 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     {
         for(astNode *temp = n->child; temp; temp = temp->sibling)
         {
-            // printf("DD%s\n", temp->tree_node->node_symbol);
             traverse_the_universe(temp, id_st);
         }
     }
@@ -831,7 +830,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -873,3 +872,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
+*/
