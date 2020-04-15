@@ -42,20 +42,31 @@ section  .text
 
 main:
 
-push rbp
-mov rbp, rsp
+	push rbp
+	mov rbp, rsp
+	
 	mov rdi, int_inMsg
 	xor rax, rax
-call printf
+	call printf
+	
 	mov rdi, intFormat_in
-	sub rbp, 8
-	lea rsi, [rbp]
 	xor rax, rax
+	mov rsi, vard1
 	call scanf
 
+	xor r12, r12
+	mov r12d, dword[vard1]
+	mov [rbp - 800], r12
+	
+	mov r12, rbp
+	sub r12, 800
 
-push rbp
-	mov rdi, int_inMsg
-pop rbp
-mov rax, 0
-ret
+	;push rbp
+	mov rdi, intFormat_out
+	xor rax, rax
+	mov rsi, [r12]
+	call printf
+
+	pop rbp
+	mov rax, 0
+	ret
