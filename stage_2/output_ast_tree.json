@@ -1,0 +1,94 @@
+{
+"nodeStructure":{
+"text": { "name": "program" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "driverModule" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "printOpt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+}

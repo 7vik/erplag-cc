@@ -1,0 +1,242 @@
+{
+"nodeStructure":{
+"text": { "name": "program" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "moduleDeclarations" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "otherModules" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "driverModule" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DRIVERDEF:<<<" },
+"children":[]
+}
+,{
+"text": { "name": "DRIVER:driver" },
+"children":[]
+}
+,{
+"text": { "name": "PROGRAM:program" },
+"children":[]
+}
+,{
+"text": { "name": "DRIVERENDDEF:>>>" },
+"children":[]
+}
+,{
+"text": { "name": "moduleDef" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GET_VALUE:get_value" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "PRINT:print" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "printOpt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "otherModules" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+}
