@@ -304,9 +304,7 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
     {
         fprintf(fp, "\tlea rdi, [intFormat_out]\n");
         fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
-        fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
-        fprintf(fp, "\tadd r14, r13\n");
-        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
+        fprintf(fp, "\tmov rsi, [r14 + r13 * 8]\n");
     }
 
     else if(type == REAL)
@@ -314,8 +312,7 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
         fprintf(fp, "lea rdi, [realFormat_out]\n");
         fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
         fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
-        fprintf(fp, "\tadd r14, r13\n");
-        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
+        
     }
 
     else if(type == BOOLEAN)
@@ -768,25 +765,43 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         
         generate_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->visited], fp);
         id_st->visited++;
+
+
     }
     if (is(n, "caseStmts"))
     {
+        char* cases_exit = generate_label();
         for (astNode *temp = n->child; temp; temp = temp->sibling)
-            generate_the_universe(temp, id_st, fp);
-    }
-    if (is(n, "caseStmt"))
-    {
-        int num = atoi(n->child->tree_node->lexeme);
+        {
+            int num = atoi(temp->child->tree_node->lexeme);
+            char* case_exit = generate_label();
+            fprintf(fp, "\tcmp rax, %d\n", num);
+            fprintf(fp, "\tjne %s\n", case_exit);
+            fprintf(fp, "\tpush rax\n\tpush rax\n");
+            generate_the_universe(temp->child->sibling, id_st, fp);
+            fprintf(fp, "\tpop rax\n\tpop rax\n");
+            fprintf(fp, "\tjmp %s\n", cases_exit);
+            fprintf(fp, "\t%s:\n", case_exit);
+        }
 
-        char* case_exit = generate_label();
-        fprintf(fp, "\tcmp rax, %d\n", num);
-        fprintf(fp, "\tjne %s\n", case_exit);
-        fprintf(fp, "\tpush rax\n\tpush rax\n");
-        generate_the_universe(n->child->sibling, id_st, fp);
-        fprintf(fp, "\tpop rax\n\tpop rax\n");
-        fprintf(fp, "\tjmp %s:")
-        //fprintf(fp, "%s:\n", case_exit);
+        astNode* default_nt_node = n->sibling;
+        generate_the_universe(default_nt_node->child, id_st, fp);
+        fprintf(fp, "%s:\n", cases_exit);
+
     }
+    // if (is(n, "caseStmt"))
+    // {
+    //     int num = atoi(n->child->tree_node->lexeme);
+
+    //     char* case_exit = generate_label();
+    //     fprintf(fp, "\tcmp rax, %d\n", num);
+    //     fprintf(fp, "\tjne %s\n", case_exit);
+    //     fprintf(fp, "\tpush rax\n\tpush rax\n");
+    //     generate_the_universe(n->child->sibling, id_st, fp);
+    //     fprintf(fp, "\tpop rax\n\tpop rax\n");
+    //     fprintf(fp, "\tjmp %s:")
+    //     //fprintf(fp, "%s:\n", case_exit);
+    // }
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {
         

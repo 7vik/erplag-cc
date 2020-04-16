@@ -5,5 +5,15 @@ start
 	get_value(y);
 	get_value(z);
 	get_value(t);
-	
+	switch(x)
+	start
+		case 1: print(y);
+                break;
+		case 2: print(y);
+                break;
+		case 3: print(z);
+                break;
+        default: print(t);
+			     break;
+	end
 end

@@ -47,7 +47,7 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	sub rsp, 16
+	sub rsp, 128
 	;Taking id
 
 	mov rdi, int_inMsg
@@ -76,6 +76,68 @@ mov rbp, rsp
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 56]
 	call scanf
+	mov rax, [rbp - 8]
+	cmp rax, 1
+	jne label1
+	push rax
+	push rax
+	;Printing ID
+
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 24]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	pop rax
+	pop rax
+	jmp label0
+	label1:
+	cmp rax, 2
+	jne label2
+	push rax
+	push rax
+	;Printing ID
+
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 24]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	pop rax
+	pop rax
+	jmp label0
+	label2:
+	cmp rax, 3
+	jne label3
+	push rax
+	push rax
+	;Printing ID
+
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 40]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	pop rax
+	pop rax
+	jmp label0
+	label3:
+	;Printing ID
+
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 56]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+label0:
 mov rsp, rbp
 pop rbp
 mov rax, 0
