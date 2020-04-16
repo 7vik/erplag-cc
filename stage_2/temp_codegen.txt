@@ -1,7 +1,7 @@
-
 <<<driver program>>>
 start
-	declare A: array[0..4] of integer;
-	get_value(A);
-	**print(A);**
+	declare p, t : integer;
+	get_value(p);
+	t := p + 3;
+	print(t);
 end

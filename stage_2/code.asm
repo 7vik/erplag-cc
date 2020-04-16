@@ -47,56 +47,23 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	mov r14, [array_available_addr]
-	lea rax, [array_buffer + r14]
-	mov [rbp - 816], rax
+	;Taking id
 
-	mov r14, [array_available_addr]
-	add r14, 5
-	mov [array_available_addr], r14
+	mov rdi, int_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 808]
+	call scanf
+	;Printing ID
 
-; loading array offsets
-mov r13, 0
-mov [rbp - 800], r13
-mov r13, 4
-mov [rbp - 808], r13
-
-	;Taking array
-
-; prompts user for input
-	mov rcx, [rbp - 800]
-	mov r8, [rbp - 808]
-	mov rsi, r8
-	sub rsi, rcx
-	inc rsi
-	mov rdi, arr_inMsg
-mov rdx, type_int
-	mov rcx, [rbp - 800]
-	mov r8, [rbp - 808]
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 824]
 	call printf
 
-	; stores the count
+	lea rdi, [new_line]
+	call printf
 
-	xor r12, r12
-	xor r13, r13
-	mov r12, [rbp - 808]
-	mov r13, [rbp - 800]
-	sub r12, r13
-	inc r12
-	xor r13, r13
-
-	label0:
-lea rdi, [intFormat_in]
-	mov r14, [rbp - 816]
-	lea rsi, [r14 + r13 * 8]
-	call scanf
-
-	inc r13
-	cmp r13, r12
-	jne label0
-
-
-add rsp, 16
+add rsp, 32
 pop rbp
 mov rax, 0
 ret

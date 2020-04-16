@@ -286,9 +286,9 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         return  get_type_expr(ex->child, id_st);
     if (ex->node_marker == var)
     {
-        if (ex->child->sibling == NULL)     // not an array
+        if (ex->child->sibling == NULL)     // not an array element
             return get_type_expr(ex->child, id_st);
-        else                                // array
+        else                                // array element
         {
             // printf("WHYTHO2?\n");
             ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
