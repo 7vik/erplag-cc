@@ -167,21 +167,27 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     new->lexeme = node->tree_node->lexeme;
     new->datatype = type;
     new->width = get_width(type);
-    new->offset = 0;                             // for now, I am not sure how to handle it
+    new->offset = current_offset++;     
     new->next = NULL;
     new->is_declared = false;
+    if (new->datatype->simple == ARRAY)
+    {
+        // new->datatype->arrtype->end_offset = current_offset++;
+        // new->datatype->arrtype->begin_offset = current_offset++;
+    }
     return new;
 }
 
 TYPE *get_type(astNode *n)          
 {
+    // printf("GET TYPE of %s\n", n->node_marker);
     TYPE *new = (TYPE *) malloc(sizeof(TYPE));
     if (!new)
         malloc_error
     new->simple = string_to_enum(n->sibling->tree_node->node_symbol);
     if (new->simple == ARRAY)
     {
-        new->arrtype =  (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
+        new->arrtype = (ARRAY_TYPE_DATA *) malloc(sizeof(ARRAY_TYPE_DATA));
         if (!(new->arrtype))
             malloc_error
     }
@@ -260,10 +266,14 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL     ||0 )
     {
+        // printf("FRT1\n");
         int t1 = get_type_expr(ex->child, id_st);
+        // printf("FRT2\n");
         int t2 = get_type_expr(ex->child->sibling, id_st); 
+        // printf("FRT3\n");
         if (t1 != t2)
         {
+            // printf("ENTERIF\n");
             if (ex->tree_node->line > error_line)
                 printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
             error_line = ex->tree_node->line;
@@ -338,7 +348,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("aaya2%s\n", n->tree_node->node_symbol);
+    // printf("->\t%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -351,33 +361,34 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     if (is(n, "declareStmt"))
     {
         astNode *temp = n->child;
-        ID_TABLE_ENTRY *i = st_lookup_nr(n->child->tree_node->lexeme, id_st);
-        if (i != NULL)
-        {
-            if (error_line < n->child->tree_node->line)
-                printf("Semantic Error at line %d. Variable '%s' redeclared.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
-            error_line = n->child->tree_node->line;
-            hasSemanticError = true;
-        }
-        while(temp->node_marker != EPS) temp = temp->sibling;
-        TYPE *t = get_type(temp);
-        temp = temp->sibling->child;        // at rangeArr
-        if (t->simple == ARRAY)
-        {
-            t->arrtype->base_type = temp->sibling->node_marker;
-            if (temp->child->node_marker != NUM || temp->child->sibling->node_marker != NUM)
-                t->arrtype->is_dynamic = true;                  // it's a dynamic array
-            else
-            {
-                t->arrtype->is_dynamic = false;                 // static array
-                t->arrtype->begin = atoi(temp->child->tree_node->lexeme);
-                t->arrtype->end = atoi(temp->child->sibling->tree_node->lexeme);
-            }
-            t->arrtype->begin_offset = current_offset++;            // in any case, 
-            t->arrtype->end_offset   = current_offset++;            // fill the offsets
-        }
+        while(temp->node_marker != EPS) temp = temp->sibling;   // so temp is EPS
+        astNode *type_node = temp;
+        astNode *range_node = temp->sibling->child;        // at rangeArr
         for(temp = n->child; temp->node_marker != EPS; temp = temp->sibling)
         {
+            ID_TABLE_ENTRY *i = st_lookup_nr(temp->tree_node->lexeme, id_st);
+            if (i != NULL)
+            {
+                if (error_line < temp->tree_node->line)
+                    printf("Semantic Error at line %d. Variable '%s' redeclared.\n", temp->tree_node->line, temp->tree_node->lexeme);
+                error_line = temp->tree_node->line;
+                hasSemanticError = true;
+            }
+            TYPE *t = get_type(type_node);
+            if (t->simple == ARRAY)
+            {
+                t->arrtype->base_type = range_node->sibling->node_marker;
+                if (range_node->child->node_marker != NUM || range_node->child->sibling->node_marker != NUM)
+                    t->arrtype->is_dynamic = true;                  // it's a dynamic array
+                else
+                {
+                    t->arrtype->is_dynamic = false;                 // static array
+                    t->arrtype->begin = atoi(range_node->child->tree_node->lexeme);
+                    t->arrtype->end = atoi(range_node->child->sibling->tree_node->lexeme);
+                }
+                t->arrtype->begin_offset = current_offset++;            // in any case, 
+                t->arrtype->end_offset   = current_offset++;            // fill the offsets
+            }
             ID_TABLE_ENTRY *id = create_symbol(temp, t);
             st_insert_id_entry(id, id_st);
         }
@@ -393,12 +404,20 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
-            // has to be in the ID table or input
-            PARAMS *p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
-            if (p == NULL)
-                p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
-            ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
-            if (i == NULL && p==NULL)
+            // first do a non-recursive lookup
+            ID_TABLE_ENTRY *i = st_lookup_nr(lhs->child->tree_node->lexeme, id_st);
+            // if (i == NULL) printf("GOTYA\n");
+            PARAMS *p;
+            if (i == NULL)      // then check for parameters
+            {
+                p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
+                if (p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
+            }
+            if (i == NULL && p == NULL) // finally do a recursive lookup
+                i = st_lookup(lhs->child->tree_node->lexeme, id_st);
+
+            if (i == NULL && p == NULL)
             {
                 if (error_line < lhs->child->tree_node->line)
                     printf("Semantic Error on line %d. Variable '%s' not declared.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
