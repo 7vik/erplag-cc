@@ -400,7 +400,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         
     }
 
-    if (ex->node_marker ==  LT)
+    if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE)
     {   
         evaluate_expr(ex->child, id_st, fp);
         
@@ -414,7 +414,20 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 
         char* flag = generate_label();
         char* over = generate_label();
-        fprintf(fp, "\tjl %s\n", flag);
+
+        if(ex->node_marker ==  GE)
+            fprintf(fp, "\tjge %s\n", flag);
+        if(ex->node_marker ==  LT)
+            fprintf(fp, "\tjl %s\n", flag);
+        if(ex->node_marker ==  GT)
+            fprintf(fp, "\tjl %s\n", flag);
+        if(ex->node_marker ==  EQ)
+            fprintf(fp, "\tje %s\n", flag);
+        if(ex->node_marker ==  NE)
+            fprintf(fp, "\tjne %s\n", flag);
+        if(ex->node_marker ==  LE)
+            fprintf(fp, "\tjle %s\n", flag);
+        
         fprintf(fp, "\tmov rcx, 0\n");
         fprintf(fp, "jmp %s\n", over);
         fprintf(fp, "%s:\n", flag);
@@ -422,11 +435,22 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         fprintf(fp, "%s:", over);
 
     }
-    if(ex->node_marker ==  GE);
-    if(ex->node_marker ==  LT);
-    if(ex->node_marker ==  GT);
-    if(ex->node_marker ==  EQ);
-    if(ex->node_marker ==  NE);
+
+    if (ex->node_marker == AND ||ex->node_marker == OR)
+    {
+        evaluate_expr(ex->child, id_st, fp);
+        
+        fprintf(fp, "\tpush rcx\n");
+        fprintf(fp, "\tpush rcx\n");
+        evaluate_expr(ex->child->sibling, id_st, fp);
+        fprintf(fp, "\tpop rdx\n");
+        fprintf(fp, "\tpop rdx\n");
+
+        if(ex->node_marker == AND)
+            fprintf(fp, "and rcx, rdx\n");
+        else
+            fprintf(fp, "or rcx, rdx\n");
+    }
     /*
     {
 
@@ -589,7 +613,13 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             if(id_entry->datatype->simple == ARRAY)
             {
                 int offset = id_entry->offset;
-                
+                if (stack_count % 2 == 0)
+                    fprintf(fp, "\tsub rsp, 16\n");
+                stack_count++;
+                if (stack_count % 2 == 0)
+                    fprintf(fp, "\tsub rsp, 16\n");
+                stack_count++;
+
                 //storing base address of this array: part of array_buffer
                 fprintf(fp, "\tmov r14, [array_available_addr]\n");
                 fprintf(fp, "\tlea rax, [array_buffer + r14]\n");

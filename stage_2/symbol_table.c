@@ -8,7 +8,7 @@
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
 
 bool hasSemanticError = false;
-unsigned int current_offset = 100;
+unsigned int current_offset = 0;
 unsigned int error_line = 0;
 
 // hash function: implementing vunDina's hash, patent pending ;)

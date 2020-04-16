@@ -1,6 +1,6 @@
 section .bss
-	start:	resd	1
-	end:	resd	1
+	start:	resq	1
+	end:	resq	1
 
 section .data
 	print_start db "Enter the start index: ",0
@@ -39,22 +39,22 @@ main:
 	;mov ebx, [rbp + offset_start]
 	;mov ecx, [rbp + offset_end]
 
-	mov ebx, [start]
-	mov ecx, [end]
-	sub ecx, ebx
-	inc ecx
+	mov r12, [start]
+	mov r13, [end]
+	sub r13, r12
+	inc r13
 	
-loop:	xor rax, rax
+loop:	;xor rax, rax
 	mov rdi, print_string
 
-	push rcx
-	push rbx
+	;push rcx
+	;push rbx
 	call printf
-	pop rbx
-	pop rcx
+	;pop rbx
+	;pop rcx
 
-	dec ecx
-	cmp ecx, 0
+	dec r13
+	cmp r13, 0
 	jne loop
 	
 	pop rbp

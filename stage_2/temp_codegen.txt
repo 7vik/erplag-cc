@@ -1,6 +1,6 @@
 <<<driver program>>>
 start
-	declare x:boolean;
-	x := 3 < 2;
-	print(x);
+	declare A:array[1..6] of integer;
+	get_value(A);
+	**print(A);**
 end

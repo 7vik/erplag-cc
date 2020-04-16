@@ -47,37 +47,54 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	mov rcx, 3
-	push rcx
-	push rcx
-	mov rcx, 2
-	pop rdx
-	pop rdx
-	cmp rdx, rcx
-	jl label0
-	mov rcx, 0
-jmp label1
-label0:
-	mov rcx, 1
-label1:	mov [rbp - 808], rcx
-	;Printing ID
+	sub rsp, 16
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14]
+	mov [rbp - 24], rax
 
-	lea rdi, [strFormat_in]
-	mov sil, [rbp - 808]
+	mov r14, [array_available_addr]
+	add r14, 6
+	mov [array_available_addr], r14
 
-	cmp sil, 0
-	jz label2
-	lea rsi, [true_label]
-	jmp label3
+; loading array offsets
+mov r13, 1
+mov [rbp - 0], r13
+mov r13, 6
+mov [rbp - 8], r13
 
-label2: 
-	lea rsi, [false_label]
+	;Taking array
 
-label3: 
+; prompts user for input
+	mov rcx, [rbp - 0]
+	mov r8, [rbp - 8]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 0]
+	mov r8, [rbp - 8]
 	call printf
 
-	lea rdi, [new_line]
-	call printf
+	; stores the count
+
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 8]
+	mov r13, [rbp - 0]
+	sub r12, r13
+	inc r12
+	xor r13, r13
+
+	label0:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 24]
+	lea rsi, [r14 + r13 * 8]
+	call scanf
+
+	inc r13
+	cmp r13, r12
+	jne label0
 
 
 mov rsp, rbp
