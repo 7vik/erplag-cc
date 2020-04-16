@@ -760,15 +760,32 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "conditionalStmt"))
     {
+        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
         
+        int offset = id_entry->offset;
+
+        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+        
+        generate_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+        id_st->visited++;
     }
     if (is(n, "caseStmts"))
     {
-        
+        for (astNode *temp = n->child; temp; temp = temp->sibling)
+            generate_the_universe(temp, id_st, fp);
     }
     if (is(n, "caseStmt"))
     {
-        
+        int num = atoi(n->child->tree_node->lexeme);
+
+        char* case_exit = generate_label();
+        fprintf(fp, "\tcmp rax, %d\n", num);
+        fprintf(fp, "\tjne %s\n", case_exit);
+        fprintf(fp, "\tpush rax\n\tpush rax\n");
+        generate_the_universe(n->child->sibling, id_st, fp);
+        fprintf(fp, "\tpop rax\n\tpop rax\n");
+        fprintf(fp, "\tjmp %s:")
+        //fprintf(fp, "%s:\n", case_exit);
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {

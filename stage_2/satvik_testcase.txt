@@ -9,4 +9,4 @@ start
 	end
 end
 
-**segfault**
+**segfault if your while expression contains non booleans**

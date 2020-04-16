@@ -47,41 +47,35 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	mov rcx, 1
-	mov [rbp - 8], rcx
-	label0:
-	mov rcx, [rbp - 8]
-	cmp rcx, 0
-	je label1	;Taking id
+	sub rsp, 16
+	;Taking id
 
-	mov rdi, bool_inMsg
+	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 8]
 	call scanf
-	;Printing ID
+	;Taking id
 
-	lea rdi, [strFormat_in]
-	mov sil, [rbp - 8]
-
-	cmp sil, 0
-	jz label2
-	lea rsi, [true_label]
-	jmp label3
-
-label2: 
-	lea rsi, [false_label]
-
-label3: 
+	mov rdi, int_inMsg
 	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 24]
+	call scanf
+	;Taking id
 
-	lea rdi, [new_line]
+	mov rdi, int_inMsg
 	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 40]
+	call scanf
+	;Taking id
 
-
-	jmp label0
-	label1:
-
+	mov rdi, int_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 56]
+	call scanf
 mov rsp, rbp
 pop rbp
 mov rax, 0

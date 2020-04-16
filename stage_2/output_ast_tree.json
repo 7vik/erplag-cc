@@ -28,58 +28,28 @@
 "children":[]
 }
 ,{
+"text": { "name": "ID:y" },
+"children":[]
+}
+,{
+"text": { "name": "ID:z" },
+"children":[]
+}
+,{
+"text": { "name": "ID:t" },
+"children":[]
+}
+,{
 "text": { "name": "EPS:EPS" },
 "children":[]
 }
 ,{
-"text": { "name": "BOOLEAN:boolean" },
+"text": { "name": "INTEGER:integer" },
 "children":[]
 }
 ]
 }
 ,{
-"text": { "name": "assignmentStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ASSIGNOP" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-,{
-"text": { "name": "TRUE:true" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "iterativeStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "START:start" },
-"children":[]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "ioStmt" },
 "collapsed": true,
 "children": [
@@ -100,28 +70,46 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "printOpt" },
+"text": { "name": "GET_VALUE" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
+"text": { "name": "ID:y" },
 "children":[]
-}
-]
-}
-]
 }
 ]
 }
 ]
 }
 ,{
-"text": { "name": "END:end" },
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:z" },
 "children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:t" },
+"children":[]
+}
+]
 }
 ]
 }
