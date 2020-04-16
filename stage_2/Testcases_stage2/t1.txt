@@ -35,11 +35,11 @@ start
 	declare abc_1: real;				**ERROR: variable abc_1 is re-declared**
 	res_2_a:= -(a*b-c/pqr_2);
 	declare s: integer;				**Not an error as a local variable can shadow the input parameter**
-	res_2__b:= res_2_b + p *12+22.34E-2;		**ERROR variable p is not declared**
-	declare m,n: boolean;
+	res_2__b:= res_2__b + p *12+22.34E-2;		**ERROR variable p is not declared**
+	declare m,n: boolean;	
 	res_1 := a <=  b AND c >= a OR  s<=23.50 AND false;
 	m:= n AND (abc_1<=pqr_2);
-	m:= m OR (a <= b) AND (res_2_b >= 30.65);
+	m:= m OR (a <= b) AND (res_2__b >= 30.65);
 	res_1:= (true AND c==b)OR(b>s AND (a<=d));	**ERROR: variable d is not declared**
 	declare new: integer;				**ERROR: variable new is re-declared**
 	new:= a<b;
