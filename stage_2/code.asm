@@ -23,7 +23,7 @@ var2         dd        6
 
 
 
-section .bss
+		section .bss
 
 vard1:   resd    1
 
@@ -42,17 +42,58 @@ section  .text
 
 main:
 
-	push rbp
-	mov rbp, rsp
-	
+push rbp
+mov rbp, rsp
+	sub rsp, 16
+	sub rsp, 16
 	mov rdi, int_inMsg
-call printf
+	call printf
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 800]
+	call scanf
+	mov rdi, int_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 808]
+	call scanf
+	mov rdi, bool_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 816]
 	call scanf
 	mov rdi, intFormat_out
 	mov rsi, [rbp - 800]
 	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	mov rdi, intFormat_out
+	mov rsi, [rbp - 808]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	lea rdi, [strFormat_in]
+	mov sil, [rbp - 816]
+
+	cmp sil, 0
+	jz false
+	lea rsi, [true_label]
+	jmp print
+
+false: 
+	lea rsi, [false_label]
+
+print: 
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+
+add rsp, 32
 pop rbp
 mov rax, 0
 ret

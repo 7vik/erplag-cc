@@ -1,10 +1,15 @@
 
 <<<driver program>>>
 start
-	declare x:integer;
+	declare x, y:integer;
+	declare z:boolean;
 	**declare A: array[x..15] of integer;**
 	get_value(x);
+	get_value(y);
+	get_value(z);
 	**get_value(A);** 
-	print(x);	
+	print(x);
+	print(y);
+	print(z);
 	**print(A);**
 end

@@ -1,13 +1,16 @@
 // make assember
-// ./stage2exe t5.txt new.new code.asm
+// 
 
 #include "code_gen.h"
 
 VARS vars;
 
+int stack_count = 0;
 
 void print_return(FILE* fp)
 {
+
+    fprintf(fp, "add rsp, %d\n", ((stack_count / 2 ) + 1) * 16);
     fprintf(fp, "pop rbp\n");
     fprintf(fp, "mov rax, 0\n");
     fprintf(fp, "ret\n");
@@ -57,7 +60,7 @@ void print_data_section(FILE* fp)
 
 void print_bss_section(FILE* fp, VARS vars)
 {
-    fprintf(fp, "section .bss\n\n");
+    fprintf(fp, "\t\tsection .bss\n\n");
 
     char buff[100];
     for(int i = 0; i < vars.num_byte_vars; i++)
@@ -106,7 +109,7 @@ void take_input(FILE* fp, int type, int offset)
 {
     // for int
     int temp = offset * 8;
-    if(type == INTEGER)
+    if(type == INTEGER || type == BOOLEAN)
     {
         fprintf(fp, "\tmov rdi, intFormat_in\n");
         fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
@@ -122,16 +125,7 @@ void take_input(FILE* fp, int type, int offset)
     
 }
 
-// void print_int_output(FILE* fp, int output_var_num)
-// {
-//     // for int
 
-//     fprintf(fp, "push rbp\n");
-//     fprintf(fp, "mov rdi, intFormat\n");
-//     fprintf(fp, "mov rsi, [vard%d]\n", output_var_num);
-//     fprintf(fp, "call printf\n");
-//     fprintf(fp, "pop rbp\n\n");
-// }
 
 void prompt_user(FILE* fp, int type)
 {
@@ -149,7 +143,7 @@ void prompt_user(FILE* fp, int type)
         exit(1);
     }
     
-    fprintf(fp, "call printf\n");
+    fprintf(fp, "\tcall printf\n");
     // fprintf(fp, "pop rbp\n\n");
 }
 
@@ -162,14 +156,35 @@ void print_id(FILE* fp, int type, int offset)
     {
         fprintf(fp, "\tmov rdi, intFormat_out\n");
         fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
-        fprintf(fp, "\tcall printf\n");
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "\tmov rdi, realFormat_out\n");
         fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
+    }
+
+    else if(type == BOOLEAN)
+    {
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tmov sil, [rbp - %d]\n\n", temp);
+        fprintf(fp, "\tcmp sil, 0\n");
+        fprintf(fp, "\tjz false\n");
+        fprintf(fp, "\tlea rsi, [true_label]\n");
+        fprintf(fp, "\tjmp print\n\n");
+        fprintf(fp, "false: \n");
+        fprintf(fp, "\tlea rsi, [false_label]\n\n");
+        fprintf(fp, "print: \n");
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
         fprintf(fp, "\tcall printf\n");
+        fprintf(fp, "\n\n");
     }
     
 }
@@ -339,7 +354,16 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "declareStmt"))
     {
-        ;
+        astNode* temp = n->child;
+
+        while(temp->node_marker != EPS)
+        {
+            if (stack_count % 2 == 0)
+                fprintf(fp, "\tsub rsp, 16\n");
+            stack_count++;
+            temp = temp->sibling;
+        }
+        
     }
     if (is(n, "assignmentStmt"))
     {
@@ -363,12 +387,13 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         prompt_user(fp, id_entry->datatype->simple);       
         take_input(fp,  id_entry->datatype->simple, id_entry->offset);
-        print_id(fp,  id_entry->datatype->simple, id_entry->offset);
+        //print_id(fp,  id_entry->datatype->simple, id_entry->offset);
 
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
-        
+        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
+        print_id(fp,  id_entry->datatype->simple, id_entry->offset);
     }
     if (is(n, "conditionalStmt"))
     {
@@ -407,17 +432,18 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     }
 
     if (is(n, "moduleDeclarations"))
-        ;
+        stack_count = 0;
 
     if (is(n, "otherModules") && n->sibling != NULL)
-        ;
+        stack_count = 0;
+
     if (is(n, "driverModule"))
     {
-        // printf("mil\n");
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
+        stack_count = 0;
         generate_the_universe(n->child, f->local_id_table, fp);
     }
     if (is(n, "otherModules") && n->sibling == NULL)
