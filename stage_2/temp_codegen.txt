@@ -1,12 +1,7 @@
 
 <<<driver program>>>
 start
-	declare x, y:integer;
-	declare A, B: array[1..15] of integer;
-	get_value(x);
-	get_value(y);
+	declare A: array[2..5] of integer;
 	get_value(A);
-	print(x);
-	print(y);
 	print(A);
 end

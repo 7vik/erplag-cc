@@ -20,6 +20,7 @@ arr_outMsg   db        "Printing array: ", 0
 new_line       db       10, 0
 var1         dd        3
 var2         dd        6
+array_available_addr   dd   0
 
 
 
@@ -46,14 +47,91 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	sub rsp, 16
-	mov rdi, int_inMsg
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14]
+	mov [rbp - 816], rax
+
+	mov r14, [array_available_addr]
+	add r14, 4
+	mov [array_available_addr], r14
+
+; loading array offsets
+mov r13, 2
+mov [rbp - 800], r13
+mov r13, 5
+mov [rbp - 808], r13
+
+	;Taking array
+
+; prompts user for input
+	mov rcx, [rbp - 800]
+	mov r8, [rbp - 808]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 800]
+	mov r8, [rbp - 808]
 	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 800]
+
+	; stores the count
+
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 808]
+	mov r13, [rbp - 800]
+	sub r12, r13
+	inc r12
+	xor r13, r13
+
+	label0:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 816]
+	lea rsi, [r14 + r13 * 8]
 	call scanf
-	mov rdi, int_inMsg
+
+	inc r13
+	cmp r13, r12
+	jge label0
+
+
+	;Printing array
+
+; prompts user for input
+	mov rcx, [rbp - 800]
+	mov r8, [rbp - 808]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 800]
+	mov r8, [rbp - 808]
 	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 808]
+
+	; stores the count
+
+	xor r12, r12
+	xor r13, r13
+	mov r12d, [rbp - 808]
+	mov r13d, [rbp - 800]
+	sub r12d, r13d
+	inc r12d
+	xor r13, r13
+
+	label1:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 816]
+	lea rsi, [r14 + r13 * 8]
 	call scanf
+
+	inc r13d
+	cmp r13d, r12d
+	jne label1
+
+
+add rsp, 16
+pop rbp
+mov rax, 0
+ret
