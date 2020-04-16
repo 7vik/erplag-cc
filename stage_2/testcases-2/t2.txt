@@ -32,7 +32,7 @@ start
 	A:=B;
 	C:=a;
 	D:=C;					**ERROR: variable D is not declared**
-	x:=c+y;	
+	x:=c+y;
 	C[18]:= a[18]+ b[18];
 	A[5]:= B[6]- 10;
 	declare A: array[10..70] of integer;	**ERROR: variable A is re-declared**
