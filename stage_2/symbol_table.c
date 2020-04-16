@@ -286,6 +286,8 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             {
                 PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
                 if (p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
+                if (p == NULL)
                 {
                     if (ex->tree_node->line > error_line)
                         printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
@@ -393,6 +395,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         {
             // has to be in the ID table or input
             PARAMS *p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
+            if (p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
             ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
             if (i == NULL && p==NULL)
             {
