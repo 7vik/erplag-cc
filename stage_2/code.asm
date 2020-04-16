@@ -48,96 +48,190 @@ push rbp
 mov rbp, rsp
 	sub rsp, 16
 	sub rsp, 128
-	;Taking id
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14]
+	mov [rbp - 24], rax
 
-	mov rdi, int_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 8]
-	call scanf
-	;Taking id
+	mov r14, [array_available_addr]
+	add r14, 3
+	mov [array_available_addr], r14
 
-	mov rdi, int_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 24]
-	call scanf
-	;Taking id
+; loading array offsets
+mov r13, 12
+mov [rbp - 0], r13
+mov r13, 14
+mov [rbp - 8], r13
 
-	mov rdi, int_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 40]
-	call scanf
-	;Taking id
+	sub rsp, 16
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14]
+	mov [rbp - 56], rax
 
-	mov rdi, int_inMsg
+	mov r14, [array_available_addr]
+	lab0:
+	add r14, 3
+	mov [array_available_addr], r14
+
+; loading array offsets
+mov r13, 12
+mov [rbp - 32], r13
+mov r13, 14
+mov [rbp - 40], r13
+
+	;Taking array
+
+; prompts user for input
+	mov rcx, [rbp - 0]
+	mov r8, [rbp - 8]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 0]
+	mov r8, [rbp - 8]
 	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 56]
+
+	; stores the count
+
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 8]
+	mov r13, [rbp - 0]
+	sub r12, r13
+	inc r12
+	xor r13, r13
+
+	label0:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 24]
+	lea rsi, [r14 + r13 * 8]
 	call scanf
-	mov rax, [rbp - 8]
-	cmp rax, 1
+
+	inc r13
+	cmp r13, r12
+	jne label0
+
+
+	;Printing array
+
+; printing array
+lea rdi, [arr_outMsg]
+call printf
+; stores the count
+
+xor r12, r12
+xor r13, r13
+mov r12, [rbp - 8]
+mov r13, [rbp - 0]
+sub r12, r13
+inc r12
+xor r13, r13
+
+label1:
+	lea rdi, [intFormat_out]
+	mov r14, [rbp - 24]
+	mov rsi, [r14 + r13 * 8]
+	call printf
+
+	inc r13
+	cmp r13, r12
 	jne label1
-	push rax
-	push rax
-	;Printing ID
-
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 24]
-	call printf
-
 	lea rdi, [new_line]
 	call printf
 
-	pop rax
-	pop rax
-	jmp label0
-	label1:
-	cmp rax, 2
-	jne label2
-	push rax
-	push rax
-	;Printing ID
 
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 24]
+	;Taking array
+
+; prompts user for input
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
 	call printf
 
-	lea rdi, [new_line]
-	call printf
+	; stores the count
 
-	pop rax
-	pop rax
-	jmp label0
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 40]
+	mov r13, [rbp - 32]
+	sub r12, r13
+	inc r12
+	xor r13, r13
+
 	label2:
-	cmp rax, 3
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 56]
+	lea rsi, [r14 + r13 * 8]
+	call scanf
+
+	inc r13
+	cmp r13, r12
+	jne label2
+
+
+	;Printing array
+
+; printing array
+lea rdi, [arr_outMsg]
+call printf
+; stores the count
+
+xor r12, r12
+xor r13, r13
+mov r12, [rbp - 8]
+mov r13, [rbp - 0]
+sub r12, r13
+inc r12
+xor r13, r13
+
+label3:
+	lea rdi, [intFormat_out]
+	mov r14, [rbp - 24]
+	mov rsi, [r14 + r13 * 8]
+	call printf
+
+	inc r13
+	cmp r13, r12
 	jne label3
-	push rax
-	push rax
-	;Printing ID
-
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 40]
-	call printf
-
 	lea rdi, [new_line]
 	call printf
 
-	pop rax
-	pop rax
-	jmp label0
-	label3:
-	;Printing ID
 
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 56]
+	;Printing array
+
+; printing array
+lea rdi, [arr_outMsg]
+call printf
+; stores the count
+
+xor r12, r12
+xor r13, r13
+mov r12, [rbp - 40]
+mov r13, [rbp - 32]
+sub r12, r13
+inc r12
+xor r13, r13
+
+label4:
+	lea rdi, [intFormat_out]
+	mov r14, [rbp - 56]
+	mov rsi, [r14 + r13 * 8]
 	call printf
 
+	inc r13
+	cmp r13, r12
+	jne label4
 	lea rdi, [new_line]
 	call printf
 
-label0:
+
 mov rsp, rbp
 pop rbp
 mov rax, 0
