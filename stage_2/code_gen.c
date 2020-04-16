@@ -238,10 +238,10 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
     fprintf(fp, "\t; stores the count\n\n");
     fprintf(fp, "\txor r12, r12\n");
     fprintf(fp, "\txor r13, r13\n");
-    fprintf(fp, "\tmov r12d, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "\tmov r13d, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "\tsub r12d, r13d\n");
-    fprintf(fp, "\tinc r12d\n");
+    fprintf(fp, "\tmov r12, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tmov r13, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tsub r12, r13\n");
+    fprintf(fp, "\tinc r12\n");
     fprintf(fp, "\txor r13, r13\n\n");  
     fprintf(fp, "\t%s:\n", array_input_label);
 
@@ -270,8 +270,8 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
     fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
     fprintf(fp, "\tcall scanf\n\n");
 
-    fprintf(fp, "\tinc r13d\n");
-    fprintf(fp, "\tcmp r13d, r12d\n");
+    fprintf(fp, "\tinc r13\n");
+    fprintf(fp, "\tcmp r13, r12\n");
     fprintf(fp, "\tjne %s\n", array_input_label);
     // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
@@ -296,33 +296,33 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
     fprintf(fp, "mov r12, [rbp - %d]\n", upper_offset);
     fprintf(fp, "mov r13, [rbp - %d]\n", lower_offset);
     fprintf(fp, "sub r12, r13\n");
-    fprintf(fp, "inc r12d\n");
+    fprintf(fp, "inc r12\n");
     fprintf(fp, "xor r13, r13\n\n");  
     fprintf(fp, "%s:\n", array_output_label);
 
     if(type == INTEGER)
     {
-        fprintf(fp, "lea rdi, [intFormat_out]\n");
-        fprintf(fp, "\tmov r11, %d", base_offset);
-        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
-        fprintf(fp, "add r14, r13\n");
-        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
+        fprintf(fp, "\tlea rdi, [intFormat_out]\n");
+        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+        fprintf(fp, "\tadd r14, r13\n");
+        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_out]\n");
-        fprintf(fp, "\tmov r11, %d", base_offset);
-        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
-        fprintf(fp, "add r14, r13\n");
-        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
+        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+        fprintf(fp, "\tadd r14, r13\n");
+        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == BOOLEAN)
     {
         char* f_label = generate_label();
         char* p_label = generate_label();
-        fprintf(fp, "lea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
         fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
         fprintf(fp, "\tmov rsi, [r14 + r13 * 8]\n");
 
@@ -343,14 +343,12 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
         exit(1);
     }
     
-    fprintf(fp, "call printf\n\n");
-
-    fprintf(fp, "inc r13d\n");
-    fprintf(fp, "cmp r13d, r12d\n");
-    fprintf(fp, "jne %s\n", array_output_label);
-
-    fprintf(fp, "lea rdi, [new_line]\n");
-    fprintf(fp, "call printf\n");
+    fprintf(fp, "\tcall printf\n\n");
+    fprintf(fp, "\tinc r13\n");
+    fprintf(fp, "\tcmp r13, r12\n");
+    fprintf(fp, "\tjne %s\n", array_output_label);
+    fprintf(fp, "\tlea rdi, [new_line]\n");
+    fprintf(fp, "\tcall printf\n");
 
     // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
@@ -480,7 +478,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         else
         {
             fprintf(fp, "\t;Printing array\n\n");
-            ask_for_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+            print_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
         }
         
     }

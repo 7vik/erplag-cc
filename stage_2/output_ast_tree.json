@@ -40,11 +40,11 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "NUM:2" },
+"text": { "name": "NUM:0" },
 "children":[]
 }
 ,{
-"text": { "name": "NUM:5" },
+"text": { "name": "NUM:4" },
 "children":[]
 }
 ]
@@ -68,28 +68,6 @@
 {
 "text": { "name": "ID:A" },
 "children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:A" },
-"children":[]
-}
-]
 }
 ]
 }

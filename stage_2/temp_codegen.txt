@@ -1,7 +1,7 @@
 
 <<<driver program>>>
 start
-	declare A: array[2..5] of integer;
+	declare A: array[0..4] of integer;
 	get_value(A);
-	print(A);
+	**print(A);**
 end

@@ -112,7 +112,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "NUM:2" },
+"text": { "name": "NUM:0" },
 "children":[]
 }
 ]
@@ -126,7 +126,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "NUM:5" },
+"text": { "name": "NUM:4" },
 "children":[]
 }
 ]
@@ -202,68 +202,8 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "PRINT:print" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:A" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "EPS:EPS" },
 "children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
 }
 ]
 }
