@@ -678,11 +678,42 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {
+        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
         
+        int offset = id_entry->offset;
+        astNode* range = n->child->sibling;
+        int start = atoi(range->child->tree_node->value_if_number);
+        int end = atoi(range->child->sibling->tree_node->value_if_number);
+
+        // @satvik should handle this
+        if (end < start)
+        {
+            printf("ERROR: end index %d less than start index %d in for loop at line %d\n", end, start, n->tree_node->line);
+            exit(1);
+        }
+
+        char* for_label = generate_label();
+        fprintf(fp, "; for loop\n\n");
+        fprintf(fp, "\tmov qword [rbp - %d], %d\n", offset * 8, start);
+        fprintf(fp, "\tmov rcx, %d\n", start);
+        fprintf(fp, "\tmov rax, %d\n", end);
+        fprintf(fp, "%s:\n", for_label);
+        fprintf(fp, "\tpush rcx\n\tpush rax\n");
+ 
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+        id_st->visited++;
+ 
+        fprintf(fp, "\tpop rax\n\t pop rcx\n");
+        fprintf(fp, "\tinc qword [rbp - %d]\n", offset * 8);
+        fprintf(fp, "\tinc rcx\n");
+        fprintf(fp, "\tcmp rcx, rax\n");
+        fprintf(fp, "\tjle %s\n", for_label);
+
     }
     if (is(n, "iterativeStmt") && (1 - is(n->child, "ID")))   // while lup
     {
        
+
     }
     if (is(n, "ioStmt") && n->child->node_marker == GET_VALUE)
     {

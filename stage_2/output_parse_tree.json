@@ -72,7 +72,19 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:A" },
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "COMMA:," },
+"children":[]
+}
+,{
+"text": { "name": "ID:i" },
 "children":[]
 }
 ,{
@@ -87,6 +99,8 @@
 }
 ]
 }
+]
+}
 ,{
 "text": { "name": "COLON::" },
 "children":[]
@@ -96,60 +110,8 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ARRAY:array" },
-"children":[]
-}
-,{
-"text": { "name": "SQBO:[" },
-"children":[]
-}
-,{
-"text": { "name": "rangeArr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "index_nt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "RANGEOP:.." },
-"children":[]
-}
-,{
-"text": { "name": "index_nt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:6" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "SQBC:]" },
-"children":[]
-}
-,{
-"text": { "name": "OF:of" },
-"children":[]
-}
-,{
-"text": { "name": "type" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "INTEGER:integer" },
 "children":[]
-}
-]
 }
 ]
 }
@@ -182,8 +144,120 @@
 "children":[]
 }
 ,{
-"text": { "name": "ID:A" },
+"text": { "name": "ID:a" },
 "children":[]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "iterativeStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "FOR:for" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "ID:i" },
+"children":[]
+}
+,{
+"text": { "name": "IN:in" },
+"children":[]
+}
+,{
+"text": { "name": "range" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:1" },
+"children":[]
+}
+,{
+"text": { "name": "RANGEOP:.." },
+"children":[]
+}
+,{
+"text": { "name": "NUM:1" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "START:start" },
+"children":[]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "PRINT:print" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "printOpt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
 }
 ,{
 "text": { "name": "BC:)" },
@@ -204,6 +278,28 @@
 {
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "END:end" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
 }
 ]
 }
