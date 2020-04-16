@@ -36,7 +36,7 @@ start
 			 break;			 	
 	end
 
-	u:= u+ x*m-n;
+	u:= u+ x*m-n;  **No problem if u was not initialized as long as it is not a code generation test case**
 
 	switch(p)				**ERROR: switch variable cannot be of type real**
 	start

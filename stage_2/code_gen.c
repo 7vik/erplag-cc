@@ -1,13 +1,19 @@
 // make assember
-// ./stage2exe t5.txt new.new code.asm
+// 
 
 #include "code_gen.h"
 
 VARS vars;
 
+int array_available_addr = 0;
+
+
+int stack_count = 0;
 
 void print_return(FILE* fp)
 {
+
+    fprintf(fp, "add rsp, %d\n", ((stack_count / 2 ) + 1) * 16);
     fprintf(fp, "pop rbp\n");
     fprintf(fp, "mov rax, 0\n");
     fprintf(fp, "ret\n");
@@ -50,6 +56,7 @@ void print_data_section(FILE* fp)
     fprintf(fp, "new_line       db       10, 0\n");
     fprintf(fp, "var1         dd        3\n");
     fprintf(fp, "var2         dd        6\n");
+    fprintf(fp, "array_available_addr   dd   0\n");
     fprintf(fp, "\n\n\n");
 
     return;
@@ -57,7 +64,7 @@ void print_data_section(FILE* fp)
 
 void print_bss_section(FILE* fp, VARS vars)
 {
-    fprintf(fp, "section .bss\n\n");
+    fprintf(fp, "\t\tsection .bss\n\n");
 
     char buff[100];
     for(int i = 0; i < vars.num_byte_vars; i++)
@@ -88,6 +95,8 @@ void print_bss_section(FILE* fp, VARS vars)
     fprintf(fp, "real_array:        resq        100\n");
     fprintf(fp, "bool_array:        resb        100\n");
 
+    fprintf(fp, "array_buffer:      resq        1000\n");
+
     fprintf(fp, "\n\n");
 }
 
@@ -105,32 +114,24 @@ void initialise_file(FILE* fp)
 void take_input(FILE* fp, int type, int offset)
 {
     // for int
-    if(type == INTEGER)
+    int temp = offset * 8;
+    if(type == INTEGER || type == BOOLEAN)
     {
         fprintf(fp, "\tmov rdi, intFormat_in\n");
-        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall scanf\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "\tmov rdi, realFormat_in\n");
-        fprintf(fp, "\tlea rsi, [rbp + %d * 8]\n", offset);
+        fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall scanf\n");
     }
     
 }
 
-// void print_int_output(FILE* fp, int output_var_num)
-// {
-//     // for int
 
-//     fprintf(fp, "push rbp\n");
-//     fprintf(fp, "mov rdi, intFormat\n");
-//     fprintf(fp, "mov rsi, [vard%d]\n", output_var_num);
-//     fprintf(fp, "call printf\n");
-//     fprintf(fp, "pop rbp\n\n");
-// }
 
 void prompt_user(FILE* fp, int type)
 {
@@ -148,22 +149,64 @@ void prompt_user(FILE* fp, int type)
         exit(1);
     }
     
-    fprintf(fp, "call printf\n");
+    fprintf(fp, "\tcall printf\n");
     // fprintf(fp, "pop rbp\n\n");
 }
 
+
+void print_id(FILE* fp, int type, int offset)
+{
+    // for int
+    int temp = offset * 8;
+    if(type == INTEGER)
+    {
+        fprintf(fp, "\tmov rdi, intFormat_out\n");
+        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
+    }
+
+    else if(type == REAL)
+    {
+        fprintf(fp, "\tmov rdi, realFormat_out\n");
+        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
+    }
+
+    else if(type == BOOLEAN)
+    {
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tmov sil, [rbp - %d]\n\n", temp);
+        fprintf(fp, "\tcmp sil, 0\n");
+        fprintf(fp, "\tjz false\n");
+        fprintf(fp, "\tlea rsi, [true_label]\n");
+        fprintf(fp, "\tjmp print\n\n");
+        fprintf(fp, "false: \n");
+        fprintf(fp, "\tlea rsi, [false_label]\n\n");
+        fprintf(fp, "print: \n");
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n");
+        fprintf(fp, "\n\n");
+    }
+    
+}
+
 // type is enum in this case
-void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
+void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, int type)
 {
 
     // fprintf(fp, "push rbp\n");
     fprintf(fp, "; prompts user for input\n");
-    fprintf(fp, "mov rcx, [var%d]\n", lower_var_num);
-    fprintf(fp, "mov r8, [var%d]\n", upper_var_num);
-    fprintf(fp, "mov rsi, r8\n");
-    fprintf(fp, "sub rsi, rcx\n");
-    fprintf(fp, "inc rsi\n");
-    fprintf(fp, "mov rdi, arr_inMsg\n");
+    fprintf(fp, "\tmov rcx, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tmov r8, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tmov rsi, r8\n");
+    fprintf(fp, "\tsub rsi, rcx\n");
+    fprintf(fp, "\tinc rsi\n");
+    fprintf(fp, "\tmov rdi, arr_inMsg\n");
 
     if (type == INTEGER)
         fprintf(fp, "mov rdx, type_int\n");
@@ -177,38 +220,36 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
         exit(1);
     }
     
-    fprintf(fp, "mov rcx, [var%d]\n", lower_var_num);
-    fprintf(fp, "mov r8, [var%d]\n", upper_var_num);
-    fprintf(fp, "call printf\n\n");
+    fprintf(fp, "\tmov rcx, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tmov r8, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tcall printf\n\n");
 
 
-    fprintf(fp, "; stores the count\n\n");
-    fprintf(fp, "xor r12, r12\n");
-    fprintf(fp, "xor r13, r13\n");
-    fprintf(fp, "mov r12d, [var%d]\n", upper_var_num);
-    fprintf(fp, "mov r13d, [var%d]\n", lower_var_num);
-    fprintf(fp, "sub r12d, r13d\n");
-    fprintf(fp, "inc r12d\n");
-    fprintf(fp, ";mov r12, 5\n");
-    fprintf(fp, "xor r13, r13\n\n");  
-    fprintf(fp, "array_input_loop:\n");
+    fprintf(fp, "\t; stores the count\n\n");
+    fprintf(fp, "\txor r12, r12\n");
+    fprintf(fp, "\txor r13, r13\n");
+    fprintf(fp, "\tmov r12d, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tmov r13d, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tsub r12d, r13d\n");
+    fprintf(fp, "\tinc r12d\n");
+    fprintf(fp, "\t;mov r12, 5\n");
+    fprintf(fp, "\txor r13, r13\n\n");  
+    fprintf(fp, "\tarray_input_loop:\n");
 
     if(type == INTEGER)
     {
         fprintf(fp, "lea rdi, [intFormat_in]\n");
-        fprintf(fp, "lea rsi, [int_array + r13d * 4]\n");
+       
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_in]\n");
-        fprintf(fp, "lea rsi, [real_array + r13d * 8]\n");
     }
 
     else if(type == BOOLEAN)
     {
         fprintf(fp, "lea rdi, [intFormat_in]\n");
-        fprintf(fp, "lea rsi, [bool_array + r13d * 1]\n");
     }
 
     else
@@ -216,7 +257,10 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
         printf("ERROR in ask for array\n");
         exit(1);
     }
-    
+    fprintf(fp, "mov r14, %d\n", base_offset);
+    fprintf(fp, "add r14, r13\n");
+    fprintf(fp, "\tmov r11, %d", base_offset);
+    fprintf(fp, "lea rsi, [r11 + r14 * 8]\n");
     fprintf(fp, "call scanf\n\n");
 
     fprintf(fp, "inc r13d\n");
@@ -229,7 +273,7 @@ void ask_for_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
 }
 
 // type is enum in this case
-void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
+void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, int type)
 {
     
     // fprintf(fp, "push rbp\n");
@@ -241,9 +285,9 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     fprintf(fp, "; stores the count\n\n");
     fprintf(fp, "xor r12, r12\n");
     fprintf(fp, "xor r13, r13\n");
-    fprintf(fp, "mov r12d, [var%d]\n", upper_var_num);
-    fprintf(fp, "mov r13d, [var%d]\n", lower_var_num);
-    fprintf(fp, "sub r12d, r13d\n");
+    fprintf(fp, "mov r12, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "mov r13, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "sub r12, r13\n");
     fprintf(fp, "inc r12d\n");
     fprintf(fp, ";mov r12, 5\n");
     fprintf(fp, "xor r13, r13\n\n");  
@@ -252,19 +296,28 @@ void print_array(FILE* fp, int lower_var_num, int upper_var_num, int type)
     if(type == INTEGER)
     {
         fprintf(fp, "lea rdi, [intFormat_out]\n");
-        fprintf(fp, "mov rsi, [int_array + r13d * 4]\n");
+        fprintf(fp, "\tmov r11, %d", base_offset);
+        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
+        fprintf(fp, "add r14, r13\n");
+        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_out]\n");
-        fprintf(fp, "mov rsi, [real_array + r13d * 8]\n");
+        fprintf(fp, "\tmov r11, %d", base_offset);
+        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
+        fprintf(fp, "add r14, r13\n");
+        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == BOOLEAN)
     {
         fprintf(fp, "lea rdi, [strFormat_in]\n");
-        fprintf(fp, "mov sil, [bool_array + r13d * 1]\n\n");
+        fprintf(fp, "\tmov r11, %d", base_offset);
+        fprintf(fp, "lea rsi, [r11 + r14 * 8]\n");
+        fprintf(fp, "add r14, r13\n");
+        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
 
         fprintf(fp, "cmp sil, 0\n");
         fprintf(fp, "jz false\n");
@@ -317,7 +370,63 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "declareStmt"))
     {
-        ;
+        astNode* temp = n->child;
+
+        while(temp->node_marker != EPS)
+        {
+            if (stack_count % 2 == 0)
+                fprintf(fp, "\tsub rsp, 16\n");
+            stack_count++;
+
+            // if array 
+            ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_st);
+
+            if(id_entry->datatype->simple == ARRAY)
+            {
+                int offset = id_entry->offset;
+                
+                //storing base address of this array: part of array_buffer
+                fprintf(fp, "\tmov r14, [array_available_addr]\n");
+                fprintf(fp, "\tlea rax, [array_buffer + r14]\n");
+                fprintf(fp, "\tmov [rbp - %d], rax\n");
+
+                // if static array
+                if (id_entry->datatype->arrtype->is_dynamic == false)
+                {
+                    int start = id_entry->datatype->arrtype->begin;
+                    int end = id_entry->datatype->arrtype->end;
+
+                    //increment array_available_addr by the used memory
+
+                    // calculate array size
+
+                    int array_size = end - start + 1;
+                    fprintf(fp, "\tmov r14, [array_available_addr]\n");
+                    fprintf(fp, "\tadd r14, %d\n", array_size);
+                    fprintf(fp, "\tmov [array_available_addr], r14\n");
+                    // load the start and end at their offset
+
+                    int start_offset_scaled = id_entry->datatype->arrtype->begin_offset * 8;
+                    int end_offset_scaled  = id_entry->datatype->arrtype->end_offset * 8;
+                    
+                    fprintf(fp, "; loading array offsets\n");
+                    fprintf(fp, "mov r13, %d\n", start);
+                    fprintf(fp, "mov [rbp - %d], r13\n", start_offset_scaled);
+                    fprintf(fp, "mov r13, %d\n", end);
+                    fprintf(fp, "mov [rbp - %d], r13\n", end_offset_scaled);
+                    
+                }
+
+                else
+                {
+                    // do something for dynamic array
+                }
+
+            }
+
+            temp = temp->sibling;
+        }
+        
     }
     if (is(n, "assignmentStmt"))
     {
@@ -339,12 +448,33 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     {
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->tree_node->lexeme, id_st);
 
-        prompt_user(fp, id_entry->datatype->simple);       
-        take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+        if (id_entry->datatype->simple != ARRAY)
+        {
+            fprintf(fp, "\t;Taking id\n\n");
+            prompt_user(fp, id_entry->datatype->simple);       
+            take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+        }
+
+        else 
+        {
+            fprintf(fp, "\t;Taking array\n\n");
+            ask_for_array(fp, id_entry->offset, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+        }
 
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
+        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
+        if (id_entry->datatype->simple != ARRAY)
+        {
+            fprintf(fp, "\t;Printing ID\n\n");
+            print_id(fp,  id_entry->datatype->simple, id_entry->offset);
+        }
+        else
+        {
+            fprintf(fp, "\t;Printing array\n\n");
+            ask_for_array(fp, id_entry->offset, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+        }
         
     }
     if (is(n, "conditionalStmt"))
@@ -384,16 +514,18 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     }
 
     if (is(n, "moduleDeclarations"))
-        ;
+        stack_count = 0;
 
     if (is(n, "otherModules") && n->sibling != NULL)
-        ;
+        stack_count = 0;
+
     if (is(n, "driverModule"))
     {
-        // printf("mil\n");
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
+        fprintf(fp, "mov rbp, rsp\n");
+        stack_count = 0;
         generate_the_universe(n->child, f->local_id_table, fp);
     }
     if (is(n, "otherModules") && n->sibling == NULL)

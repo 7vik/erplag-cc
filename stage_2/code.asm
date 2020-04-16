@@ -23,13 +23,14 @@ var2         dd        6
 
 
 
-section .bss
+		section .bss
 
 vard1:   resd    1
 
 int_array:         resd        100
 real_array:        resq        100
 bool_array:        resb        100
+array_buffer:      resq        1000
 
 
 global main
@@ -42,34 +43,17 @@ section  .text
 
 main:
 
-	push rbp
-	mov rbp, rsp
-	
+push rbp
+mov rbp, rsp
+	sub rsp, 16
+	sub rsp, 16
 	mov rdi, int_inMsg
-	xor rax, rax
 	call printf
-	
 	mov rdi, intFormat_in
-	xor rax, rax
-	;mov r12, rbp
-	;sub r12, 800
-	;mov rsi, r12
-	mov rsi, vard1
+	lea rsi, [rbp - 800]
 	call scanf
-
-	xor r12, r12
-	mov r12d, dword[vard1]
-	mov qword[rbp - 800], r12
-	
-	;mov r12, rbp
-	;sub r12, 800
-
-	;push rbp
-	mov rdi, intFormat_out
-	xor rax, rax
-	mov rsi, [rbp - 800]
+	mov rdi, int_inMsg
 	call printf
-
-	pop rbp
-	mov rax, 0
-	ret
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 808]
+	call scanf

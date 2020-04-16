@@ -62,7 +62,7 @@ start
 	declare x,y, p: real;
 	declare k, y1: integer;
 	declare E: array[2..20] of integer;
-	declare Var3, var4: array[100..150] of boolean;
+	declare Var3, Var4: array[100..150] of boolean;
 	get_value(y);
 	get_value(x);
 	declare A,B: array[4..10] of integer;
@@ -82,10 +82,10 @@ start
 	start
 		x:=x+k*y;				    **ERROR: Type mismatch error**
 		declare u, v:real;
-		declare int1: integer;
+		declare int1, int2: integer;
 		u := y+c*34.2;
 		v:= u-c*p-20.5E+2;
-		[x, int1, m, k]:=use module function1 with parameters Var3, c, k, Var4, k; **ERROR: Input parameter type of Var4 does not match with formal parameter type**		
+		[x, int1, m, int2]:=use module function1 with parameters Var3, c, k, Var4, k; **ERROR: Input parameter type of Var4 does not match with formal parameter type**		
 		switch(k)
 		start
 			case 10: declare A:real;

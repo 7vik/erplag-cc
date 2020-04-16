@@ -13,13 +13,13 @@ start
 	p:= m;					** not an error**
 	k:=true;
 	p[10]:= a*b-20*h;			**ERROR: variable h is not declared**
-	while(k AND x<=m[11] OR false)
+	while(k AND a<=m[11] OR false)
 	start
 		declare p:integer;
 		declare b: array[2..20] of integer;
 		b:= m;
 		b[2]:= u+m[6];			**ERROR: variable u is not declared**
-		p:= b[18]*18;
+		a:= b[18]*18;
 	end
         n:= a - b;
 	declare b:real;				**ERROR: variable b is re-declared**
@@ -69,7 +69,7 @@ start
 				 break;			 	
 		end
 		x:=x+u*v;
-		k:= Q+1;				**ERROR: variable Q is not declared**
+		n:= Q+1;				**ERROR: variable Q is not declared**
 	end
 	x:=c+y;	
 	C[18]:= a[18]+ b[18];
