@@ -2,14 +2,11 @@
 <<<driver program>>>
 start
 	declare x, y:integer;
-	declare z:boolean;
-	**declare A: array[x..15] of integer;**
+	declare A, B: array[1..15] of integer;
 	get_value(x);
 	get_value(y);
-	get_value(z);
-	**get_value(A);** 
+	get_value(A);
 	print(x);
 	print(y);
-	print(z);
-	**print(A);**
+	print(A);
 end
