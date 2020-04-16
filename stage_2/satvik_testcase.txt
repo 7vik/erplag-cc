@@ -1,0 +1,12 @@
+<<<driver program>>>
+start
+	declare x:integer;
+	x:=3;
+   while(x<=6)
+	start
+		print(x);
+       x:=x+1;
+	end
+end
+
+**segfault**

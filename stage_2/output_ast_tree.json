@@ -24,11 +24,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
-"children":[]
-}
-,{
-"text": { "name": "ID:i" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -36,21 +32,25 @@
 "children":[]
 }
 ,{
-"text": { "name": "INTEGER:integer" },
+"text": { "name": "BOOLEAN:boolean" },
 "children":[]
 }
 ]
 }
 ,{
-"text": { "name": "ioStmt" },
+"text": { "name": "assignmentStmt" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "GET_VALUE" },
+"text": { "name": "ASSIGNOP" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "TRUE:true" },
 "children":[]
 }
 ]
@@ -62,19 +62,11 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "range" },
+"text": { "name": "var" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "NUM:1" },
-"children":[]
-}
-,{
-"text": { "name": "NUM:1" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ]
@@ -92,6 +84,22 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "printOpt" },
 "collapsed": true,
 "children": [
@@ -100,7 +108,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ]

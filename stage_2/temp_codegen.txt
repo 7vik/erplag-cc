@@ -1,10 +1,22 @@
+**<<<driver program>>>**
+**start**
+**	declare a, i:integer;**
+**	get_value(a);**
+
+**	for(i in 1..1)**
+**	start**
+**		print(a);**
+**	end**
+**end**
+
 <<<driver program>>>
 start
-	declare a, i:integer;
-	get_value(a);
-
-	for(i in 1..1)
+	declare x:boolean;
+	x:=true;
+   while(x)
 	start
-		print(a);
+		get_value(x);
+		print(x);
+    	**x:=x+1;**
 	end
 end

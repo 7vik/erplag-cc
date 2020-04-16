@@ -712,7 +712,17 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "iterativeStmt") && (1 - is(n->child, "ID")))   // while lup
     {
-       
+       astNode* ex = n->child;
+       char* while_label = generate_label();
+       char* exit_label = generate_label();
+       fprintf(fp, "\t%s:\n", while_label);
+       evaluate_expr(ex, id_st, fp);
+       fprintf(fp, "\tcmp rcx, 0\n");
+       fprintf(fp, "\tje %s", exit_label);
+       generate_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+       id_st->visited++;
+       fprintf(fp, "\tjmp %s\n", while_label);
+       fprintf(fp, "\t%s:\n\n", exit_label);
 
     }
     if (is(n, "ioStmt") && n->child->node_marker == GET_VALUE)

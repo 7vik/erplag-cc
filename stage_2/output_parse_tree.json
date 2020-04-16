@@ -72,19 +72,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
-"children":[]
-}
-,{
-"text": { "name": "idList_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "COMMA:," },
-"children":[]
-}
-,{
-"text": { "name": "ID:i" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -99,8 +87,6 @@
 }
 ]
 }
-]
-}
 ,{
 "text": { "name": "COLON::" },
 "children":[]
@@ -110,7 +96,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "INTEGER:integer" },
+"text": { "name": "BOOLEAN:boolean" },
 "children":[]
 }
 ]
@@ -122,6 +108,208 @@
 ]
 }
 ]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "simpleStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "assignmentStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "whichStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "lvalueIDStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ASSIGNOP::=" },
+"children":[]
+}
+,{
+"text": { "name": "expression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "booleanConst" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "TRUE:true" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "iterativeStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "WHILE:while" },
+"children":[]
+}
+,{
+"text": { "name": "BO:(" },
+"children":[]
+}
+,{
+"text": { "name": "arithmeticOrBooleanExpression" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "opt_expr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:x" },
+"children":[]
+}
+,{
+"text": { "name": "whichId" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "one_more_opt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "opt_expr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "BC:)" },
+"children":[]
+}
+,{
+"text": { "name": "START:start" },
+"children":[]
 }
 ,{
 "text": { "name": "statements" },
@@ -144,7 +332,7 @@
 "children":[]
 }
 ,{
-"text": { "name": "ID:a" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -158,60 +346,6 @@
 ]
 }
 ]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "iterativeStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "FOR:for" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "ID:i" },
-"children":[]
-}
-,{
-"text": { "name": "IN:in" },
-"children":[]
-}
-,{
-"text": { "name": "range" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-,{
-"text": { "name": "RANGEOP:.." },
-"children":[]
-}
-,{
-"text": { "name": "NUM:1" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
-}
-,{
-"text": { "name": "START:start" },
-"children":[]
 }
 ,{
 "text": { "name": "statements" },
@@ -242,7 +376,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -278,6 +412,8 @@
 {
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
 }
 ]
 }
