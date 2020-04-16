@@ -24,11 +24,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:p" },
-"children":[]
-}
-,{
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -36,24 +32,8 @@
 "children":[]
 }
 ,{
-"text": { "name": "INTEGER:integer" },
+"text": { "name": "BOOLEAN:boolean" },
 "children":[]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "GET_VALUE" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:p" },
-"children":[]
-}
-]
 }
 ]
 }
@@ -66,25 +46,19 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
-"text": { "name": "PLUS" },
+"text": { "name": "LT" },
 "collapsed": true,
 "children": [
 {
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:p" },
-"children":[]
-}
-]
-}
-,{
 "text": { "name": "NUM:3" },
+"children":[]
+}
+,{
+"text": { "name": "NUM:2" },
 "children":[]
 }
 ]
@@ -106,7 +80,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ]

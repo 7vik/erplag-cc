@@ -78,6 +78,7 @@ FUNC_TABLE_ENTRY *create_function(astNode *ast_node, PARAMS *in, PARAMS *out, ID
 int get_total_width(ID_SYMBOL_TABLE *st);
 PARAMS *create_param(astNode *plist);
 void gst_print(GST *st);
+PARAMS *param_lookup(PARAMS *plist, char *var);
 void traverse_the_multiverse(astNode *node, GST *st);
 int is(astNode *node, char *comp);
 void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);

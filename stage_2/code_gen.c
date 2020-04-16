@@ -21,7 +21,7 @@ char* generate_label(void)
 void print_return(FILE* fp)
 {
 
-    fprintf(fp, "add rsp, %d\n", ((stack_count / 2 ) + 1) * 16);
+    fprintf(fp, "mov rsp, rbp\n");
     fprintf(fp, "pop rbp\n");
     fprintf(fp, "mov rax, 0\n");
     fprintf(fp, "ret\n");
@@ -194,7 +194,7 @@ void print_id(FILE* fp, int type, int offset)
         fprintf(fp, "\tjz %s\n", f_label);
         fprintf(fp, "\tlea rsi, [true_label]\n");
         fprintf(fp, "\tjmp %s\n\n", p_label);
-        fprintf(fp, "f%s: \n", f_label);
+        fprintf(fp, "%s: \n", f_label);
         fprintf(fp, "\tlea rsi, [false_label]\n\n");
         fprintf(fp, "%s: \n", p_label);
         fprintf(fp, "\tcall printf\n\n");
@@ -359,6 +359,10 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
 // evaluates the rhs and stores the result in RCX
 void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 {
+    if(ex->node_marker == var)
+    {
+        evaluate_expr(ex->child, id_st, fp);
+    }
     if (ex->node_marker == ID)
     {
         ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
@@ -376,6 +380,68 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             return;
         }
     }
+
+    if (ex->node_marker == RNUM)
+    {
+        ;
+    }
+    if (ex->node_marker == NUM)
+    {
+        char* num = ex->tree_node->lexeme;
+        fprintf(fp, "\tmov rcx, %s\n", num);
+    }
+
+    if (ex->node_marker == TRUE || ex->node_marker == FALSE)
+    {
+        if(ex->node_marker == TRUE)
+            fprintf(fp, "\tmov rcx, 1\n");
+        else
+            fprintf(fp, "\tmov rcx, 0\n");
+        
+    }
+
+    if (ex->node_marker ==  LT)
+    {   
+        evaluate_expr(ex->child, id_st, fp);
+        
+        fprintf(fp, "\tpush rcx\n");
+        fprintf(fp, "\tpush rcx\n");
+        evaluate_expr(ex->child->sibling, id_st, fp);
+        fprintf(fp, "\tpop rdx\n");
+        fprintf(fp, "\tpop rdx\n");
+
+        fprintf(fp, "\tcmp rdx, rcx\n");
+
+        char* flag = generate_label();
+        char* over = generate_label();
+        fprintf(fp, "\tjl %s\n", flag);
+        fprintf(fp, "\tmov rcx, 0\n");
+        fprintf(fp, "jmp %s\n", over);
+        fprintf(fp, "%s:\n", flag);
+        fprintf(fp, "\tmov rcx, 1\n");
+        fprintf(fp, "%s:", over);
+
+    }
+    if(ex->node_marker ==  GE);
+    if(ex->node_marker ==  LT);
+    if(ex->node_marker ==  GT);
+    if(ex->node_marker ==  EQ);
+    if(ex->node_marker ==  NE);
+    /*
+    {
+
+        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Exppected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+        }
+        else
+            return BOOLEAN;
+    }
+    */
+    /*
     if (ex->node_marker == RNUM)
         return REAL;
     if (ex->node_marker == NUM)
@@ -487,6 +553,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
     }
     if (ex->node_marker == ARRAY)
         return ARRAY;
+    */
     return;
 }
 
@@ -573,6 +640,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "ASSIGNOP"))
     {
        evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
+       
+       ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
+       int offset = id_entry->offset;
+
+       fprintf(fp, "\tmov [rbp - %d], rcx\n", offset * 8);
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {

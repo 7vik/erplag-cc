@@ -72,19 +72,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:p" },
-"children":[]
-}
-,{
-"text": { "name": "idList_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "COMMA:," },
-"children":[]
-}
-,{
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -99,8 +87,6 @@
 }
 ]
 }
-]
-}
 ,{
 "text": { "name": "COLON::" },
 "children":[]
@@ -110,46 +96,10 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "INTEGER:integer" },
+"text": { "name": "BOOLEAN:boolean" },
 "children":[]
 }
 ]
-}
-,{
-"text": { "name": "SEMICOL:;" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "statement" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "GET_VALUE:get_value" },
-"children":[]
-}
-,{
-"text": { "name": "BO:(" },
-"children":[]
-}
-,{
-"text": { "name": "ID:p" },
-"children":[]
-}
-,{
-"text": { "name": "BC:)" },
-"children":[]
 }
 ,{
 "text": { "name": "SEMICOL:;" },
@@ -176,7 +126,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -220,62 +170,6 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:p" },
-"children":[]
-}
-,{
-"text": { "name": "whichId" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "term_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "arithmeticExpr_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "op1" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "PLUS:+" },
-"children":[]
-}
-]
-}
-,{
-"text": { "name": "term" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "factor" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "NUM:3" },
 "children":[]
 }
@@ -307,15 +201,67 @@
 }
 ]
 }
-]
-}
 ,{
 "text": { "name": "one_more_opt" },
 "collapsed": true,
 "children": [
 {
+"text": { "name": "relationalOp" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "LT:<" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "term" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "factor" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:2" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "term_lr" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "arithmeticExpr_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+]
+}
+]
 }
 ]
 }
@@ -378,7 +324,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
+"text": { "name": "ID:x" },
 "children":[]
 }
 ,{
@@ -414,8 +360,6 @@
 {
 "text": { "name": "EPS:EPS" },
 "children":[]
-}
-]
 }
 ]
 }
