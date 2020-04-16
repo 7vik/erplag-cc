@@ -1,101 +1,18 @@
-** Test case 9: Testing execution flow statements - switch and for 
+** Test case 8: Testing function overloading and recursion 
 This Includes 
-1. Switch variable type and case values plus the presence of default statement
-2. Whether the loop variable is not assigned a value in for loop 
-3. A function with the same name cannot appear more than once (overloading check)
-4. A function cannot call itself (recursion check)
-5. precedence of function definitions before their use
-6. Assignment of output parameters 
-7. Number and types of input and output parameters (extension of test case 6)
-8. static bound checking and static type checking in expressions - arithmetic and boolean (extension of test case 5) **
+1. A function with the same name cannot appear more than once (overloading check)
+2. A function cannot call itself (recursion check)
+3. precedence of function definitions before their use
+4. Assignment of output parameters 
+5. Number and types of input and output parameters (extension of test case 6)
+6. static bound checking and static type checking in expressions - arithmetic and boolean (extension of test case 5) **
 
 ** Multiple level nesting using integer, real, boolean data types including static array data type**
-**Variant of test case 8**
+**Variant of test case 7**
 
 declare module function1;
 declare module function2;
 declare module function4;
-declare module switch_int_default;
-
-
-<<module switch_var_demo1>>
-takes input [x: integer, y: real, z:boolean];
-returns [u: integer];
-start
-
-	declare m,n,k: integer;
-	declare h:boolean;
-	declare p: real;
-	get_value(n);
-	switch(k)
-	start
-		case 10: declare A:real;
-			 declare Q: integer;
-			 declare B: array[10..30] of integer;
-			 declare E: array[4..10] of integer;
-			 B[12]:= k*20; 	                  	
-			 break;
-		case 20: A:= 12.90 + p;       
-			 get_value(Q);
-			 for(m in 10..15)
-			 start
-				n:= n+m;
-			 end
-			 E[7]:= k+12 - Q*10;       
-			 break;
-		case true: m:=m-n;			**ERROR: Case value is incorrect as condition variable type is integer**
-			 break;
-		default: E[9]:= B[15]+Q;	       
-			 break;			 	
-	end
-
-	u:= u+ x*m-n;
-	use module switch_int_default with parameters n;
-	switch(p)				**ERROR: switch variable cannot be of type real**
-	start
-		case 1: p:=p+1;
-			break;
-		default:h:=false;
-			break;
-	end
-
-	switch(h)
-	start
-		case false: declare A:real;
-			 declare Q: integer;
-			 declare B: array[10..30] of integer;
-			 declare E: array[4..10] of integer;
-			 B[12]:= k*20; 	                  	
-			 break;
-		case 20: A:= 12.90 + p;       **ERROR: Case value is incorrect as condiiton variable type is boolean**
-			 get_value(Q);
-			 for(m in 10..15)
-			 start
-				n:= n+m;
-			 end
-			 E[7]:= k+12 - Q*10;       
-			 break;
-		case true: m:=m-n;
-			 print(m);			
-			 break;
-		default: E[9]:= B[15]+Q;	      **ERROR: presence of default statement is incorrect as condiiton variable type is boolean** 
-			 break;			 	
-	end
-	
-end
-
-<<module for_loop_demo>>
-takes input [x: integer, y: real, z:boolean];
-returns [u: integer];
-start
-
-	declare k: integer;
-	for(k in 12..70)
-	start
-		u:= x+k;
-		k:= k+2;                            **ERROR: for loop variable k cannot be assigned a value** 
-	end 
-end
 
 <<module var_demo_array>>
 takes input [x:integer, m:array [2..20] of integer, p:real];
@@ -168,10 +85,10 @@ start
 	start
 		x:=x+k*y;				    **ERROR: Type mismatch error**
 		declare u, v:real;
-		declare int1: integer;
+		declare int1, int2: integer;
 		u := y+c*34.2;
 		v:= u-c*p-20.5E+2;
-		[x, int1, m, k]:=use module function1 with parameters Var3, c, k, Var4, k; **ERROR: Input parameter type of Var4 does not match with formal parameter type**		
+		[x, int1, m, int2]:=use module function1 with parameters Var3, c, k, Var4, int1; **ERROR: Input parameter type of Var4 does not match with formal parameter type**		
 		switch(k)
 		start
 			case 10: declare A:real;
@@ -194,7 +111,7 @@ start
 		x:=x + u*v- u<=v;                             **ERROR: Type mismatch error**
 	end
 	x:=c+y;	
-	[p]:= use module function3 with parameters x,y;       **ERROR: module function3 is not defined**
+	[p]:= use module function3 with parameters x,y;       **ERROR: module function3 is neither defined nor declared preceding this call**
 	C[18]:= a[18]+ b[18];
 	A[5]:= B[6]- 10;
 	m:= A[5]< C[18] + A[11];			      **ERROR: element of array A is out of bound** 
@@ -274,31 +191,10 @@ start
 	R4:=f + 100;
 end								** ERROR: Output parameter R3 is not assigned any value **
 
-<<module function1>>			    	**ERROR: function1 cannot be overloaded**
+<<module function1>>			    **ERROR: function1 cannot be overloaded**
 takes input [b:boolean, e:integer];
 returns [c:boolean, d: integer];
 start
 	d:= e+15;
 	c:= true AND b;	
-end
-
-<<module switch_int_default>>
-takes input [x:integer];
-start
-	declare a, b: integer;
-	declare c: real;
-	declare d: boolean;
-	x:= a+b;
-	[a]:=use module for_loop_demo with parameters b, c, d;
-	switch(a)
-	start
-		case 1: a:=a+b;
-			break;
-		case 2: a:=a-b;
-			break;
-		case 3: a:= a*b;
-			break;
-		case 4: a:= a/b;
-			break;
-	end					**ERROR: default statement is missing- the type of switch variable is integer**
 end
