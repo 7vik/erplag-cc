@@ -30,6 +30,7 @@ vard1:   resd    1
 int_array:         resd        100
 real_array:        resq        100
 bool_array:        resb        100
+array_buffer:      resq        1000
 
 
 global main
@@ -56,44 +57,3 @@ mov rbp, rsp
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 808]
 	call scanf
-	mov rdi, bool_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 816]
-	call scanf
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 800]
-	call printf
-
-	lea rdi, [new_line]
-	call printf
-
-	mov rdi, intFormat_out
-	mov rsi, [rbp - 808]
-	call printf
-
-	lea rdi, [new_line]
-	call printf
-
-	lea rdi, [strFormat_in]
-	mov sil, [rbp - 816]
-
-	cmp sil, 0
-	jz false
-	lea rsi, [true_label]
-	jmp print
-
-false: 
-	lea rsi, [false_label]
-
-print: 
-	call printf
-
-	lea rdi, [new_line]
-	call printf
-
-
-add rsp, 32
-pop rbp
-mov rax, 0
-ret
