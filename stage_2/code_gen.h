@@ -31,6 +31,6 @@ void prompt_user(FILE* fp, int type);
 void print_int_output(FILE* fp, int output_var_num);
 void take_real_input(FILE* fp, int input_var_num);
 void take_int_input(FILE* fp, int input_var_num);
-
+char* generate_label(void);
 
 #endif

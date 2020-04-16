@@ -6,10 +6,18 @@
 VARS vars;
 
 int array_available_addr = 0;
-
+int label_count = 0;
 
 int stack_count = 0;
 
+
+char* generate_label(void)
+{
+    char* label = (char*) malloc((sizeof(100*sizeof(char))));
+    sprintf(label, "label%d", label_count);
+    label_count++;
+    return label;
+}
 void print_return(FILE* fp)
 {
 
@@ -178,15 +186,17 @@ void print_id(FILE* fp, int type, int offset)
 
     else if(type == BOOLEAN)
     {
+        char* f_label = generate_label();
+        char* p_label = generate_label();
         fprintf(fp, "\tlea rdi, [strFormat_in]\n");
         fprintf(fp, "\tmov sil, [rbp - %d]\n\n", temp);
         fprintf(fp, "\tcmp sil, 0\n");
-        fprintf(fp, "\tjz false\n");
+        fprintf(fp, "\tjz %s\n", f_label);
         fprintf(fp, "\tlea rsi, [true_label]\n");
-        fprintf(fp, "\tjmp print\n\n");
-        fprintf(fp, "false: \n");
+        fprintf(fp, "\tjmp %s\n\n", p_label);
+        fprintf(fp, "f%s: \n", f_label);
         fprintf(fp, "\tlea rsi, [false_label]\n\n");
-        fprintf(fp, "print: \n");
+        fprintf(fp, "%s: \n", p_label);
         fprintf(fp, "\tcall printf\n\n");
         fprintf(fp, "\tlea rdi, [new_line]\n");
         fprintf(fp, "\tcall printf\n");
@@ -224,17 +234,16 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
     fprintf(fp, "\tmov r8, [rbp - %d]\n", upper_offset);
     fprintf(fp, "\tcall printf\n\n");
 
-
+    char* array_input_label  = generate_label();
     fprintf(fp, "\t; stores the count\n\n");
     fprintf(fp, "\txor r12, r12\n");
     fprintf(fp, "\txor r13, r13\n");
-    fprintf(fp, "\tmov r12d, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "\tmov r13d, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "\tsub r12d, r13d\n");
-    fprintf(fp, "\tinc r12d\n");
-    fprintf(fp, "\t;mov r12, 5\n");
+    fprintf(fp, "\tmov r12, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tmov r13, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tsub r12, r13\n");
+    fprintf(fp, "\tinc r12\n");
     fprintf(fp, "\txor r13, r13\n\n");  
-    fprintf(fp, "\tarray_input_loop:\n");
+    fprintf(fp, "\t%s:\n", array_input_label);
 
     if(type == INTEGER)
     {
@@ -257,15 +266,13 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
         printf("ERROR in ask for array\n");
         exit(1);
     }
-    fprintf(fp, "mov r14, %d\n", base_offset);
-    fprintf(fp, "add r14, r13\n");
-    fprintf(fp, "\tmov r11, %d", base_offset);
-    fprintf(fp, "lea rsi, [r11 + r14 * 8]\n");
-    fprintf(fp, "call scanf\n\n");
+    fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+    fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+    fprintf(fp, "\tcall scanf\n\n");
 
-    fprintf(fp, "inc r13d\n");
-    fprintf(fp, "cmp r13d, r12d\n");
-    fprintf(fp, "jne array_input_loop\n");
+    fprintf(fp, "\tinc r13\n");
+    fprintf(fp, "\tcmp r13, r12\n");
+    fprintf(fp, "\tjne %s\n", array_input_label);
     // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
 
@@ -282,51 +289,51 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
     fprintf(fp, "lea rdi, [arr_outMsg]\n");
     fprintf(fp, "call printf\n");
 
+    char* array_output_label = generate_label();
     fprintf(fp, "; stores the count\n\n");
     fprintf(fp, "xor r12, r12\n");
     fprintf(fp, "xor r13, r13\n");
     fprintf(fp, "mov r12, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "mov r13, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "mov r13, [rbp - %d]\n", lower_offset);
     fprintf(fp, "sub r12, r13\n");
-    fprintf(fp, "inc r12d\n");
-    fprintf(fp, ";mov r12, 5\n");
+    fprintf(fp, "inc r12\n");
     fprintf(fp, "xor r13, r13\n\n");  
-    fprintf(fp, "array_output_loop:\n");
+    fprintf(fp, "%s:\n", array_output_label);
 
     if(type == INTEGER)
     {
-        fprintf(fp, "lea rdi, [intFormat_out]\n");
-        fprintf(fp, "\tmov r11, %d", base_offset);
-        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
-        fprintf(fp, "add r14, r13\n");
-        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
+        fprintf(fp, "\tlea rdi, [intFormat_out]\n");
+        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+        fprintf(fp, "\tadd r14, r13\n");
+        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_out]\n");
-        fprintf(fp, "\tmov r11, %d", base_offset);
-        fprintf(fp, "mov rsi, [r11 + r14 * 8]\n");
-        fprintf(fp, "add r14, r13\n");
-        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
+        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+        fprintf(fp, "\tadd r14, r13\n");
+        fprintf(fp, "\tmov rsi, [array_buffer + r14 * 8]\n");
     }
 
     else if(type == BOOLEAN)
     {
-        fprintf(fp, "lea rdi, [strFormat_in]\n");
-        fprintf(fp, "\tmov r11, %d", base_offset);
-        fprintf(fp, "lea rsi, [r11 + r14 * 8]\n");
-        fprintf(fp, "add r14, r13\n");
-        fprintf(fp, "mov rsi, [array_buffer + r14 * 8]\n");
+        char* f_label = generate_label();
+        char* p_label = generate_label();
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\tmov rsi, [r14 + r13 * 8]\n");
 
-        fprintf(fp, "cmp sil, 0\n");
-        fprintf(fp, "jz false\n");
-        fprintf(fp, "lea rsi, [true_label]\n");
-        fprintf(fp, "jmp print\n\n");
-        fprintf(fp, "false: \n");
-        fprintf(fp, "lea rsi, [false_label]\n\n");
+        fprintf(fp, "\tcmp sil, 0\n");
+        fprintf(fp, "\tjz %s\n", f_label);
+        fprintf(fp, "\tlea rsi, [true_label]\n");
+        fprintf(fp, "\tjmp %s\n\n", p_label);
+        fprintf(fp, "%s: \n", f_label);
+        fprintf(fp, "\tlea rsi, [false_label]\n\n");
 
-        fprintf(fp, "print: \n");
+        fprintf(fp, "%s: \n", p_label);
 
     }
 
@@ -336,14 +343,12 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
         exit(1);
     }
     
-    fprintf(fp, "call printf\n\n");
-
-    fprintf(fp, "inc r13d\n");
-    fprintf(fp, "cmp r13d, r12d\n");
-    fprintf(fp, "jne array_output_loop\n");
-
-    fprintf(fp, "lea rdi, [new_line]\n");
-    fprintf(fp, "call printf\n");
+    fprintf(fp, "\tcall printf\n\n");
+    fprintf(fp, "\tinc r13\n");
+    fprintf(fp, "\tcmp r13, r12\n");
+    fprintf(fp, "\tjne %s\n", array_output_label);
+    fprintf(fp, "\tlea rdi, [new_line]\n");
+    fprintf(fp, "\tcall printf\n");
 
     // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
@@ -388,7 +393,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                 //storing base address of this array: part of array_buffer
                 fprintf(fp, "\tmov r14, [array_available_addr]\n");
                 fprintf(fp, "\tlea rax, [array_buffer + r14]\n");
-                fprintf(fp, "\tmov [rbp - %d], rax\n");
+                fprintf(fp, "\tmov [rbp - %d], rax\n\n", offset * 8);
 
                 // if static array
                 if (id_entry->datatype->arrtype->is_dynamic == false)
@@ -403,7 +408,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     int array_size = end - start + 1;
                     fprintf(fp, "\tmov r14, [array_available_addr]\n");
                     fprintf(fp, "\tadd r14, %d\n", array_size);
-                    fprintf(fp, "\tmov [array_available_addr], r14\n");
+                    fprintf(fp, "\tmov [array_available_addr], r14\n\n");
                     // load the start and end at their offset
 
                     int start_offset_scaled = id_entry->datatype->arrtype->begin_offset * 8;
@@ -413,7 +418,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "mov r13, %d\n", start);
                     fprintf(fp, "mov [rbp - %d], r13\n", start_offset_scaled);
                     fprintf(fp, "mov r13, %d\n", end);
-                    fprintf(fp, "mov [rbp - %d], r13\n", end_offset_scaled);
+                    fprintf(fp, "mov [rbp - %d], r13\n\n", end_offset_scaled);
                     
                 }
 
@@ -458,7 +463,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         else 
         {
             fprintf(fp, "\t;Taking array\n\n");
-            ask_for_array(fp, id_entry->offset, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+            ask_for_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
         }
 
     }
@@ -473,7 +478,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         else
         {
             fprintf(fp, "\t;Printing array\n\n");
-            ask_for_array(fp, id_entry->offset, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+            print_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
         }
         
     }
