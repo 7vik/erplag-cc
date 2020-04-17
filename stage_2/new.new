@@ -14,80 +14,89 @@
                 ----	              0	                ----	                ----	        driverModule	                NOPE	           moduleDef                  25
              declare	              3	                ----	             DECLARE	         declareStmt	                 YES	             DECLARE                   0
                 ----	              0	                ----	                ----	           statement	                NOPE	         declareStmt                  92
-                   a	              3	                ----	                  ID	              idList	                 YES	                  ID                   0
+                   b	              3	                ----	                  ID	              idList	                 YES	                  ID                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	              idList                  56
-                   ,	              3	                ----	               COMMA	           idList_lr	                 YES	               COMMA                   0
-                ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  54
-                   b	              3	                ----	                  ID	           idList_lr	                 YES	                  ID                   0
                  EPS	              0	                ----	                 EPS	           idList_lr	                 YES	                 EPS                   0
-                ----	              0	                ----	                ----	           idList_lr	                NOPE	           idList_lr                  55
+                ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  55
                    :	              3	                ----	               COLON	         declareStmt	                 YES	               COLON                   0
              integer	              3	                ----	             INTEGER	            datatype	                 YES	             INTEGER                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	            datatype                  17
                    ;	              3	                ----	             SEMICOL	         declareStmt	                 YES	             SEMICOL                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	           statement                  30
                 ----	              0	                ----	                ----	           moduleDef	                NOPE	          statements                  26
-           get_value	              4	                ----	           GET_VALUE	              ioStmt	                 YES	           GET_VALUE                   0
-                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  33
-                   (	              4	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
-                   a	              4	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
-                   )	              4	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
-                   ;	              4	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
-                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
+             declare	              4	                ----	             DECLARE	         declareStmt	                 YES	             DECLARE                   0
+                ----	              0	                ----	                ----	           statement	                NOPE	         declareStmt                  92
+                   a	              4	                ----	                  ID	              idList	                 YES	                  ID                   0
+                ----	              0	                ----	                ----	         declareStmt	                NOPE	              idList                  56
+                 EPS	              0	                ----	                 EPS	           idList_lr	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  55
+                   :	              4	                ----	               COLON	         declareStmt	                 YES	               COLON                   0
+             integer	              4	                ----	             INTEGER	            datatype	                 YES	             INTEGER                   0
+                ----	              0	                ----	                ----	         declareStmt	                NOPE	            datatype                  17
+                   ;	              4	                ----	             SEMICOL	         declareStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  30
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
            get_value	              5	                ----	           GET_VALUE	              ioStmt	                 YES	           GET_VALUE                   0
                 ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  33
                    (	              5	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
-                   b	              5	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
+                   a	              5	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
                    )	              5	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
                    ;	              5	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
-             declare	              6	                ----	             DECLARE	         declareStmt	                 YES	             DECLARE                   0
+           get_value	              6	                ----	           GET_VALUE	              ioStmt	                 YES	           GET_VALUE                   0
+                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  33
+                   (	              6	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
+                   b	              6	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
+                   )	              6	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
+                   ;	              6	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+             declare	              7	                ----	             DECLARE	         declareStmt	                 YES	             DECLARE                   0
                 ----	              0	                ----	                ----	           statement	                NOPE	         declareStmt                  92
-                   w	              6	                ----	                  ID	              idList	                 YES	                  ID                   0
+                   w	              7	                ----	                  ID	              idList	                 YES	                  ID                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	              idList                  56
                  EPS	              0	                ----	                 EPS	           idList_lr	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  55
-                   :	              6	                ----	               COLON	         declareStmt	                 YES	               COLON                   0
-               array	              6	                ----	               ARRAY	            datatype	                 YES	               ARRAY                   0
+                   :	              7	                ----	               COLON	         declareStmt	                 YES	               COLON                   0
+               array	              7	                ----	               ARRAY	            datatype	                 YES	               ARRAY                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	            datatype                  20
-                   [	              6	                ----	                SQBO	            datatype	                 YES	                SQBO                   0
-                   1	              6	                   1	                 NUM	            index_nt	                 YES	                 NUM                   0
+                   [	              7	                ----	                SQBO	            datatype	                 YES	                SQBO                   0
+                   1	              7	                   1	                 NUM	            index_nt	                 YES	                 NUM                   0
                 ----	              0	                ----	                ----	            rangeArr	                NOPE	            index_nt                  49
                 ----	              0	                ----	                ----	            datatype	                NOPE	            rangeArr                  21
-                  ..	              6	                ----	             RANGEOP	            rangeArr	                 YES	             RANGEOP                   0
-                   b	              6	                ----	                  ID	            index_nt	                 YES	                  ID                   0
-                ----	              0	                ----	                ----	            rangeArr	                NOPE	            index_nt                  50
-                   ]	              6	                ----	                SQBC	            datatype	                 YES	                SQBC                   0
-                  of	              6	                ----	                  OF	            datatype	                 YES	                  OF                   0
-             integer	              6	                ----	             INTEGER	                type	                 YES	             INTEGER                   0
+                  ..	              7	                ----	             RANGEOP	            rangeArr	                 YES	             RANGEOP                   0
+                   2	              7	                   2	                 NUM	            index_nt	                 YES	                 NUM                   0
+                ----	              0	                ----	                ----	            rangeArr	                NOPE	            index_nt                  49
+                   ]	              7	                ----	                SQBC	            datatype	                 YES	                SQBC                   0
+                  of	              7	                ----	                  OF	            datatype	                 YES	                  OF                   0
+             integer	              7	                ----	             INTEGER	                type	                 YES	             INTEGER                   0
                 ----	              0	                ----	                ----	            datatype	                NOPE	                type                  22
-                   ;	              6	                ----	             SEMICOL	         declareStmt	                 YES	             SEMICOL                   0
+                   ;	              7	                ----	             SEMICOL	         declareStmt	                 YES	             SEMICOL                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	           statement                  30
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
-           get_value	              7	                ----	           GET_VALUE	              ioStmt	                 YES	           GET_VALUE                   0
+           get_value	              8	                ----	           GET_VALUE	              ioStmt	                 YES	           GET_VALUE                   0
                 ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  33
-                   (	              7	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
-                   w	              7	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
-                   )	              7	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
-                   ;	              7	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
-                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
-                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
-               print	              8	                ----	               PRINT	              ioStmt	                 YES	               PRINT                   0
-                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  34
                    (	              8	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
-                   w	              8	                ----	                  ID	                 var	                 YES	                  ID                   0
-                ----	              0	                ----	                ----	            printOpt	                NOPE	                 var                  35
-                 EPS	              0	                ----	                 EPS	             whichId	                 YES	                 EPS                   0
-                ----	              0	                ----	                ----	                 var	                NOPE	             whichId                  39
-                ----	              0	                ----	                ----	              ioStmt	                NOPE	            printOpt                  41
+                   w	              8	                ----	                  ID	              ioStmt	                 YES	                  ID                   0
                    )	              8	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
                    ;	              8	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+               print	              9	                ----	               PRINT	              ioStmt	                 YES	               PRINT                   0
+                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  34
+                   (	              9	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
+                   w	              9	                ----	                  ID	                 var	                 YES	                  ID                   0
+                ----	              0	                ----	                ----	            printOpt	                NOPE	                 var                  35
+                 EPS	              0	                ----	                 EPS	             whichId	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	                 var	                NOPE	             whichId                  39
+                ----	              0	                ----	                ----	              ioStmt	                NOPE	            printOpt                  41
+                   )	              9	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
+                   ;	              9	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
                  EPS	              0	                ----	                 EPS	          statements	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  27
-                 end	             10	                ----	                 END	           moduleDef	                 YES	                 END                   0
+                 end	             11	                ----	                 END	           moduleDef	                 YES	                 END                   0
                  EPS	              0	                ----	                 EPS	        otherModules	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	             program	                NOPE	        otherModules                   6

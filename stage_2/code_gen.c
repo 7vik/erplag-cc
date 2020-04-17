@@ -64,7 +64,7 @@ void print_data_section(FILE* fp)
     fprintf(fp, "new_line       db       10, 0\n");
     fprintf(fp, "var1         dd        3\n");
     fprintf(fp, "var2         dd        6\n");
-    fprintf(fp, "array_available_addr   dd   0\n");
+    fprintf(fp, "array_available_addr   dq   0\n");
     fprintf(fp, "\n\n\n");
 
     return;
@@ -208,7 +208,7 @@ void print_id(FILE* fp, int type, int offset)
 // type is enum in this case
 void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, int type)
 {
-
+    printf("%d %d %d\n", base_offset, lower_offset, upper_offset);
     // fprintf(fp, "push rbp\n");
     fprintf(fp, "; prompts user for input\n");
     fprintf(fp, "\tmov rcx, [rbp - %d]\n", lower_offset);
@@ -679,6 +679,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "\tmov rcx, [rbp - %d]\n", end_offset * 8);
                     fprintf(fp, "\tsub rcx, rax\n");
                     fprintf(fp, "\tinc rcx\n");
+                    //fprintf(fp, "\timul rcx, 8\n");
                     fprintf(fp, "\tadd r14, rcx\n");
                     fprintf(fp, "\tmov [array_available_addr], r14\n\n");
                     

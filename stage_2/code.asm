@@ -20,7 +20,7 @@ arr_outMsg   db        "Printing array: ", 0
 new_line       db       10, 0
 var1         dd        3
 var2         dd        6
-array_available_addr   dd   0
+array_available_addr   dq   0
 
 
 
@@ -52,14 +52,14 @@ mov rbp, rsp
 	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
-	lea rsi, [rbp - 8]
+	lea rsi, [rbp - 16]
 	call scanf
 	;Taking id
 
 	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
-	lea rsi, [rbp - 16]
+	lea rsi, [rbp - 8]
 	call scanf
 	sub rsp, 16
 	sub rsp, 16
@@ -67,19 +67,15 @@ mov rbp, rsp
 	lea rax, [array_buffer + r14 * 8]
 	mov [rbp - 24], rax
 
+	mov r14, [array_available_addr]
+	add r14, 2
+	mov [array_available_addr], r14
+
+; loading array offsets
 mov r13, 1
 mov [rbp - 32], r13
-	mov rax, [rbp - 16]
-	mov [rbp - 40], rax
-; incrementing array_available address by array size
-
-	mov r14, [array_available_addr]
-	mov rax, [rbp - 32]
-	mov rcx, [rbp - 40]
-	sub rcx, rax
-	inc rcx
-	add r14, rcx
-	mov [array_available_addr], r14
+mov r13, 2
+mov [rbp - 40], r13
 
 	;Taking array
 

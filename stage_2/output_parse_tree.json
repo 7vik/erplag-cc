@@ -72,18 +72,6 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
-"children":[]
-}
-,{
-"text": { "name": "idList_lr" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "COMMA:," },
-"children":[]
-}
-,{
 "text": { "name": "ID:b" },
 "children":[]
 }
@@ -96,6 +84,62 @@
 "children":[]
 }
 ]
+}
+]
+}
+,{
+"text": { "name": "COLON::" },
+"children":[]
+}
+,{
+"text": { "name": "datatype" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "SEMICOL:;" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "statements" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "statement" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "DECLARE:declare" },
+"children":[]
+}
+,{
+"text": { "name": "idList" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
+"children":[]
+}
+,{
+"text": { "name": "idList_lr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "EPS:EPS" },
+"children":[]
 }
 ]
 }
@@ -270,7 +314,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:b" },
+"text": { "name": "NUM:2" },
 "children":[]
 }
 ]
@@ -406,6 +450,8 @@
 {
 "text": { "name": "EPS:EPS" },
 "children":[]
+}
+]
 }
 ]
 }

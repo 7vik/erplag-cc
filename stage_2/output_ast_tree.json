@@ -24,11 +24,25 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:a" },
+"text": { "name": "ID:b" },
 "children":[]
 }
 ,{
-"text": { "name": "ID:b" },
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:a" },
 "children":[]
 }
 ,{
@@ -98,7 +112,7 @@
 "children":[]
 }
 ,{
-"text": { "name": "ID:b" },
+"text": { "name": "NUM:2" },
 "children":[]
 }
 ]
