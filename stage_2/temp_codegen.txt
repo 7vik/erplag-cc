@@ -1,32 +1,15 @@
-**<<<driver program>>>**
-**start**
-**	declare x, y, z, t:integer;**
-**	get_value(x);**
-**	get_value(y);**
-**	get_value(z);**
-**	get_value(t);**
-**	switch(x)**
-**	start**
-**		case 1: print(y);**
-**                break;**
-**		case 2: print(y);**
-**                break;**
-**		case 3: print(z);**
-**                break;**
-**        default: print(t);**
-**			     break;**
-**	end**
-**end**
-
 <<<driver program>>>
 start
-	declare A:array[12..14] of integer;
-	declare B, C:array[12..14] of integer;
-	get_value(A);
-	print(A);
-	get_value(B);
-	get_value(C);
-	print(A);
-	print(B);
-	print(C);
+	declare x, y, z, t:boolean;
+	get_value(x);
+	get_value(y);
+	get_value(z);
+	get_value(t);
+	switch(x)
+	start
+		case true: print(y);
+                break;
+		case false: print(x);
+                break;
+	end
 end

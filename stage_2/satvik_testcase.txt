@@ -5,7 +5,7 @@ start
    while(x<=6)
 	start
 		print(x);
-       x:=x+1;
+        get_value(x);
 	end
 end
 

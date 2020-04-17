@@ -764,8 +764,31 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
         
-        generate_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->visited], fp);
-        id_st->visited++;
+        if(id_entry->datatype->simple != BOOLEAN)
+        {
+            generate_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+            id_st->visited++;
+        }
+        else
+        {
+            astNode* case_node = n->child->sibling->sibling->child;
+            char* cases_exit = generate_label();
+            char* case_exit = generate_label();
+            fprintf(fp, "\tcmp rax, %d\n", 1);
+            fprintf(fp, "\tjne %s\n", case_exit);
+            fprintf(fp, "\tpush rax\n\tpush rax\n");
+            generate_the_universe(case_node->child->sibling, id_st->kid_st[id_st->visited], fp);
+            fprintf(fp, "\tpop rax\n\tpop rax\n");
+            fprintf(fp, "\tjmp %s\n", cases_exit);
+            fprintf(fp, "\t%s:\n", case_exit);
+
+            fprintf(fp, "\tpush rax\n\tpush rax\n");
+            generate_the_universe(case_node->sibling->child->sibling, id_st->kid_st[id_st->visited], fp);
+            id_st->visited++;
+            fprintf(fp, "\tpop rax\n\tpop rax\n");
+            fprintf(fp, "\t%s:\n", cases_exit);   
+        }
+        
 
 
     }
