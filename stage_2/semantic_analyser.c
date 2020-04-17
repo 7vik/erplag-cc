@@ -585,6 +585,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     return;
 }
 
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -628,3 +629,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
+*/

@@ -1,7 +1,9 @@
 <<<driver program>>>
 start
-	declare w : array[2..4] of integer;
-	w[2] := w[3] + 4;
+	declare w:array[1..3] of integer;
+	declare x: integer;
+	get_value(w);
+	w[2] := 3 * x; 
+	print(w);
+	
 end
-
-**segfault if your while expression contains non booleans**

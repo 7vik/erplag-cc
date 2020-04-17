@@ -47,89 +47,103 @@ main:
 push rbp
 mov rbp, rsp
 	sub rsp, 16
-	sub rsp, 16
 	;Taking id
 
-	mov rdi, bool_inMsg
+	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 8]
 	call scanf
 	;Taking id
 
-	mov rdi, bool_inMsg
+	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 16]
 	call scanf
-	;Taking id
+	sub rsp, 16
+	sub rsp, 16
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14 * 8]
+	mov [rbp - 24], rax
 
-	mov rdi, bool_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 24]
-	call scanf
-	;Taking id
+mov r13, 1
+mov [rbp - 32], r13
+	mov rax, [rbp - 16]
+	mov [rbp - 40], rax
+; incrementing array_available address by array size
 
-	mov rdi, bool_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 32]
-	call scanf
-	mov rax, [rbp - 8]
-	cmp rax, 1
-	jne label1
-	push rax
-	push rax
-	;Printing ID
+	mov r14, [array_available_addr]
+	mov rax, [rbp - 32]
+	mov rcx, [rbp - 40]
+	sub rcx, rax
+	inc rcx
+	add r14, rcx
+	mov [array_available_addr], r14
 
-	lea rdi, [strFormat_in]
-	mov sil, [rbp - 16]
+	;Taking array
 
-	cmp sil, 0
-	jz label2
-	lea rsi, [true_label]
-	jmp label3
-
-label2: 
-	lea rsi, [false_label]
-
-label3: 
-	call printf
-
-	lea rdi, [new_line]
+; prompts user for input
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
 	call printf
 
+	; stores the count
 
-	pop rax
-	pop rax
-	jmp label0
-	label1:
-	push rax
-	push rax
-	;Printing ID
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 40]
+	mov r13, [rbp - 32]
+	sub r12, r13
+	inc r12
+	xor r13, r13
 
-	lea rdi, [strFormat_in]
-	mov sil, [rbp - 8]
-
-	cmp sil, 0
-	jz label4
-	lea rsi, [true_label]
-	jmp label5
-
-label4: 
-	lea rsi, [false_label]
-
-label5: 
-	call printf
-
-	lea rdi, [new_line]
-	call printf
-
-
-	pop rax
-	pop rax
 	label0:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 24]
+	lea rsi, [r14 + r13 * 8]
+	call scanf
+
+	inc r13
+	cmp r13, r12
+	jne label0
+
+
+	;Printing array
+
+; printing array
+lea rdi, [arr_outMsg]
+call printf
+; stores the count
+
+xor r12, r12
+xor r13, r13
+mov r12, [rbp - 40]
+mov r13, [rbp - 32]
+sub r12, r13
+inc r12
+xor r13, r13
+
+label1:
+	lea rdi, [intFormat_out]
+	mov r14, [rbp - 24]
+	mov rsi, [r14 + r13 * 8]
+	call printf
+
+	inc r13
+	cmp r13, r12
+	jne label1
+	lea rdi, [new_line]
+	call printf
+
+
 mov rsp, rbp
 pop rbp
 mov rax, 0

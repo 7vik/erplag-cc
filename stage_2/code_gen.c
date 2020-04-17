@@ -448,71 +448,93 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         else
             fprintf(fp, "or rcx, rdx\n");
     }
+
+    if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL)
+    {
+        evaluate_expr(ex->child, id_st, fp);
+        
+        fprintf(fp, "\tpush rcx\n");
+        fprintf(fp, "\tpush rcx\n");
+        evaluate_expr(ex->child->sibling, id_st, fp);
+        fprintf(fp, "\tpop rdx\n");
+        fprintf(fp, "\tpop rdx\n");
+
+        if(ex->node_marker == PLUS)
+        {
+            fprintf(fp, "\tadd rdx, rcx\n");
+            fprintf(fp, "\tmov rcx, rdx\n");
+            return;
+        }
+        else if(ex->node_marker == MINUS)
+        {
+            fprintf(fp, "\tsub rdx, rcx\n");
+            fprintf(fp, "\tmov rcx, rdx\n");
+            return;
+        }
+        else if(ex->node_marker == MUL)
+        {
+            fprintf(fp, "\timul rdx, rcx\n");
+            fprintf(fp, "\tmov rcx, rdx\n");
+            return;
+        }
+
+        else
+        {
+            // store dividend in rax, divisor in rbx --> quotient in rax, remainedr in rdx
+            //@bharat debug this
+            fprintf(fp, "\tmov rax, rdx\n");
+            fprintf(fp, "\tmov rbx, rcx\n"); 
+            fprintf(fp, "\txor rdx, rdx\n");    
+            fprintf(fp, "\tdiv rbx\n"); 
+            fprintf(fp, "\tmov rcx, rax\n");
+        }
+    
+    }
+
+    if (ex->node_marker == MINUS && ex->child->sibling == NULL)
+    {
+        evaluate_expr(ex->child, id_st, fp);
+        fprintf(fp, "\timul rcx, -1\n");
+        return;
+    }
+
+    if (ex->node_marker == var)
+    {
+        if (ex->child->sibling == NULL)     // not an array element
+            evaluate_expr(ex->child, id_st, fp);
+        else                                // array element
+        {
+            ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
+            if (i == NULL)
+            {
+                PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
+                if (p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
+                
+                return;
+                //return value 
+            }
+            else
+            {
+                int base_offset = i->offset;
+                int start_offset = i->datatype->arrtype->begin_offset;
+                int index = atoi(ex->child->sibling->tree_node->lexeme);
+                // bound check
+                fprintf(fp, "\tmov rax, [rbp - %d]\n", base_offset * 8);
+                fprintf(fp, "\tmov rdx, [rbp - %d]\n", start_offset * 8);
+                fprintf(fp, "\tmov rbx, %d\n", index);
+                fprintf(fp, "\tsub rbx, rdx\n");
+                fprintf(fp, "\tmov rcx, [rax + rbx * 8]\n");
+                return;
+            }
+        }
+    }
     /*
     {
-
-        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
-        {
-            if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Exppected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
-            error_line = ex->tree_node->line;
-            hasSemanticError = true;
-        }
-        else
-            return BOOLEAN;
     }
     */
     /*
-    if (ex->node_marker == RNUM)
-        return REAL;
-    if (ex->node_marker == NUM)
-        return INTEGER;
-    if (ex->node_marker == TRUE || ex->node_marker == FALSE)
-        return BOOLEAN;
-    if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE||0)
-    {
-        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
-        {
-            if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Exppected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
-            error_line = ex->tree_node->line;
-            hasSemanticError = true;
-        }
-        else
-            return BOOLEAN;
-    }
-    if (ex->node_marker == AND ||ex->node_marker == OR||0)
-    {
-        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
-        {
-            if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Expnected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
-            error_line = ex->tree_node->line;
-            hasSemanticError = true;
-        }
-        else
-            return BOOLEAN;
-    }
-    if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL     ||0 )
-    {
-        // printf("FRT1\n");
-        int t1 = get_type_expr(ex->child, id_st);
-        // printf("FRT2\n");
-        int t2 = get_type_expr(ex->child->sibling, id_st); 
-        // printf("FRT3\n");
-        if (t1 != t2)
-        {
-            // printf("ENTERIF\n");
-            if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
-            error_line = ex->tree_node->line;
-            hasSemanticError = true;
-        }
-        else
-            return get_type_expr(ex->child, id_st);
-    }
-    if (ex->node_marker == MINUS && ex->child->sibling == NULL)
-        return  get_type_expr(ex->child, id_st);
+    
     if (ex->node_marker == var)
     {
         if (ex->child->sibling == NULL)     // not an array element
@@ -521,55 +543,8 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         {
             // printf("WHYTHO2?\n");
             ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
-            if (i == NULL)
-            {
-                PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
-                if (p == NULL)
-                    p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
-                if (p == NULL)
-                {
-                    if (ex->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                }
-                else if (p->datatype->simple != ARRAY)
-                {
-                    if (ex->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                }
-                else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
-                {
-                    if (ex->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                }
-                else
-                {
-                    return p->datatype->arrtype->base_type;
-                }
-            }
-            else if (i->datatype->simple != ARRAY)
-            {
-                if (ex->tree_node->line > error_line)
-                    printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
-                error_line = ex->tree_node->line;
-                hasSemanticError = true;
-            }
-            else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
-            {
-                if (ex->tree_node->line > error_line)
-                    printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
-                error_line = ex->tree_node->line;
-                hasSemanticError = true;
-            }
-            else
-            {
-                return i->datatype->arrtype->base_type;
-            }
+            
+        
         }
     }
     if (ex->node_marker == ARRAY)
@@ -617,7 +592,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "\tsub rsp, 16\n");
                 stack_count++;
 
-                printf("%d\n", stack_count);
                 //storing base address of this array: part of array_buffer
                 fprintf(fp, "\tmov r14, [array_available_addr]\n");
                 fprintf(fp, "\tlea rax, [array_buffer + r14 * 8]\n");
@@ -652,7 +626,62 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
                 else
                 {
-                    // do something for dynamic array
+
+                    astNode* node = n->child;
+                    while(node->node_marker != ARRAY)
+                    {
+                        node = node->sibling;
+                    }
+
+                    // now go to 
+                    node = node->child->child;
+                    astNode* rchild = node->sibling;
+                    int start_offset = id_entry->datatype->arrtype->begin_offset;
+                    int end_offset = id_entry->datatype->arrtype->end_offset;
+
+                    if(node->node_marker == ID)
+                    {
+                        ID_TABLE_ENTRY* index = st_lookup(node->tree_node->lexeme, id_st);
+                        int offset = index->offset;
+
+                        // load start index value from offset
+                        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+                        fprintf(fp, "\tmov [rbp - %d], rax\n", start_offset * 8);
+                    }
+
+                    else
+                    {
+                        int start = atoi(node->tree_node->lexeme);
+                        printf("%d\n", start);
+                        fprintf(fp, "mov r13, %d\n", start);
+                        fprintf(fp, "mov [rbp - %d], r13\n", start_offset * 8);
+                    }
+                    if(rchild->node_marker == ID)
+                    {
+                        ID_TABLE_ENTRY* index = st_lookup(rchild->tree_node->lexeme, id_st);
+                        int offset = index->offset;
+
+                        // load end index value from offset
+                        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+                        fprintf(fp, "\tmov [rbp - %d], rax\n", end_offset * 8);
+                    }
+
+                    else
+                    {
+                        int end = atoi(rchild->tree_node->lexeme);
+                        fprintf(fp, "mov r13, %d\n", end);
+                        fprintf(fp, "mov [rbp - %d], r13\n", end_offset * 8);
+                    }
+
+                    fprintf(fp, "; incrementing array_available address by array size\n\n"); 
+                    fprintf(fp, "\tmov r14, [array_available_addr]\n");
+                    fprintf(fp, "\tmov rax, [rbp - %d]\n", start_offset * 8);
+                    fprintf(fp, "\tmov rcx, [rbp - %d]\n", end_offset * 8);
+                    fprintf(fp, "\tsub rcx, rax\n");
+                    fprintf(fp, "\tinc rcx\n");
+                    fprintf(fp, "\tadd r14, rcx\n");
+                    fprintf(fp, "\tmov [array_available_addr], r14\n\n");
+                    
                 }
 
             }
@@ -670,6 +699,47 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
        evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
        
        ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
+
+        /*
+       if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
+        {
+            // first do a non-recursive lookup
+            ID_TABLE_ENTRY *i = st_lookup_nr(lhs->child->tree_node->lexeme, id_st);
+            // if (i == NULL) printf("GOTYA\n");
+            PARAMS *p;
+            if (i == NULL)      // then check for parameters
+            {
+                p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
+                if (p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
+            }
+            if (i == NULL && p == NULL) // finally do a recursive lookup
+                i = st_lookup(lhs->child->tree_node->lexeme, id_st);
+
+            if (i == NULL && p == NULL)
+            {
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+            }
+            // and type must match before assignment
+            if (i != NULL && (i->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
+            {
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[i->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+            }
+            if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
+            {
+                if (error_line < lhs->child->tree_node->line)
+                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[p->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+            }
+        }
+        */
        int offset = id_entry->offset;
 
        fprintf(fp, "\tmov [rbp - %d], rcx\n", offset * 8);
