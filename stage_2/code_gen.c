@@ -789,7 +789,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         char* for_label = generate_label();
         fprintf(fp, "; for loop\n\n");
-        fprintf(fp, "\tmov [rbp - %d], %d\n", offset * 8, start);
+        fprintf(fp, "\tmov qword [rbp - %d], %d\n", offset * 8, start);
         fprintf(fp, "\tmov rcx, %d\n", start);
         fprintf(fp, "\tmov rax, %d\n", end);
         fprintf(fp, "%s:\n", for_label);
@@ -799,7 +799,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         id_st->visited++;
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
-        fprintf(fp, "\tinc [rbp - %d]\n", offset * 8);
+        fprintf(fp, "\tinc qword [rbp - %d]\n", offset * 8);
         fprintf(fp, "\tinc rcx\n");
         fprintf(fp, "\tcmp rcx, rax\n");
         fprintf(fp, "\tjle %s\n", for_label);

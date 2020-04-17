@@ -25,6 +25,7 @@ start
               print(a);
               z:= z+k+a*2;
               print(z);
+			  print(k);
         end
 	z:= x + y*b +(a-b)*y+ a*2 - b*x;
 	v:= z > 10 OR a<=b AND x<y AND u;	**follows left to right associativity**
