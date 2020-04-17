@@ -582,7 +582,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         if(id_entry->datatype->arrtype->is_dynamic == true)
             return;
         
-        else  //bound check
+        else  //bound check: it would obviously enter 'else' in case the array is static
         {
             if (index_node->node_marker == ID)
                 return;
@@ -590,13 +590,20 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
             {
                 if(index_node->node_marker != NUM)
                 {
-                    printf("Semantic Error: Array index should be a number at line %d - found %s\n", index_node->tree_node->line, variables_array[index_node->node_marker]);
+                    printf("Semantic Error at line %d: Array index should be a number - found %s\n", index_node->tree_node->line, variables_array[index_node->node_marker]);
                     hasSemanticError = true;
                     return;
                 }
 
                 int low_index = id_entry->datatype->arrtype->begin;
                 int high_index = id_entry->datatype->arrtype->end;
+
+                if(low_index > high_index)
+                {
+                    printf("Semantic Error at line %d: The lower index of array %s, %d, is greater than the upper index, %d\n", var_node->tree_node->line, var_node->tree_node->lexeme, low_index, high_index);
+                    hasSemanticError = true;
+                }
+
                 int index = atoi(index_node->tree_node->lexeme);
                 if (index < low_index || index > high_index)
                 {
