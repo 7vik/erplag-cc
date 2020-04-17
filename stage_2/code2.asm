@@ -72,46 +72,45 @@ mov rbp, rsp
 ; incrementing array_available address by array size
 
 	mov r14, [array_available_addr]
-	mov eax, [rbp - 32]
-	mov ecx, [rbp - 40]
-	sub ecx, eax
-	inc ecx
-	add r14d, ecx
-	mov [array_available_addr], r14d
+	mov rax, [rbp - 32]
+	mov rcx, [rbp - 40]
+	sub rcx, rax
+	inc rcx
+	add r14, rcx
+	mov [array_available_addr], r14
 
 	;Taking array
 
 ; prompts user for input
-	mov ecx, [rbp - 32]
-	mov r8d, [rbp - 40]
-	mov esi, r8d
-	sub esi, ecx
-	inc esi
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
 	mov rdi, arr_inMsg
 mov rdx, type_int
-	mov ecx, [rbp - 32]
-	mov r8d, [rbp - 40]
+	mov rcx, [rbp - 32]
+	mov r8, [rbp - 40]
 	call printf
 
 	; stores the count
 
 	xor r12, r12
 	xor r13, r13
-	mov r12d, [rbp - 40]
-	mov r13d, [rbp - 32]
-	sub r12d, r13d
-	inc r12d
+	mov r12, [rbp - 40]
+	mov r13, [rbp - 32]
+	sub r12, r13
+	inc r12
 	xor r13, r13
 
 	label0:
 lea rdi, [intFormat_in]
-	xor r14, r14
-	mov r14d, [rbp - 24]
+	mov r14, [rbp - 24]
 	lea rsi, [r14 + r13 * 8]
 	call scanf
 
-	inc r13d
-	cmp r13d, r12d
+	inc r13
+	cmp r13, r12
 	jne label0
 
 
@@ -124,21 +123,20 @@ call printf
 
 xor r12, r12
 xor r13, r13
-mov r12d, [rbp - 40]
-mov r13d, [rbp - 32]
-sub r12d, r13d
-inc r12d
+mov r12, [rbp - 40]
+mov r13, [rbp - 32]
+sub r12, r13
+inc r12
 xor r13, r13
 
 label1:
 	lea rdi, [intFormat_out]
-	xor r14, r14
-	mov r14d, [rbp - 24]
+	mov r14, [rbp - 24]
 	mov rsi, [r14 + r13 * 8]
 	call printf
 
-	inc r13d
-	cmp r13d, r12d
+	inc r13
+	cmp r13, r12
 	jne label1
 	lea rdi, [new_line]
 	call printf

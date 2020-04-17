@@ -7,7 +7,10 @@ VARS vars;
 
 int array_available_addr = 0;
 int label_count = 0;
-int stack_count = 0;
+
+// change this after satvik implements
+//refer to temp_funccall.asm by @bharat
+//int stack_count = 0;
 
 
 char* generate_label(void)
@@ -175,7 +178,8 @@ void print_id(FILE* fp, int type, int offset)
     if(type == INTEGER)
     {
         fprintf(fp, "\tmov rdi, intFormat_out\n");
-        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\txor rsi, rsi\n");
+        fprintf(fp, "\tmov esi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall printf\n\n");
         fprintf(fp, "\tlea rdi, [new_line]\n");
         fprintf(fp, "\tcall printf\n\n");
@@ -184,7 +188,8 @@ void print_id(FILE* fp, int type, int offset)
     else if(type == REAL)
     {
         fprintf(fp, "\tmov rdi, realFormat_out\n");
-        fprintf(fp, "\tmov rsi, [rbp - %d]\n", temp);
+        fprintf(fp, "\txor rsi, rsi\n");
+        fprintf(fp, "\tmov esi, [rbp - %d]\n", temp);
         fprintf(fp, "\tcall printf\n\n");
         fprintf(fp, "\tlea rdi, [new_line]\n");
         fprintf(fp, "\tcall printf\n\n");
@@ -217,11 +222,11 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
     printf("%d %d %d\n", base_offset, lower_offset, upper_offset);
     // fprintf(fp, "push rbp\n");
     fprintf(fp, "; prompts user for input\n");
-    fprintf(fp, "\tmov rcx, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "\tmov r8, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "\tmov rsi, r8\n");
-    fprintf(fp, "\tsub rsi, rcx\n");
-    fprintf(fp, "\tinc rsi\n");
+    fprintf(fp, "\tmov ecx, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tmov r8d, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tmov esi, r8d\n");
+    fprintf(fp, "\tsub esi, ecx\n");
+    fprintf(fp, "\tinc esi\n");
     fprintf(fp, "\tmov rdi, arr_inMsg\n");
 
     if (type == INTEGER)
@@ -235,19 +240,20 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
         printf("Error in ask for array function\n");
         exit(1);
     }
-    
-    fprintf(fp, "\tmov rcx, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "\tmov r8, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\txor rcx, rcx\n");
+    fprintf(fp, "\txor r8, r8\n");
+    fprintf(fp, "\tmov ecx, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tmov r8d, [rbp - %d]\n", upper_offset);
     fprintf(fp, "\tcall printf\n\n");
 
     char* array_input_label  = generate_label();
     fprintf(fp, "\t; stores the count\n\n");
     fprintf(fp, "\txor r12, r12\n");
     fprintf(fp, "\txor r13, r13\n");
-    fprintf(fp, "\tmov r12, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "\tmov r13, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "\tsub r12, r13\n");
-    fprintf(fp, "\tinc r12\n");
+    fprintf(fp, "\tmov r12d, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "\tmov r13d, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "\tsub r12d, r13d\n");
+    fprintf(fp, "\tinc r12d\n");
     fprintf(fp, "\txor r13, r13\n\n");  
     fprintf(fp, "\t%s:\n", array_input_label);
 
@@ -272,12 +278,13 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
         printf("ERROR in ask for array\n");
         exit(1);
     }
-    fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+    fprintf(fp, "\txor r14, r14\n");
+    fprintf(fp, "\tmov r14d, [rbp - %d]\n", base_offset);
     fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
     fprintf(fp, "\tcall scanf\n\n");
 
-    fprintf(fp, "\tinc r13\n");
-    fprintf(fp, "\tcmp r13, r12\n");
+    fprintf(fp, "\tinc r13d\n");
+    fprintf(fp, "\tcmp r13d, r12d\n");
     fprintf(fp, "\tjne %s\n", array_input_label);
     // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
@@ -299,24 +306,26 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
     fprintf(fp, "; stores the count\n\n");
     fprintf(fp, "xor r12, r12\n");
     fprintf(fp, "xor r13, r13\n");
-    fprintf(fp, "mov r12, [rbp - %d]\n", upper_offset);
-    fprintf(fp, "mov r13, [rbp - %d]\n", lower_offset);
-    fprintf(fp, "sub r12, r13\n");
-    fprintf(fp, "inc r12\n");
+    fprintf(fp, "mov r12d, [rbp - %d]\n", upper_offset);
+    fprintf(fp, "mov r13d, [rbp - %d]\n", lower_offset);
+    fprintf(fp, "sub r12d, r13d\n");
+    fprintf(fp, "inc r12d\n");
     fprintf(fp, "xor r13, r13\n\n");  
     fprintf(fp, "%s:\n", array_output_label);
 
     if(type == INTEGER)
     {
         fprintf(fp, "\tlea rdi, [intFormat_out]\n");
-        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\txor r14, r14\n");
+        fprintf(fp, "\tmov r14d, [rbp - %d]\n", base_offset);
         fprintf(fp, "\tmov rsi, [r14 + r13 * 8]\n");
     }
 
     else if(type == REAL)
     {
         fprintf(fp, "lea rdi, [realFormat_out]\n");
-        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\txor r14, r14\n");
+        fprintf(fp, "\tmov r14d, [rbp - %d]\n", base_offset);
         fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
         
     }
@@ -326,7 +335,8 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
         char* f_label = generate_label();
         char* p_label = generate_label();
         fprintf(fp, "\tlea rdi, [strFormat_in]\n");
-        fprintf(fp, "\tmov r14, [rbp - %d]\n", base_offset);
+        fprintf(fp, "\txor r14, r14\n");
+        fprintf(fp, "\tmov r14d, [rbp - %d]\n", base_offset);
         fprintf(fp, "\tmov rsi, [r14 + r13 * 8]\n");
 
         fprintf(fp, "\tcmp sil, 0\n");
@@ -347,8 +357,8 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
     }
     
     fprintf(fp, "\tcall printf\n\n");
-    fprintf(fp, "\tinc r13\n");
-    fprintf(fp, "\tcmp r13, r12\n");
+    fprintf(fp, "\tinc r13d\n");
+    fprintf(fp, "\tcmp r13d, r12d\n");
     fprintf(fp, "\tjne %s\n", array_output_label);
     fprintf(fp, "\tlea rdi, [new_line]\n");
     fprintf(fp, "\tcall printf\n");
@@ -379,7 +389,8 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         else        // is in ID_ST
         {
             int offset = i->offset;
-            fprintf(fp, "\tmov rcx, [rbp - %d]\n", offset * 8);
+            fprintf(fp, "\txor rcx, rcx\n");
+            fprintf(fp, "\tmov ecx, [rbp - %d]\n", offset * 8);
             return;
         }
     }
@@ -526,11 +537,14 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
                 int start_offset = i->datatype->arrtype->begin_offset;
                 int index = atoi(ex->child->sibling->tree_node->lexeme);
                 // bound check
-                fprintf(fp, "\tmov rax, [rbp - %d]\n", base_offset * 8);
-                fprintf(fp, "\tmov rdx, [rbp - %d]\n", start_offset * 8);
-                fprintf(fp, "\tmov rbx, %d\n", index);
-                fprintf(fp, "\tsub rbx, rdx\n");
-                fprintf(fp, "\tmov rcx, [rax + rbx * 8]\n");
+                fprintf(fp, "\txor rax, rax\n");
+                fprintf(fp, "\txor rdx, rdx\n");
+                fprintf(fp, "\tmov eax, [rbp - %d]\n", base_offset * 8);
+                fprintf(fp, "\tmov edx, [rbp - %d]\n", start_offset * 8);
+                fprintf(fp, "\tmov ebx, %d\n", index);
+                fprintf(fp, "\tsub ebx, edx\n");
+                fprintf(fp, "\txor rcx, rcx\n");
+                fprintf(fp, "\tmov ecx, [rax + rbx * 8]\n");
                 return;
             }
         }
@@ -581,9 +595,9 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         while(temp->node_marker != EPS)
         {
-            if (stack_count % 2 == 0)
-                fprintf(fp, "\tsub rsp, 16\n");
-            stack_count++;
+            // if (stack_count % 2 == 0)
+            //     fprintf(fp, "\tsub rsp, 16\n");
+            // stack_count++;
 
             // if array 
             ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_st);
@@ -591,15 +605,16 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             if(id_entry->datatype->simple == ARRAY)
             {
                 int offset = id_entry->offset;
-                if (stack_count % 2 == 0)
-                    fprintf(fp, "\tsub rsp, 16\n");
-                stack_count++;
-                if (stack_count % 2 == 0)
-                    fprintf(fp, "\tsub rsp, 16\n");
-                stack_count++;
+                // if (stack_count % 2 == 0)
+                //     fprintf(fp, "\tsub rsp, 16\n");
+                // stack_count++;
+                // if (stack_count % 2 == 0)
+                //     fprintf(fp, "\tsub rsp, 16\n");
+                // stack_count++;
 
                 //storing base address of this array: part of array_buffer
-                fprintf(fp, "\tmov r14, [array_available_addr]\n");
+                fprintf(fp, "\txor r14, r14\n");
+                fprintf(fp, "\tmov r14d, [array_available_addr]\n");
                 fprintf(fp, "\tlea rax, [array_buffer + r14 * 8]\n");
                 fprintf(fp, "\tmov [rbp - %d], rax\n\n", offset * 8);
 
@@ -614,7 +629,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     // calculate array size
 
                     int array_size = end - start + 1;
-                    fprintf(fp, "\tmov r14, [array_available_addr]\n");
+                    fprintf(fp, "mov r14d, r14d\n");
+                    fprintf(fp, "\tmov r14d, [array_available_addr]\n");
                     fprintf(fp, "\tadd r14, %d\n", array_size);
                     fprintf(fp, "\tmov [array_available_addr], r14\n\n");
                     // load the start and end at their offset
@@ -651,7 +667,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                         int offset = index->offset;
 
                         // load start index value from offset
-                        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+                        fprintf(fp, "\txor rax, rax\n");
+                        fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);
                         fprintf(fp, "\tmov [rbp - %d], rax\n", start_offset * 8);
                     }
 
@@ -668,7 +685,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                         int offset = index->offset;
 
                         // load end index value from offset
-                        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+                        fprintf(fp, "\txor rax, rax\n");
+                        fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);
                         fprintf(fp, "\tmov [rbp - %d], rax\n", end_offset * 8);
                     }
 
@@ -680,13 +698,16 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     }
 
                     fprintf(fp, "; incrementing array_available address by array size\n\n"); 
-                    fprintf(fp, "\tmov r14, [array_available_addr]\n");
-                    fprintf(fp, "\tmov rax, [rbp - %d]\n", start_offset * 8);
-                    fprintf(fp, "\tmov rcx, [rbp - %d]\n", end_offset * 8);
-                    fprintf(fp, "\tsub rcx, rax\n");
-                    fprintf(fp, "\tinc rcx\n");
+                    fprintf(fp, "\txor r14, r14\n");
+                    fprintf(fp, "\tmov r14d, [array_available_addr]\n");
+                    fprintf(fp, "\txor rax, rax\n");
+                    fprintf(fp, "\txor rcx, rcx\n");
+                    fprintf(fp, "\tmov eax, [rbp - %d]\n", start_offset * 8);
+                    fprintf(fp, "\tmov ecx, [rbp - %d]\n", end_offset * 8);
+                    fprintf(fp, "\tsub ecx, eax\n");
+                    fprintf(fp, "\tinc ecx\n");
                     //fprintf(fp, "\timul rcx, 8\n");
-                    fprintf(fp, "\tadd r14, rcx\n");
+                    fprintf(fp, "\tadd r14d, ecx\n");
                     fprintf(fp, "\tmov [array_available_addr], r14\n\n");
                     
                 }
@@ -747,9 +768,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             }
         }
         */
-       int offset = id_entry->offset;
-
-       fprintf(fp, "\tmov [rbp - %d], rcx\n", offset * 8);
+        int offset = id_entry->offset;
+        fprintf(fp, "\tmov [rbp - %d], rcx\n", offset * 8);
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {
@@ -769,7 +789,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         char* for_label = generate_label();
         fprintf(fp, "; for loop\n\n");
-        fprintf(fp, "\tmov qword [rbp - %d], %d\n", offset * 8, start);
+        fprintf(fp, "\tmov [rbp - %d], %d\n", offset * 8, start);
         fprintf(fp, "\tmov rcx, %d\n", start);
         fprintf(fp, "\tmov rax, %d\n", end);
         fprintf(fp, "%s:\n", for_label);
@@ -779,7 +799,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         id_st->visited++;
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
-        fprintf(fp, "\tinc qword [rbp - %d]\n", offset * 8);
+        fprintf(fp, "\tinc [rbp - %d]\n", offset * 8);
         fprintf(fp, "\tinc rcx\n");
         fprintf(fp, "\tcmp rcx, rax\n");
         fprintf(fp, "\tjle %s\n", for_label);
@@ -838,8 +858,9 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
         
         int offset = id_entry->offset;
-
-        fprintf(fp, "\tmov rax, [rbp - %d]\n", offset * 8);
+        
+        fprintf(fp, "\txor rax, rax\n");
+        fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);
         
         if(id_entry->datatype->simple != BOOLEAN)
         {
@@ -927,8 +948,8 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         }
     }
 
-    if (is(n, "moduleDeclarations"))
-        stack_count = 0;
+    if (is(n, "moduleDeclarations"));
+        //stack_count = 0;
 
     if (is(n, "otherModules") && n->sibling != NULL)
     {
@@ -951,17 +972,17 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
             fprintf(fp, "\tpush rbp\n");
             fprintf(fp, "\tpush rbp\n");
             fprintf(fp, "\tmov rbp, rsp\n");
-            stack_count = 0;
+            //stack_count = 0;
             generate_the_universe(module_node->child->sibling->sibling->sibling, func_entry->local_id_table ,fp); 
             fprintf(fp, "\tmov rsp, rbp\n");
             fprintf(fp, "\tpop rbp\n");
             fprintf(fp, "\tpop rbp\n");
-            fprintf(fp, "t\pop r9\n");
-            fprintf(fp, "t\pop r8\n");
-            fprintf(fp, "t\pop rcx\n");
-            fprintf(fp, "t\pop rdx\n");
-            fprintf(fp, "t\pop rsi\n");
-            fprintf(fp, "t\pop rdi\n");
+            fprintf(fp, "\tpop r9\n");
+            fprintf(fp, "\tpop r8\n");
+            fprintf(fp, "\tpop rcx\n");
+            fprintf(fp, "\tpop rdx\n");
+            fprintf(fp, "\tpop rsi\n");
+            fprintf(fp, "\tpop rdi\n");
             fprintf(fp, "\tmov rsp, rbp\n");
             fprintf(fp, "\tpop rbp\n");
             fprintf(fp, "\tret\n");    
@@ -974,7 +995,8 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
-        stack_count = 0;
+        fprintf(fp, "\tsub rsp, %d\n", (f->activation_record_size) * 16);
+        //stack_count = 0;
         generate_the_universe(n->child, f->local_id_table, fp);
 
     }
