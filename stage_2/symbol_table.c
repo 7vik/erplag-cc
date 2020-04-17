@@ -53,6 +53,11 @@ void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st)
     }
     st->total_ids += 1;                                 // finally, increment total kids,
     sym->offset = current_offset++;                     // and the offset
+    if (sym->datatype->simple == ARRAY)                 // unless if it's an array,
+    {
+        sym->datatype->arrtype->begin_offset = current_offset++;            // in which case,
+        sym->datatype->arrtype->end_offset   = current_offset++;            // fill the offsets
+    }
     return;
 }
 
@@ -167,14 +172,8 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     new->lexeme = node->tree_node->lexeme;
     new->datatype = type;
     new->width = get_width(type);
-    new->offset = current_offset++;     
     new->next = NULL;
     new->is_declared = false;
-    if (new->datatype->simple == ARRAY)
-    {
-        // new->datatype->arrtype->end_offset = current_offset++;
-        // new->datatype->arrtype->begin_offset = current_offset++;
-    }
     return new;
 }
 
@@ -389,8 +388,6 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     t->arrtype->begin = atoi(range_node->child->tree_node->lexeme);
                     t->arrtype->end = atoi(range_node->child->sibling->tree_node->lexeme);
                 }
-                t->arrtype->begin_offset = current_offset++;            // in any case, 
-                t->arrtype->end_offset   = current_offset++;            // fill the offsets
             }
             ID_TABLE_ENTRY *id = create_symbol(temp, t);
             st_insert_id_entry(id, id_st);
