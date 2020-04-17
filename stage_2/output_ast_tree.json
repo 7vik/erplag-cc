@@ -24,19 +24,11 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:x" },
+"text": { "name": "ID:a" },
 "children":[]
 }
 ,{
-"text": { "name": "ID:y" },
-"children":[]
-}
-,{
-"text": { "name": "ID:z" },
-"children":[]
-}
-,{
-"text": { "name": "ID:t" },
+"text": { "name": "ID:b" },
 "children":[]
 }
 ,{
@@ -44,7 +36,7 @@
 "children":[]
 }
 ,{
-"text": { "name": "BOOLEAN:boolean" },
+"text": { "name": "INTEGER:integer" },
 "children":[]
 }
 ]
@@ -58,23 +50,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:x" },
-"children":[]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "GET_VALUE" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:y" },
+"text": { "name": "ID:a" },
 "children":[]
 }
 ]
@@ -90,7 +66,45 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:z" },
+"text": { "name": "ID:b" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:w" },
+"children":[]
+}
+,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+,{
+"text": { "name": "ARRAY" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "rangeArr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:1" },
+"children":[]
+}
+,{
+"text": { "name": "ID:b" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "INTEGER:integer" },
 "children":[]
 }
 ]
@@ -106,7 +120,7 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:t" },
+"text": { "name": "ID:w" },
 "children":[]
 }
 ]
@@ -114,34 +128,6 @@
 ]
 }
 ,{
-"text": { "name": "conditionalStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-,{
-"text": { "name": "START:start" },
-"children":[]
-}
-,{
-"text": { "name": "caseStmts" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "caseStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "TRUE:true" },
-"children":[]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
 "text": { "name": "ioStmt" },
 "collapsed": true,
 "children": [
@@ -154,66 +140,12 @@
 "collapsed": true,
 "children": [
 {
-"text": { "name": "ID:y" },
+"text": { "name": "ID:w" },
 "children":[]
 }
 ]
 }
 ]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "caseStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "FALSE:false" },
-"children":[]
-}
-,{
-"text": { "name": "statements" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ioStmt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "printOpt" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "var" },
-"collapsed": true,
-"children": [
-{
-"text": { "name": "ID:x" },
-"children":[]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-]
-}
-,{
-"text": { "name": "EPS:EPS" },
-"children":[]
-}
-,{
-"text": { "name": "END:end" },
-"children":[]
 }
 ]
 }
