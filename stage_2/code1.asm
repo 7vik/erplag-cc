@@ -67,20 +67,13 @@ mov rbp, rsp
 	lea rax, [array_buffer + r14 * 8]
 	mov [rbp - 24], rax
 
+	lab1:
 	mov rax, [rbp - 16]
 	mov [rbp - 32], rax
 	mov rax, [rbp - 8]
 	mov [rbp - 40], rax
 ; incrementing array_available address by array size
 
-	mov r14, [array_available_addr]
-	mov rax, [rbp - 32]
-	mov rcx, [rbp - 40]
-	sub rcx, rax
-	inc rcx
-	imul rcx, 8
-	add r14, rcx
-	mov [array_available_addr], r14
 
 	;Taking array
 

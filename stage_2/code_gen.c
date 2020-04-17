@@ -7,7 +7,6 @@ VARS vars;
 
 int array_available_addr = 0;
 int label_count = 0;
-
 int stack_count = 0;
 
 
@@ -16,6 +15,13 @@ char* generate_label(void)
     char* label = (char*) malloc((sizeof(100*sizeof(char))));
     sprintf(label, "label%d", label_count);
     label_count++;
+    return label;
+}
+
+char* generate_func_label(char* func_name)
+{
+    char* label = (char*) malloc((sizeof(100*sizeof(char))));
+    sprintf(label, "%s:", func_name);
     return label;
 }
 void print_return(FILE* fp)
@@ -925,7 +931,42 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         stack_count = 0;
 
     if (is(n, "otherModules") && n->sibling != NULL)
-        stack_count = 0;
+    {
+        astNode* module_node = n->child;
+
+        while(module_node->node_marker != EPS)
+        {
+            FUNC_TABLE_ENTRY* func_entry = global_st_lookup(module_node->child->tree_node->lexeme, st);
+            char* func_label = generate_func_label(module_node->child->tree_node->lexeme);
+            fprintf(fp, "%s\n\n", func_label);
+            fprintf(fp, "\tpush rbp\n");
+            fprintf(fp, "\tmov rbp, rsp\n");
+            fprintf(fp, "\tpush rdi\n");
+            fprintf(fp, "\tpush rsi\n");
+            fprintf(fp, "\tpush rdx\n");
+            fprintf(fp, "\tpush rcx\n");
+            fprintf(fp, "\tpush r8\n");
+            fprintf(fp, "\tpush r9\n");
+            fprintf(fp, "\tsub rsp, 48\n");
+            fprintf(fp, "\tpush rbp\n");
+            fprintf(fp, "\tpush rbp\n");
+            fprintf(fp, "\tmov rbp, rsp\n");
+            stack_count = 0;
+            generate_the_universe(module_node->child->sibling->sibling->sibling, func_entry->local_id_table ,fp); 
+            fprintf(fp, "\tmov rsp, rbp\n");
+            fprintf(fp, "\tpop rbp\n");
+            fprintf(fp, "\tpop rbp\n");
+            fprintf(fp, "t\pop r9\n");
+            fprintf(fp, "t\pop r8\n");
+            fprintf(fp, "t\pop rcx\n");
+            fprintf(fp, "t\pop rdx\n");
+            fprintf(fp, "t\pop rsi\n");
+            fprintf(fp, "t\pop rdi\n");
+            fprintf(fp, "\tmov rsp, rbp\n");
+            fprintf(fp, "\tpop rbp\n");
+            fprintf(fp, "\tret\n");    
+        }
+    }
 
     if (is(n, "driverModule"))
     {
@@ -935,10 +976,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         fprintf(fp, "mov rbp, rsp\n");
         stack_count = 0;
         generate_the_universe(n->child, f->local_id_table, fp);
-    }
-    if (is(n, "otherModules") && n->sibling == NULL)
-    {
-        ;
+
     }
     if (is(n, "EPS"))
         return;         // bliss

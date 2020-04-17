@@ -4,7 +4,7 @@ start
 	declare a:integer;
 	get_value(a);
 	get_value(b);
-	declare w:array[1..2] of integer;
+	declare w:array[a..b] of integer;
 	get_value(w);
 	print(w);
 	
