@@ -711,8 +711,11 @@ void traverse_the_multiverse(astNode *n, GST *st)
             PARAMS *p2 = create_param(m->child->sibling->sibling->child);
             // printf("aaya2\n");
             ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-            st_insert_func_entry(create_function(m->child, p1, p2, id_st), st);
+            FUNC_TABLE_ENTRY *f = create_function(m->child, p1, p2, id_st);
+            st_insert_func_entry(f, st);
             traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
+            f->activation_record_size = current_offset;
+            // printf("ALA\t%d", current_offset);
         }
     }
 
@@ -723,6 +726,8 @@ void traverse_the_multiverse(astNode *n, GST *st)
         st_insert_func_entry(fnew, st);
         // printf("mil\n");
         traverse_the_universe(n->child, id_st);
+        fnew->activation_record_size = current_offset;
+        // printf("ALA\t%d", current_offset);
         // printf("gaya\n");
     }
     if (is(n, "otherModules") && n->sibling == NULL)
@@ -737,8 +742,11 @@ void traverse_the_multiverse(astNode *n, GST *st)
             else
                 p2 = create_param(m->child->sibling->sibling->child);
             ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-            st_insert_func_entry(create_function(m->child, p1, p2, id_st), st);
+            FUNC_TABLE_ENTRY *f = create_function(m->child, p1, p2, id_st);
+            st_insert_func_entry(f, st);
             traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
+            f->activation_record_size = current_offset;
+            // printf("ALA\t%d", current_offset);
         }
     }
     if (is(n, "EPS"))
