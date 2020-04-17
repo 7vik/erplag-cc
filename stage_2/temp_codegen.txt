@@ -20,10 +20,13 @@
 
 <<<driver program>>>
 start
-	declare A, B:array[12..14] of integer;
+	declare A:array[12..14] of integer;
+	declare B, C:array[12..14] of integer;
 	get_value(A);
 	print(A);
 	get_value(B);
+	get_value(C);
 	print(A);
 	print(B);
+	print(C);
 end

@@ -49,7 +49,7 @@ mov rbp, rsp
 	sub rsp, 16
 	sub rsp, 128
 	mov r14, [array_available_addr]
-	lea rax, [array_buffer + r14]
+	lea rax, [array_buffer + r14 * 8]
 	mov [rbp - 24], rax
 
 	mov r14, [array_available_addr]
@@ -64,11 +64,10 @@ mov [rbp - 8], r13
 
 	sub rsp, 16
 	mov r14, [array_available_addr]
-	lea rax, [array_buffer + r14]
+	lea rax, [array_buffer + r14 * 8]
 	mov [rbp - 56], rax
 
 	mov r14, [array_available_addr]
-	lab0:
 	add r14, 3
 	mov [array_available_addr], r14
 
@@ -77,6 +76,22 @@ mov r13, 12
 mov [rbp - 32], r13
 mov r13, 14
 mov [rbp - 40], r13
+
+	sub rsp, 16
+	sub rsp, 16
+	mov r14, [array_available_addr]
+	lea rax, [array_buffer + r14 * 8]
+	mov [rbp - 88], rax
+
+	mov r14, [array_available_addr]
+	add r14, 3
+	mov [array_available_addr], r14
+
+; loading array offsets
+mov r13, 12
+mov [rbp - 64], r13
+mov r13, 14
+mov [rbp - 72], r13
 
 	;Taking array
 
@@ -176,6 +191,41 @@ lea rdi, [intFormat_in]
 	jne label2
 
 
+	;Taking array
+
+; prompts user for input
+	mov rcx, [rbp - 64]
+	mov r8, [rbp - 72]
+	mov rsi, r8
+	sub rsi, rcx
+	inc rsi
+	mov rdi, arr_inMsg
+mov rdx, type_int
+	mov rcx, [rbp - 64]
+	mov r8, [rbp - 72]
+	call printf
+
+	; stores the count
+
+	xor r12, r12
+	xor r13, r13
+	mov r12, [rbp - 72]
+	mov r13, [rbp - 64]
+	sub r12, r13
+	inc r12
+	xor r13, r13
+
+	label3:
+lea rdi, [intFormat_in]
+	mov r14, [rbp - 88]
+	lea rsi, [r14 + r13 * 8]
+	call scanf
+
+	inc r13
+	cmp r13, r12
+	jne label3
+
+
 	;Printing array
 
 ; printing array
@@ -191,7 +241,7 @@ sub r12, r13
 inc r12
 xor r13, r13
 
-label3:
+label4:
 	lea rdi, [intFormat_out]
 	mov r14, [rbp - 24]
 	mov rsi, [r14 + r13 * 8]
@@ -199,7 +249,7 @@ label3:
 
 	inc r13
 	cmp r13, r12
-	jne label3
+	jne label4
 	lea rdi, [new_line]
 	call printf
 
@@ -219,7 +269,7 @@ sub r12, r13
 inc r12
 xor r13, r13
 
-label4:
+label5:
 	lea rdi, [intFormat_out]
 	mov r14, [rbp - 56]
 	mov rsi, [r14 + r13 * 8]
@@ -227,7 +277,35 @@ label4:
 
 	inc r13
 	cmp r13, r12
-	jne label4
+	jne label5
+	lea rdi, [new_line]
+	call printf
+
+
+	;Printing array
+
+; printing array
+lea rdi, [arr_outMsg]
+call printf
+; stores the count
+
+xor r12, r12
+xor r13, r13
+mov r12, [rbp - 72]
+mov r13, [rbp - 64]
+sub r12, r13
+inc r12
+xor r13, r13
+
+label6:
+	lea rdi, [intFormat_out]
+	mov r14, [rbp - 88]
+	mov rsi, [r14 + r13 * 8]
+	call printf
+
+	inc r13
+	cmp r13, r12
+	jne label6
 	lea rdi, [new_line]
 	call printf
 

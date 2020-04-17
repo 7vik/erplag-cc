@@ -617,9 +617,10 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "\tsub rsp, 16\n");
                 stack_count++;
 
+                printf("%d\n", stack_count);
                 //storing base address of this array: part of array_buffer
                 fprintf(fp, "\tmov r14, [array_available_addr]\n");
-                fprintf(fp, "\tlea rax, [array_buffer + r14]\n");
+                fprintf(fp, "\tlea rax, [array_buffer + r14 * 8]\n");
                 fprintf(fp, "\tmov [rbp - %d], rax\n\n", offset * 8);
 
                 // if static array

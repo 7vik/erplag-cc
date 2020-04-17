@@ -28,7 +28,45 @@
 "children":[]
 }
 ,{
+"text": { "name": "EPS:EPS" },
+"children":[]
+}
+,{
+"text": { "name": "ARRAY" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "rangeArr" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "NUM:12" },
+"children":[]
+}
+,{
+"text": { "name": "NUM:14" },
+"children":[]
+}
+]
+}
+,{
+"text": { "name": "INTEGER:integer" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "declareStmt" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "ID:B" },
+"children":[]
+}
+,{
+"text": { "name": "ID:C" },
 "children":[]
 }
 ,{
@@ -120,6 +158,22 @@
 "collapsed": true,
 "children": [
 {
+"text": { "name": "GET_VALUE" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:C" },
+"children":[]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
 "text": { "name": "printOpt" },
 "collapsed": true,
 "children": [
@@ -151,6 +205,28 @@
 "children": [
 {
 "text": { "name": "ID:B" },
+"children":[]
+}
+]
+}
+]
+}
+]
+}
+,{
+"text": { "name": "ioStmt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "printOpt" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "var" },
+"collapsed": true,
+"children": [
+{
+"text": { "name": "ID:C" },
 "children":[]
 }
 ]
