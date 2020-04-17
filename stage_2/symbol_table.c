@@ -361,7 +361,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("->\t%s\n", n->tree_node->node_symbol);
+    printf("->\t%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -557,17 +557,13 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     if (is(n, "iterativeStmt") && (1 - is(n->child, "ID")))   // while lup
     {
         // i think while loops will have more checks than this (@bharat)
-        if (is(n->child, "LE"))
+        int t1 = get_type_expr(n->child, id_st);
+        if (t1 != BOOLEAN)
         {
-            ID_TABLE_ENTRY *i1 = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
-            ID_TABLE_ENTRY *i2 = st_lookup(n->child->child->sibling->child->tree_node->lexeme, id_st);
-            if (i1 == NULL && i2 == NULL)
-            {
-                if (error_line < n->child->tree_node->line)
-                    printf("Semantic Error on line %d. While loop variables not declared.\n", n->child->tree_node->line);
+            if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. While condition ain't a boolean.\n", n->child->tree_node->line);
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
-            }
         }
         // create a new ID ST
         id_st->kid_st[id_st->kid_table_count++] = create_id_st(id_st);
