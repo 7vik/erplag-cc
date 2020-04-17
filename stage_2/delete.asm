@@ -50,7 +50,7 @@ mov rbp, rsp
 	sub rsp, 16
 	mov r14, [array_available_addr]
 	lea rax, [array_buffer + r14 * 8]
-	mov [rbp - 64], rax
+	mov [rbp - 8], rax
 
 	mov r14, [array_available_addr]
 	add r14, 15
@@ -58,14 +58,14 @@ mov rbp, rsp
 
 ; loading array offsets
 mov r13, 1
-mov [rbp - 72], r13
+mov [rbp - 16], r13
 mov r13, 15
-mov [rbp - 80], r13
+mov [rbp - 24], r13
 
 	sub rsp, 16
 	mov r14, [array_available_addr]
 	lea rax, [array_buffer + r14 * 8]
-	mov [rbp - 88], rax
+	mov [rbp - 32], rax
 
 	mov r14, [array_available_addr]
 	add r14, 15
@@ -73,9 +73,9 @@ mov [rbp - 80], r13
 
 ; loading array offsets
 mov r13, 1
-mov [rbp - 96], r13
+mov [rbp - 40], r13
 mov r13, 15
-mov [rbp - 104], r13
+mov [rbp - 48], r13
 
 	sub rsp, 16
 	;Taking id
@@ -83,12 +83,12 @@ mov [rbp - 104], r13
 	mov rdi, int_inMsg
 	call printf
 	mov rdi, intFormat_in
-	lea rsi, [rbp - 112]
+	lea rsi, [rbp - 56]
 	call scanf
 	;Printing ID
 
 	mov rdi, realFormat_out
-	mov rsi, [rbp - 120]
+	mov rsi, [rbp - 64]
 	call printf
 
 	lea rdi, [new_line]

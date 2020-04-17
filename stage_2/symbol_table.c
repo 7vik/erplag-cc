@@ -806,6 +806,7 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
     }
     st->total_functions += 1;
     f->procreator = st;
+    current_offset = 1;                 // see if this fixes it
     return;
 }
 
