@@ -1,12 +1,7 @@
 <<<driver program>>>
 start
-	declare x:integer;
-	x:=3;
-   while(x<=6)
-	start
-		print(x);
-        get_value(x);
-	end
+	declare w : array[2..4] of integer;
+	w[2] := w[3] + 4;
 end
 
 **segfault if your while expression contains non booleans**
