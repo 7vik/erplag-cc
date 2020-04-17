@@ -52,6 +52,7 @@ typedef struct FUNC_TABLE_ENTRY
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
     int is_declared;                                   // to check if it is declared (semantix)
     struct FUNC_SYMBOL_TABLE *procreator;               // link to GST
+    unsigned int activation_record_size;                // size of the activation record
 }FUNC_TABLE_ENTRY;
 
 typedef struct FUNC_SYMBOL_TABLE                        // the final beautiful ST

@@ -27,8 +27,8 @@ hellos: bool.o parser.o lexer.o hash.o ast.o symbol_table.o
 ast: bool.o parser.o lexer.o hash.o ast.o
 	gcc -o stage2exe bool.o ast.o parser.o lexer.o hash.o
 
-assembler: bool.o parser.o lexer.o hash.o ast.o code_gen.o symbol_table.o
-	gcc -o stage2exe code_gen.o bool.o ast.o parser.o lexer.o hash.o symbol_table.o
+assembler: bool.o parser.o lexer.o hash.o ast.o code_gen.o symbol_table.o semantic_analyser.o
+	gcc -o stage2exe code_gen.o bool.o ast.o parser.o lexer.o hash.o symbol_table.o semantic_analyser.o
 
 code: code.o
 	gcc -o code code.o

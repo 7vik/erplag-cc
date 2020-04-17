@@ -1,12 +1,9 @@
 <<<driver program>>>
 start
-	declare x:integer;
-	x:=3;
-   while(x<=6)
-	start
-		print(x);
-        get_value(x);
-	end
+	declare w:array[1..3] of integer;
+	declare x: integer;
+	get_value(w);
+	w[2] := 3 * x; 
+	print(w);
+	
 end
-
-**segfault if your while expression contains non booleans**
