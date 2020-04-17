@@ -241,7 +241,12 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         return BOOLEAN;
     if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE||0)
     {
-        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+        // printf("REE1\n");
+        int t1 = get_type_expr(ex->child, id_st);
+        // printf("REE2 %s\n", variables_array[t1]);
+        int t2 = get_type_expr(ex->child->sibling, id_st); 
+        // printf("REE3 %s\n", variables_array[t2]);
+        if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
                 printf("Semantic Error on line %d. Exppected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
@@ -253,7 +258,12 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker == AND ||ex->node_marker == OR||0)
     {
-        if (get_type_expr(ex->child, id_st) != get_type_expr(ex->child->sibling, id_st))
+        // printf("FRT1\n");
+        int t1 = get_type_expr(ex->child, id_st);
+        // printf("FRT2 %s\n", variables_array[t1]);
+        int t2 = get_type_expr(ex->child->sibling, id_st); 
+        // printf("FRT3 %s\n", variables_array[t2]);
+        if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
                 printf("Semantic Error on line %d. Expnected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
@@ -270,7 +280,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         // printf("FRT2\n");
         int t2 = get_type_expr(ex->child->sibling, id_st); 
         // printf("FRT3\n");
-        if (t1 != t2)
+        if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             // printf("ENTERIF\n");
             if (ex->tree_node->line > error_line)
@@ -298,10 +308,11 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
                 if (p == NULL)
                 {
-                    if (ex->tree_node->line > error_line)
+                    // if (ex->tree_node->line >= error_line)
                         printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
                     error_line = ex->tree_node->line;
                     hasSemanticError = true;
+                    return 0;
                 }
                 else if (p->datatype->simple != ARRAY)
                 {
@@ -345,7 +356,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     if (ex->node_marker == ARRAY)
         return ARRAY;
     // printf("BAZINGA %s %s\n", variables_array[ex->node_marker], ex->tree_node->lexeme);
-    return 43;      // hopefully never
+    return 0;      // hopefully never
 }
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
