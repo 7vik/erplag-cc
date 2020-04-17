@@ -334,6 +334,34 @@ void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID
 {
     assert(root->node_marker == caseStmts);
     astNode* temp = root->child;
+    // Boolean type switch variable should have "exactly" 2 cases- true and false
+    if(id_entry->datatype->simple == BOOLEAN)
+    {
+        if(temp->sibling == NULL) // we need to have 2 cases, only one case present
+        {
+            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have a single case.\n", temp->tree_node->line);
+            hasSemanticError = true;
+        }
+        else if(temp->sibling->sibling != NULL) // we're having >=3 cases! Binary system: 0, 1, and ?? => Error
+        {
+            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have more than two cases.\n", temp->sibling->sibling->tree_node->line);
+            hasSemanticError = true;
+        }
+        // if we haven't entered any aforementioned condition, we now have 2 case statements in the construct
+
+        else if(temp->child->node_marker == TRUE && temp->sibling->child->node_marker == TRUE)
+        {
+            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable TRUE.\n", temp->sibling->tree_node->line);
+            hasSemanticError = true;
+        }        
+
+        else if(temp->child->node_marker == FALSE && temp->sibling->child->node_marker == FALSE)
+        {
+            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable FALSE.\n", temp->sibling->tree_node->line);
+            hasSemanticError = true;
+        }
+    }
+    
     while(temp != NULL)
     {
         check_caseStmt_semantic(temp, id_child_table, id_entry);
@@ -554,7 +582,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         if(id_entry->datatype->arrtype->is_dynamic == true)
             return;
         
-        else  //bound check
+        else  //bound check: it would obviously enter 'else' in case the array is static
         {
             if (index_node->node_marker == ID)
                 return;
@@ -562,13 +590,20 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
             {
                 if(index_node->node_marker != NUM)
                 {
-                    printf("Semantic Error: Array index should be a number at line %d - found %s\n", index_node->tree_node->line, variables_array[index_node->node_marker]);
+                    printf("Semantic Error at line %d: Array index should be a number - found %s\n", index_node->tree_node->line, variables_array[index_node->node_marker]);
                     hasSemanticError = true;
                     return;
                 }
 
                 int low_index = id_entry->datatype->arrtype->begin;
                 int high_index = id_entry->datatype->arrtype->end;
+
+                if(low_index > high_index)
+                {
+                    printf("Semantic Error at line %d: The lower index of array %s, %d, is greater than the upper index, %d\n", var_node->tree_node->line, var_node->tree_node->lexeme, low_index, high_index);
+                    hasSemanticError = true;
+                }
+
                 int index = atoi(index_node->tree_node->lexeme);
                 if (index < low_index || index > high_index)
                 {
