@@ -2,9 +2,9 @@
 start
 	declare A:array[10..15] of integer;
 	declare k:integer;
+	get_value(k);
 	get_value(A);
-	for (k in 10..15)
-	start
-		print(A[k]);
-	end
+	print(A[11]);
+	print(A[k]);
+	print(A);
 end
