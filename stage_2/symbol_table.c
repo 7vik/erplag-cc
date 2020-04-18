@@ -588,17 +588,21 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 hasSemanticError = true;
             }
         }
-        else
+        else                // it's a printOp
         {
-            // it's not a get value, hence a printop, same shit
-            ID_TABLE_ENTRY *i1 = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
-            PARAMS *p1 = param_lookup(id_st->primogenitor->in_params ,n->child->child->child->tree_node->lexeme);
-            PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
-            if (i1 == NULL && p1 == NULL && p2 == NULL)
+            if (n->child->child->node_marker == ID || n->child->child->node_marker == var)     // only if it's an ID (or an array)
             {
-                printf("Semantic Error on line %d. Variable '%s' not declared.\n", n->child->child->child->tree_node->line, n->child->child->child->tree_node->lexeme);
-                hasSemanticError = true;
+                ID_TABLE_ENTRY *i1 = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
+                PARAMS *p1 = param_lookup(id_st->primogenitor->in_params ,n->child->child->child->tree_node->lexeme);
+                PARAMS *p2 = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
+                if (i1 == NULL && p1 == NULL && p2 == NULL)
+                {
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", n->child->child->child->tree_node->line, n->child->child->child->tree_node->lexeme);
+                    hasSemanticError = true;
+                }
             }
+            else
+                ;       // do nothing 
         }
     }
     if (is(n, "conditionalStmt"))
@@ -650,7 +654,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         if (f == NULL)
         {
             if (error_line < n->child->sibling->tree_node->line)
-                printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
+                // printf("Semantic Error at line %d. Function %s not defined before use.\n", n->child->sibling->tree_node->line, n->child->sibling->tree_node->lexeme);
             error_line = n->child->sibling->tree_node->line;
             hasSemanticError = true;
         }
