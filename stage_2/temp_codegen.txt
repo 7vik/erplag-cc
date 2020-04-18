@@ -1,7 +1,10 @@
 <<<driver program>>>
 start
-	declare b:integer;
-	declare a:integer;
-	declare t:boolean;
-	t:= a<=b;
+	declare A:array[10..15] of integer;
+	declare k:integer;
+	get_value(A);
+	for (k in 10..15)
+	start
+		print(A[k]);
+	end
 end
