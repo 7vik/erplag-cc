@@ -61,4 +61,4 @@ code.o: code.asm
 	nasm -felf64 code.asm
 
 clean:
-	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o code.o
+	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o code.o ./a.out code_gen.o

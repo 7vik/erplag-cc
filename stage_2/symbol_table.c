@@ -455,7 +455,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         }
         else    // not an array
         {
-            PARAMS *p; ID_TABLE_ENTRY *i;
+            PARAMS *p = NULL;
+            ID_TABLE_ENTRY *i = NULL;
             if (lhs->node_marker == var)
             {
                 // printf("DOD1\n");
@@ -687,7 +688,7 @@ void traverse_the_multiverse(astNode *n, GST *st)
     // printf("aaya1%s\n", n->tree_node->node_symbol);
     if (is(n,"program"))
     {
-        astNode *d;
+        astNode *d = NULL;
         for(astNode *temp = n->child; temp; temp = temp->sibling)
         {
             if (is(temp, "driverModule"))
@@ -704,14 +705,14 @@ void traverse_the_multiverse(astNode *n, GST *st)
         for (astNode *temp = n->child; temp; temp = temp->sibling)
             // st_insert_func_entry(create_function(temp, NULL, NULL, NULL), st);
             lite();
-
+    /*
     if (is(n, "otherModules") && n->sibling != NULL)
     {
         for (astNode *m = n->child; m; m = m->sibling)
         {
             PARAMS *p1 = create_param(m->child->sibling->child);
             PARAMS *p2 = create_param(m->child->sibling->sibling->child);
-            // printf("aaya2\n");
+            printf("aaya2\n");
             ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
             FUNC_TABLE_ENTRY *f = create_function(m->child, p1, p2, id_st);
             st_insert_func_entry(f, st);
@@ -720,7 +721,7 @@ void traverse_the_multiverse(astNode *n, GST *st)
             // printf("ALA\t%d", current_offset);
         }
     }
-
+    */
     if (is(n, "driverModule"))
     {
         ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
@@ -732,13 +733,13 @@ void traverse_the_multiverse(astNode *n, GST *st)
         // printf("ALA\t%d", current_offset);
         // printf("gaya\n");
     }
-    if (is(n, "otherModules") && n->sibling == NULL)
+    if (is(n, "otherModules"))// && n->sibling == NULL)
     {
         for (astNode *m = n->child; m; m = m->sibling)
         {
             PARAMS *p1 = create_param(m->child->sibling->child);
             // printf("aaya2\n");
-            PARAMS *p2;
+            PARAMS *p2 = NULL;
             if (m->child->sibling->sibling->child->node_marker == EPS)  // no output
                 p2 = NULL;
             else
@@ -748,7 +749,6 @@ void traverse_the_multiverse(astNode *n, GST *st)
             st_insert_func_entry(f, st);
             traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
             f->activation_record_size = current_offset;
-            // printf("ALA\t%d", current_offset);
         }
     }
     if (is(n, "EPS"))
@@ -929,7 +929,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
 	return 0;
 
     int total = 0;
-    ID_TABLE_ENTRY *temp;
+    ID_TABLE_ENTRY *temp = NULL;
     for(int i = 0; i < ST_ID_SIZE; i++)	// summing up the widths of each identifier in the current ST.
     {
         temp = st->id_table[i];
