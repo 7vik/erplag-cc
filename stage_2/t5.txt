@@ -4,12 +4,12 @@ declare module readArr;
 takes input[list:array[1..15] of    real, n:integer];
 returns  [sum:real];
 start
-	declare index:integer;
+	declare index, satvik:integer;
 	declare t:boolean;
 	sum:=0.0;
 	for(index in  1..15)
 	start
-		t:= index<=n;
+		t:= index<=satvik;
 		switch(t)
 		start
 			case true: print(list[index]);

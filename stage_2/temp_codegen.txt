@@ -2,12 +2,6 @@
 start
 	declare b:integer;
 	declare a:integer;
-	get_value(a);
-	get_value(b);
-	declare w, c:array[a..b] of integer;
-	get_value(w);
-	get_value(c);
-	w[2] := c[3] + 4;
-	print(w);
-	print(c);	
+	declare t:boolean;
+	t:= a<=b;
 end

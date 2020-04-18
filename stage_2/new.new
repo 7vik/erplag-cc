@@ -61,8 +61,11 @@
                 ----	              0	                ----	                ----	           statement	                NOPE	         declareStmt                  92
                index	              7	                ----	                  ID	              idList	                 YES	                  ID                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	              idList                  56
+                   ,	              7	                ----	               COMMA	           idList_lr	                 YES	               COMMA                   0
+                ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  54
+              satvik	              7	                ----	                  ID	           idList_lr	                 YES	                  ID                   0
                  EPS	              0	                ----	                 EPS	           idList_lr	                 YES	                 EPS                   0
-                ----	              0	                ----	                ----	              idList	                NOPE	           idList_lr                  55
+                ----	              0	                ----	                ----	           idList_lr	                NOPE	           idList_lr                  55
                    :	              7	                ----	               COLON	         declareStmt	                 YES	               COLON                   0
              integer	              7	                ----	             INTEGER	            datatype	                 YES	             INTEGER                   0
                 ----	              0	                ----	                ----	         declareStmt	                NOPE	            datatype                  17
@@ -136,7 +139,7 @@
                   <=	             12	                ----	                  LE	        relationalOp	                 YES	                  LE                   0
                 ----	              0	                ----	                ----	        one_more_opt	                NOPE	        relationalOp                  87
                 ----	              0	                ----	                ----	            opt_expr	                NOPE	        one_more_opt                  68
-                   n	             12	                ----	                  ID	                 var	                 YES	                  ID                   0
+              satvik	             12	                ----	                  ID	                 var	                 YES	                  ID                   0
                 ----	              0	                ----	                ----	              factor	                NOPE	                 var                  35
                  EPS	              0	                ----	                 EPS	             whichId	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	                 var	                NOPE	             whichId                  39
@@ -601,7 +604,4 @@
                 ----	              0	                ----	                ----	arithmeticOrBooleanExpression	                NOPE	            opt_expr                  66
                  EPS	              0	                ----	                 EPS	        one_more_opt	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	            opt_expr	                NOPE	        one_more_opt                  69
-                ----	              0	                ----	                ----	          expression	                NOPE	arithmeticOrBooleanExpression                  63
-                 EPS	              0	                ----	                 EPS	         opt_expr_lr	                 YES	                 EPS                   0
-                ----	              0	                ----	                ----	arithmeticOrBooleanExpression	                NOPE	         opt_expr_lr                  65
-                ----	              0	                ----	                ----	        lvalueIDStmt
+                ----	              0	                ----	                ----	          expression	                N

@@ -808,9 +808,10 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ASSIGNOP"))
     {
-       evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
+        printf("jdnn\n");
+        evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
        
-       
+        printf("evaluated\n");
        
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
@@ -935,18 +936,128 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     {
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->tree_node->lexeme, id_st);
 
-        if (id_entry->datatype->simple != ARRAY)
+        if(id_entry != NULL)
         {
-            fprintf(fp, "\t;Taking id\n\n");
-            prompt_user(fp, id_entry->datatype->simple);       
-            take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+            if (id_entry->datatype->simple != ARRAY)
+            {
+                fprintf(fp, "\t;Taking id\n\n");
+                prompt_user(fp, id_entry->datatype->simple);       
+                take_input(fp,  id_entry->datatype->simple, id_entry->offset);
+            }
+
+            else 
+            {
+                fprintf(fp, "\t;Taking array\n\n");
+                ask_for_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+            }
         }
 
-        else 
+        else
         {
-            fprintf(fp, "\t;Taking array\n\n");
-            ask_for_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params ,n->child->child->tree_node->lexeme);
+            if (p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params ,n->child->child->tree_node->lexeme);
+
+            if (p->datatype->simple != ARRAY)
+            {
+                fprintf(fp, "\t;Taking id\n\n");
+                prompt_user(fp, p->datatype->simple); 
+                int type = id_entry->datatype->simple;
+                int offset = p->offset;
+                int temp = offset * 8;
+                if(type == INTEGER || type == BOOLEAN)
+                {
+                    fprintf(fp, "\tmov rdi, intFormat_in\n");
+                    fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
+                    fprintf(fp, "\tcall scanf\n");
+                }
+
+                else if(type == REAL)
+                {
+                    fprintf(fp, "\tmov rdi, realFormat_in\n");
+                    fprintf(fp, "\tlea rsi, [rbp - %d]\n", temp);
+                    fprintf(fp, "\tcall scanf\n");
+                }      
+            }
+
+            else 
+            {
+                fprintf(fp, "\t;Taking array\n\n");
+                int base_offset = p->offset * 8;
+                int lower_offset = p->datatype->arrtype->begin_offset * 8;
+                int upper_offset = p->datatype->arrtype->end_offset * 8;
+                int type = p->datatype->arrtype->base_type;
+                fprintf(fp, "; prompts user for input\n");
+                fprintf(fp, "\tmov ecx, [rbp - %d]\n", lower_offset);
+                fprintf(fp, "\tmov r8d, [rbp - %d]\n", upper_offset);
+                fprintf(fp, "\tmov esi, r8d\n");
+                fprintf(fp, "\tsub esi, ecx\n");
+                fprintf(fp, "\tinc esi\n");
+                fprintf(fp, "\tmov rdi, arr_inMsg\n");
+
+                if (type == INTEGER)
+                    fprintf(fp, "mov rdx, type_int\n");
+                else if (type == REAL)
+                    fprintf(fp, "mov rdx, type_real\n");
+                else if (type == BOOLEAN)
+                    fprintf(fp, "mov rdx, type_bool\n");
+                else
+                {
+                    printf("Error in ask for array function\n");
+                    exit(1);
+                }
+                fprintf(fp, "\txor rcx, rcx\n");
+                fprintf(fp, "\txor r8, r8\n");
+                fprintf(fp, "\tmov ecx, [rbp - %d]\n", lower_offset);
+                fprintf(fp, "\tmov r8d, [rbp - %d]\n", upper_offset);
+                fprintf(fp, "\tcall printf\n\n");
+
+                char* array_input_label  = generate_label();
+                fprintf(fp, "\t; stores the count\n\n");
+                fprintf(fp, "\txor r12, r12\n");
+                fprintf(fp, "\txor r13, r13\n");
+                fprintf(fp, "\tmov r12d, [rbp - %d]\n", upper_offset);
+                fprintf(fp, "\tmov r13d, [rbp - %d]\n", lower_offset);
+                fprintf(fp, "\tsub r12d, r13d\n");
+                fprintf(fp, "\tinc r12d\n");
+                fprintf(fp, "\txor r13, r13\n\n");  
+                fprintf(fp, "\t%s:\n", array_input_label);
+
+                if(type == INTEGER)
+                {
+                    fprintf(fp, "lea rdi, [intFormat_in]\n");
+                
+                }
+
+                else if(type == REAL)
+                {
+                    fprintf(fp, "lea rdi, [realFormat_in]\n");
+                }
+
+                else if(type == BOOLEAN)
+                {
+                    fprintf(fp, "lea rdi, [intFormat_in]\n");
+                }
+
+                else
+                {
+                    printf("ERROR in ask for array\n");
+                    exit(1);
+                }
+                fprintf(fp, "\txor r14, r14\n");
+                fprintf(fp, "\tmov r14d, [rbp - %d]\n", base_offset);
+                fprintf(fp, "\tlea rsi, [r14 + r13 * 8]\n");
+                fprintf(fp, "\tcall scanf\n\n");
+
+                fprintf(fp, "\tinc r13d\n");
+                fprintf(fp, "\tcmp r13d, r12d\n");
+                fprintf(fp, "\tjne %s\n", array_input_label);
+                // fprintf(fp, "pop rbp\n");
+                fprintf(fp, "\n\n");
+            }
+            
         }
+        
 
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
@@ -975,12 +1086,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             PARAMS* p = param_lookup(id_st->primogenitor->in_params ,n->child->child->child->tree_node->lexeme);
             if (p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
-            
             if (p->datatype->simple != ARRAY)
             {
                 fprintf(fp, "\t;Printing ID\n\n");
-                int type = id_entry->datatype->simple;
-                int offset = id_entry->offset;
+                int type = p->datatype->simple;
+                int offset = p->offset;
                 int temp = offset * 8;
                 if(type == INTEGER)
                 {
@@ -1159,21 +1269,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "%s:\n", cases_exit);
 
     }
-    // if (is(n, "caseStmt"))
-    // {
-    //     int num = atoi(n->child->tree_node->lexeme);
-
-    //     char* case_exit = generate_label();
-    //     fprintf(fp, "\tcmp rax, %d\n", num);
-    //     fprintf(fp, "\tjne %s\n", case_exit);
-    //     fprintf(fp, "\tpush rax\n\tpush rax\n");
-    //     generate_the_universe(n->child->sibling, id_st, fp);
-    //     fprintf(fp, "\tpop rax\n\tpop rax\n");
-    //     fprintf(fp, "\tjmp %s:")
-    //     //fprintf(fp, "%s:\n", case_exit);
-    // }
-    
-    //
+  
     if (is(n, "moduleReuseStmt") && n->child->node_marker == EPS)
     {
         char* func_name = n->child->sibling->tree_node->lexeme;
