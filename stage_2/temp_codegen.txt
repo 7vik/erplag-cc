@@ -7,4 +7,6 @@ start
 	print(A[11]);
 	print(A[k]);
 	print(A);
+	print(true);
+	print(2);
 end

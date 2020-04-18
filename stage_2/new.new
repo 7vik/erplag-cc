@@ -105,8 +105,28 @@
                    ;	              9	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+               print	             10	                ----	               PRINT	              ioStmt	                 YES	               PRINT                   0
+                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  34
+                   (	             10	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
+                true	             10	                ----	                TRUE	        booleanConst	                 YES	                TRUE                   0
+                ----	              0	                ----	                ----	            printOpt	                NOPE	        booleanConst                  70
+                ----	              0	                ----	                ----	              ioStmt	                NOPE	            printOpt                  40
+                   )	             10	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
+                   ;	             10	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+               print	             11	                ----	               PRINT	              ioStmt	                 YES	               PRINT                   0
+                ----	              0	                ----	                ----	           statement	                NOPE	              ioStmt                  34
+                   (	             11	                ----	                  BO	              ioStmt	                 YES	                  BO                   0
+                   2	             11	                   2	                 NUM	                 var	                 YES	                 NUM                   0
+                ----	              0	                ----	                ----	            printOpt	                NOPE	                 var                  36
+                ----	              0	                ----	                ----	              ioStmt	                NOPE	            printOpt                  41
+                   )	             11	                ----	                  BC	              ioStmt	                 YES	                  BC                   0
+                   ;	             11	                ----	             SEMICOL	              ioStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  28
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
                  EPS	              0	                ----	                 EPS	          statements	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	          statements	                NOPE	          statements                  27
-                 end	             10	                ----	                 END	           moduleDef	                 YES	                 END                   0
+                 end	             12	                ----	                 END	           moduleDef	                 YES	                 END                   0
                  EPS	              0	                ----	                 EPS	        otherModules	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	             program	                NOPE	        otherModules                   6

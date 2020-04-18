@@ -1194,6 +1194,38 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
         printf("here io1\n");
+        
+        // print constant
+        if(n->child->child->child == NULL)
+        {
+            if(n->child->child->node_marker == NUM)
+            {
+                int num = atoi(n->child->child->tree_node->lexeme);
+                fprintf(fp, "\tlea rdi, [intFormat_out]\n");
+                fprintf(fp, "xor rsi, rsi\n");
+                fprintf(fp, "\tmov esi, %d\n", num);
+                fprintf(fp, "\tcall printf\n");
+
+                fprintf(fp, "\tlea rdi, [new_line]\n");
+                fprintf(fp, "\tcall printf\n\n");
+            }
+            else
+            {
+                if(n->child->child->node_marker == TRUE)
+                {
+                    fprintf(fp, "lea rsi, [true_label]\n");
+                }
+                else
+                {
+                    fprintf(fp, "lea rsi, [false_label]\n");
+                }
+                fprintf(fp, "\tlea rdi, [strFormat_out]\n");
+                fprintf(fp, "\tcall printf\n");
+                
+            }
+            
+            return;
+        }
         printf("%s\n", n->child->child->child->tree_node->lexeme);
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
         

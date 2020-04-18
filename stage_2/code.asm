@@ -215,6 +215,16 @@ label5:
 	call printf
 
 
+lea rsi, [true_label]
+	lea rdi, [strFormat_out]
+	call printf
+	lea rdi, [intFormat_out]
+xor rsi, rsi
+	mov esi, 2
+	call printf
+	lea rdi, [new_line]
+	call printf
+
 main_end:
 mov rsp, rbp
 pop rbp
