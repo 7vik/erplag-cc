@@ -1,0 +1,19 @@
+<<<driver program>>>
+start
+    declare w:integer;
+    declare r:real;
+    declare b:boolean;
+    declare A: array[5..10] of integer;
+    w:=10;
+    b:=false;
+    switch(w)
+		start
+			case true: w:=20;
+				 break;
+			case false: w:=40;    
+				 break;
+			default: w:=30;       
+				 break;		 	
+		end
+    print(w);
+end

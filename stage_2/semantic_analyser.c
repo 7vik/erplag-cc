@@ -312,10 +312,12 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     temp = temp->sibling;
 
+    printf("%s\n", variables_array[temp->node_marker]);
     // now, we are on START
     ID_SYMBOL_TABLE* id_child_table = id_table->kid_st[id_table->visited];
     temp = temp->sibling;
     
+    printf("here1\n");
     // we are now on caseStmts
     check_caseStmts_semantic(temp, id_child_table, id_entry);
     temp = temp->sibling;
@@ -332,11 +334,13 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
 void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_TABLE_ENTRY* id_entry)
 {
+    printf("here1\n");
     assert(root->node_marker == caseStmts);
     astNode* temp = root->child;
     // Boolean type switch variable should have "exactly" 2 cases- true and false
     if(id_entry->datatype->simple == BOOLEAN)
     {
+        printf("here\n");
         if(temp->sibling == NULL) // we need to have 2 cases, only one case present
         {
             printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have a single case.\n", temp->tree_node->line);
@@ -402,13 +406,15 @@ void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, I
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", root->tree_node->line, id_entry->lexeme);
         hasSemanticError = true;
+        return;
     }
 
     // Now, the type of switch variable is integer, but node marker says default not present
     else if(root->node_marker == EPS && id_entry->datatype->simple == INTEGER)
     {
-        printf("SEMANTIC ERROR at line %d: A default statement must have been present here.\n", root->tree_node->line);
+        printf("SEMANTIC ERROR at line %d: A default statement must have been present here.\n",root->sibling->tree_node->line);
         hasSemanticError = true;
+        return;
     }
 
     assert(root->node_marker == default_nt);
@@ -620,7 +626,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     return;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -664,4 +670,3 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/
