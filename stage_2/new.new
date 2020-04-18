@@ -604,4 +604,23 @@
                 ----	              0	                ----	                ----	arithmeticOrBooleanExpression	                NOPE	            opt_expr                  66
                  EPS	              0	                ----	                 EPS	        one_more_opt	                 YES	                 EPS                   0
                 ----	              0	                ----	                ----	            opt_expr	                NOPE	        one_more_opt                  69
-                ----	              0	                ----	                ----	          expression	                N
+                ----	              0	                ----	                ----	          expression	                NOPE	arithmeticOrBooleanExpression                  63
+                 EPS	              0	                ----	                 EPS	         opt_expr_lr	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	arithmeticOrBooleanExpression	                NOPE	         opt_expr_lr                  65
+                ----	              0	                ----	                ----	        lvalueIDStmt	                NOPE	          expression                  58
+                   ;	             53	                ----	             SEMICOL	        lvalueIDStmt	                 YES	             SEMICOL                   0
+                ----	              0	                ----	                ----	      assignmentStmt	                NOPE	           whichStmt                  45
+                ----	              0	                ----	                ----	           statement	                NOPE	          simpleStmt                  42
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  29
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+                 EPS	              0	                ----	                 EPS	          statements	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  27
+                 end	             55	                ----	                 END	       iterativeStmt	                 YES	                 END                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	           statement                  32
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  26
+                 EPS	              0	                ----	                 EPS	          statements	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	          statements	                NOPE	          statements                  27
+                 end	             56	                ----	                 END	           moduleDef	                 YES	                 END                   0
+                ----	              0	                ----	                ----	             program	                NOPE	        otherModules                   5
+                 EPS	              0	                ----	                 EPS	        otherModules	                 YES	                 EPS                   0
+                ----	              0	                ----	                ----	        otherModules	                NOPE	        otherModules                   6

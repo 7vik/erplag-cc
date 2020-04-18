@@ -841,7 +841,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                 fprintf(fp, "\tmov edx, [rbp - %d + 208]\n", start_offset * 8);
                 fprintf(fp, "\tmov ebx, %d\n", index);
                 fprintf(fp, "\tsub ebx, edx\n");
-                fprintf(fp, "\tmov [rax + rbx * 8], \n");
+                fprintf(fp, "\tmov [rax + rbx * 8], rcx \n");
                 return;
             }
 
@@ -1385,14 +1385,15 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 
     if (is(n, "moduleDeclarations"))
         ;
-    if (is(n, "otherModules") && n->sibling != NULL)
+    if (is(n, "otherModules"))
     {
         astNode* module_node = n->child;
 
-        while(module_node->node_marker != EPS)
+        while(module_node != NULL)
         {
             FUNC_TABLE_ENTRY* func_entry = global_st_lookup(module_node->child->tree_node->lexeme, st);
             char* func_label = generate_func_label(module_node->child->tree_node->lexeme);
+            printf("Generating code for module %s\n", module_node->child->tree_node->lexeme);
             fprintf(fp, "%s\n\n", func_label);
             fprintf(fp, "\tpush rbp\n");
             fprintf(fp, "\tmov rbp, rsp\n");
@@ -1431,20 +1432,24 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
             fprintf(fp, "\tpop rdi\n");
             fprintf(fp, "\tmov rsp, rbp\n");
             fprintf(fp, "\tpop rbp\n");
-            fprintf(fp, "\tret\n");    
+            fprintf(fp, "\tret\n"); 
+            printf("Generating code for module %s completed\n", module_node->child->tree_node->lexeme);  
+            module_node = module_node->sibling; 
         }
+
     }
 
     if (is(n, "driverModule"))
     {
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
+        printf("driver module started\n");
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
         fprintf(fp, "\tsub rsp, %d\n", (f->activation_record_size) * 16);
         //stack_count = 0;
         generate_the_universe(n->child, f->local_id_table, fp);
-
+        printf("driver module ended\n");
     }
     if (is(n, "EPS"))
         return;         // bliss
