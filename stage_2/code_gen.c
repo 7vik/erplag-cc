@@ -131,6 +131,38 @@ void initialise_file(FILE* fp)
     return;   
 }
 
+void bound_check(FILE* fp, int start_offset, int end_offset, int index, int line)
+{
+    char* error_label = generate_label();
+    char* exit_label = generate_label();
+    fprintf(fp, "; bound checking\n");
+    fprintf(fp, "\tpush r13\n");
+    fprintf(fp, "\tpush r14\n");
+    fprintf(fp, "\txor r13, r13\n");
+    fprintf(fp, "\txor r14, r14\n");
+    fprintf(fp, "\tmov r13d, [rbp - %d]\n", start_offset * 8);
+    fprintf(fp, "\tmov r14d, [rbp - %d]\n", end_offset * 8);
+    fprintf(fp, "\tcmp r13d, %d\n", index);
+    fprintf(fp, "\tjg %s\n", error_label);
+    fprintf(fp, "\tcmp r14d, %d\n", index);
+    fprintf(fp, "\tjl %s\n", error_label);
+    fprintf(fp, "\tjmp %s\n", exit_label);
+
+    fprintf(fp, "\t%s: \n", error_label);
+    fprintf(fp, "\tlea rdi, [errorMsg2]\n");
+    // "errorMsg2    db        \"RUN TIME ERROR: Index %%d out of
+    // bounds %%d and %%d at line %%d. Aborting.\"
+    fprintf(fp, "\tmov rsi, %d\n", index);
+    fprintf(fp, "\tmov rdx,  r13\n");
+    fprintf(fp, "\txor rcx, rcx\n");
+    fprintf(fp, "\tmov rcx, r14\n");
+    fprintf(fp, "\tmov r8, %d\n", line);
+    fprintf(fp, "\txor rax, rax\n");
+    fprintf(fp, "\tcall printf\n");
+    fprintf(fp, "\tjmp main_end\n");
+    fprintf(fp, "%s:\n", exit_label);
+}
+
 void take_input(FILE* fp, int type, int offset)
 {
     // for int
@@ -538,8 +570,11 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             {
                 int base_offset = i->offset;
                 int start_offset = i->datatype->arrtype->begin_offset;
+                int end_offset = i->datatype->arrtype->end_offset;
                 int index = atoi(ex->child->sibling->tree_node->lexeme);
-                // bound check
+                int line = ex->child->sibling->tree_node->line;
+                
+                bound_check(fp, start_offset, end_offset, index, line);
                 fprintf(fp, "\txor rax, rax\n");
                 fprintf(fp, "\txor rdx, rdx\n");
                 fprintf(fp, "\tmov eax, [rbp - %d]\n", base_offset * 8);
