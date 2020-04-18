@@ -1071,6 +1071,11 @@ int main(int argc, char* argv[])
     }
     FILE* test_fp = fopen(argv[1], "r");
     FILE* test_parse_fp = fopen(argv[2], "w");
+    if (test_fp == NULL || test_parse_fp == NULL)
+    {
+        printf("Error in opening files. Exitting.\n");
+        exit(1);
+    }
     populate_ht(hash_table, KEYWORDS_FILE);
     int line_count = 1;
     TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
@@ -1092,6 +1097,14 @@ int main(int argc, char* argv[])
     traverse_the_multiverse(ast_root, st);
     gst_print(st);
 
+    printf("Performing further semantic analysis\n\n");
+    semantic_analyser(ast_root, st);
+
+    if (hasSemanticError == true)
+    {
+        printf("Semantic errors detected. Code generation aborted. Exitting\n");
+        exit(3);
+    }
     // test code generation
     printf("Starting code generation\n");
     FILE* code_fp = fopen(argv[3], "w");
