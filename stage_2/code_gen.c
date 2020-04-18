@@ -1003,7 +1003,8 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         }
     }
 
-    if (is(n, "moduleDeclarations"));
+    if (is(n, "moduleDeclarations"))
+        ;               // could have been pass(), but alas!
         //stack_count = 0;
 
     if (is(n, "otherModules") && n->sibling != NULL)

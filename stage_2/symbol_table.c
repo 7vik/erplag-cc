@@ -6,6 +6,9 @@
 #include<string.h>                                      // char *strcpy()
 #define ST_ABS(N) ((N<0)?(-N):(N))                      // because of my awesome hashing function
 #define malloc_error { printf("Malloc error. Terminating.\n\n"); exit(5); }
+#define IN_PARAM_OFFSET 1
+#define OUT_PARAM_OFFSET 13
+
 
 bool hasSemanticError = false;
 unsigned int current_offset = 0;
@@ -774,8 +777,8 @@ PARAMS *create_param(astNode *plist)
             t->arrtype->begin = atoi(temp->child->tree_node->lexeme);
             t->arrtype->end = atoi(temp->child->sibling->tree_node->lexeme);
         }
-        t->arrtype->begin_offset = current_offset++;            // in any case, 
-        t->arrtype->end_offset   = current_offset++;            // fill the offsets
+        t->arrtype->begin_offset = 0;            // don't fill param 
+        t->arrtype->end_offset   = 0;            // offets now
     }
     new->is_assigned = false;
     if (plist->sibling)
@@ -783,6 +786,23 @@ PARAMS *create_param(astNode *plist)
     else
         new->next = NULL;
     return new;
+}
+
+// fill offsets into a linked list of parameters
+void fill_param_offsets(PARAMS *p, unsigned int off)
+{
+    unsigned int offset = off;                               // initialize offset
+    for (PARAMS *pt = p; pt != NULL; pt = pt->next)         // traverse the parameters, 
+    {                                                      // and give each one an
+        pt->offset = offset++;                            // offset, and
+        if (pt->datatype->simple == ARRAY)               // if it's an array,
+        {                                               // take its type,
+            ARRAY_TYPE_DATA *a = pt->datatype->arrtype;// and 
+            a->begin_offset = offset++;               // give offsets to 
+            a->end_offset = offset++;                // begin and end too
+        }   
+    }
+    return;
 }
 
 // we initialize our global symbol table
@@ -813,7 +833,9 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
     }
     st->total_functions += 1;
     f->procreator = st;
-    current_offset = 1;                 // see if this fixes it
+    current_offset = 1;                 // set the correct offset (just in case, not needed)
+    fill_param_offsets(f->in_params, IN_PARAM_OFFSET);                      // and fill in the input and 
+    fill_param_offsets(f->out_params, OUT_PARAM_OFFSET);                    // output parameter offsets
     return;
 }
 
@@ -845,7 +867,7 @@ void print_params(PARAMS *list)
     {
         char *pn = temp->param_name;
         char *ty = show_type(temp->datatype);
-        printf("%s : %s, ",pn, ty);
+        printf("%s : %s (%u), ",pn, ty, temp->offset);
 	    temp = temp->next;
     }
     putchar('\n');

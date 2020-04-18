@@ -41,6 +41,7 @@ typedef struct param_list
     TYPE *datatype;                                     // type of variable (check on output type != array)
     bool is_assigned;                                   // to check whether out_params are assigned values inside function before returning
     struct param_list *next;                            // linked list
+    unsigned int offset;                                // offset of the parameter
 } PARAMS;
 
 typedef struct FUNC_TABLE_ENTRY
@@ -69,6 +70,7 @@ ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st);
 int get_width(TYPE *datatype);
 ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type);
 int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st);
+void fill_param_offsets(PARAMS *p, unsigned int off);
 
 GST *create_global_st();
 void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *gst);
