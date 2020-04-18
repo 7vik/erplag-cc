@@ -7,11 +7,7 @@ start
 	declare w, c:array[a..b] of integer;
 	get_value(w);
 	get_value(c);
-	declare q:array[1..2] of boolean;
-	a := w[2];
-	get_value(q);
+	w[2] := c[3] + 4;
 	print(w);
-	print(c);
-	print(q);
-	
+	print(c);	
 end
