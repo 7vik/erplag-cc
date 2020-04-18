@@ -9,9 +9,10 @@
 #include "type.h"               // type data
 #include <assert.h>
 #include "bool.h"
-#define ST_ID_SIZE 8            // max size of the id symbol table, for testing purposes, change later
-#define ST_KID_NUM 8            // max no of kids of an ID symbol table, change later
-#define GST_SIZE 8          // max size of the global symbol table, for testing purposes, change later
+
+#define ST_ID_SIZE 32            // max size of the id symbol table, for testing purposes, change later
+#define ST_KID_NUM 32            // max no of kids of an ID symbol table, change later
+#define   GST_SIZE 32            // max size of the global symbol table, for testing purposes, change later
 
 typedef struct ID_TABLE_ENTRY
 {
@@ -26,12 +27,12 @@ typedef struct ID_TABLE_ENTRY
 typedef struct ID_SYMBOL_TABLE
 {
     struct ID_SYMBOL_TABLE *id_st_parent;               // parent to the ID ST (NULL at top) (not storing FST)
-    struct FUNC_TABLE_ENTRY *primogenitor;                     // the function this ID table belong to
-    ID_TABLE_ENTRY *id_table[ST_ID_SIZE];
-    int total_ids;
+    struct FUNC_TABLE_ENTRY *primogenitor;              // the function this ID table belong to
+    ID_TABLE_ENTRY *id_table[ST_ID_SIZE];               // actual ST
+    int total_ids;  
     int kid_table_count;
     int visited;                                        // the genius that is ruslan spivak
-    struct ID_SYMBOL_TABLE *kid_st[ST_KID_NUM];                               
+    struct ID_SYMBOL_TABLE *kid_st[ST_KID_NUM];         // n-ary tree of STs 
 } ID_SYMBOL_TABLE;
 
 // i/o parameters
@@ -47,11 +48,11 @@ typedef struct param_list
 typedef struct FUNC_TABLE_ENTRY
 {
     char *func_name;                                    //function name from lexer (hash on this)
-    PARAMS *in_params, *out_params;                 //list of input and output parameters
+    PARAMS *in_params, *out_params;                     //list of input and output parameters
     int width;                                          // total size of all local variables (why tho?)
     ID_SYMBOL_TABLE *local_id_table;                    // nested ID table for each function
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
-    int is_declared;                                   // to check if it is declared (semantix)
+    int is_declared;                                    // to check if it is declared (semantix)
     struct FUNC_SYMBOL_TABLE *procreator;               // link to GST
     unsigned int activation_record_size;                // size of the activation record
 }FUNC_TABLE_ENTRY;
