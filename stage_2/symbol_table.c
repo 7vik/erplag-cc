@@ -416,8 +416,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         astNode *rhs = n->child->sibling;
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
-            // first do a non-recursive lookup
-            ID_TABLE_ENTRY *i = st_lookup_nr(lhs->child->tree_node->lexeme, id_st);
+            // first do a ID table recursive lookup
+            ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
             PARAMS *p = NULL;
             if (i == NULL)      // then check for parameters
             {
@@ -425,8 +425,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 if (p == NULL)
                     p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
             }
-            if (i == NULL && p == NULL) // finally do a recursive lookup
-                i = st_lookup(lhs->child->tree_node->lexeme, id_st);
+            // if (i == NULL && p == NULL) // finally do a recursive lookup  (no this concept is flawed)
+            //     i = st_lookup(lhs->child->tree_node->lexeme, id_st);
             
             if (i == NULL && p == NULL)
             {
