@@ -4,6 +4,6 @@ start
 	declare x: integer;
 	get_value(w);
 	w[2] := 3 * x; 
-	print(w);
+	print(w);	
 	
 end
