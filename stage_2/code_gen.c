@@ -164,6 +164,41 @@ void bound_check(FILE* fp, int start_offset, int end_offset, int index, int line
     fprintf(fp, "%s:\n", exit_label);
 }
 
+// for A[k] kind
+void bound_check_dynamic(FILE* fp, int start_offset, int end_offset, int index_offset, int line)
+{
+    char* error_label = generate_label();
+    char* exit_label = generate_label();
+    fprintf(fp, "; bound checking\n");
+    fprintf(fp, "\tpush r13\n");
+    fprintf(fp, "\tpush r14\n");
+    fprintf(fp, "\txor r13, r13\n");
+    fprintf(fp, "\txor r14, r14\n");
+    fprintf(fp, "\txor r15, r15\n");
+    fprintf(fp, "\tmov r13d, [rbp - %d]\n", start_offset * 8);
+    fprintf(fp, "\tmov r14d, [rbp - %d]\n", end_offset * 8);
+    fprintf(fp, "\tmov r15d, [rbp - %d]\n", index_offset * 8);
+    fprintf(fp, "\tcmp r13d, r15d\n");
+    fprintf(fp, "\tjg %s\n", error_label);
+    fprintf(fp, "\tcmp r14d, r15d\n");
+    fprintf(fp, "\tjl %s\n", error_label);
+    fprintf(fp, "\tjmp %s\n", exit_label);
+
+    fprintf(fp, "\t%s: \n", error_label);
+    fprintf(fp, "\tlea rdi, [errorMsg2]\n");
+    // "errorMsg2    db        \"RUN TIME ERROR: Index %%d out of
+    // bounds %%d and %%d at line %%d. Aborting.\"
+    fprintf(fp, "\tmov rsi, r15\n");
+    fprintf(fp, "\tmov rdx,  r13\n");
+    fprintf(fp, "\txor rcx, rcx\n");
+    fprintf(fp, "\tmov rcx, r14\n");
+    fprintf(fp, "\tmov r8, %d\n", line);
+    fprintf(fp, "\txor rax, rax\n");
+    fprintf(fp, "\tcall printf\n");
+    fprintf(fp, "\tjmp main_end\n");
+    fprintf(fp, "%s:\n", exit_label);
+}
+
 void take_input(FILE* fp, int type, int offset)
 {
     // for int
@@ -238,6 +273,101 @@ void print_id(FILE* fp, int type, int offset)
         fprintf(fp, "\tlea rdi, [strFormat_in]\n");
         fprintf(fp, "\tmov sil, [rbp - %d]\n\n", temp);
         fprintf(fp, "\tcmp sil, 0\n");
+        fprintf(fp, "\tjz %s\n", f_label);
+        fprintf(fp, "\tlea rsi, [true_label]\n");
+        fprintf(fp, "\tjmp %s\n\n", p_label);
+        fprintf(fp, "%s: \n", f_label);
+        fprintf(fp, "\tlea rsi, [false_label]\n\n");
+        fprintf(fp, "%s: \n", p_label);
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n");
+        fprintf(fp, "\n\n");
+    }
+    
+}
+
+void print_array_id(FILE* fp, int type, int base_offset, int start_offset, int index)
+{
+    // for int
+    fprintf(fp, "\txor rsi, rsi\n");
+    fprintf(fp, "\tmov r13, [rbp - %d]\n", base_offset * 8);
+    fprintf(fp, "\txor r14, r14\n");
+    fprintf(fp, "\txor r15, r15\n");
+    fprintf(fp, "\tmov r14d, %d\n", index);
+    fprintf(fp, "\tmov r15d, [rbp - %d]\n", start_offset * 8);
+    fprintf(fp, "\tsub r14d, r15d\n");
+    fprintf(fp, "\tmov esi, [r13 + r14 * 8]\n");
+
+    if(type == INTEGER)
+    {
+        fprintf(fp, "\tmov rdi, intFormat_out\n");
+        
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
+    }
+
+    else if(type == REAL)
+    {
+        printf("Real not handled\n");
+        exit(1);
+    }
+
+    else if(type == BOOLEAN)
+    {
+        char* f_label = generate_label();
+        char* p_label = generate_label();
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tcmp esi, 0\n");
+        fprintf(fp, "\tjz %s\n", f_label);
+        fprintf(fp, "\tlea rsi, [true_label]\n");
+        fprintf(fp, "\tjmp %s\n\n", p_label);
+        fprintf(fp, "%s: \n", f_label);
+        fprintf(fp, "\tlea rsi, [false_label]\n\n");
+        fprintf(fp, "%s: \n", p_label);
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n");
+        fprintf(fp, "\n\n");
+    }
+    
+}
+
+void print_array_id_dynamic(FILE* fp, int type, int base_offset, int start_offset, int index_offset)
+{
+    // for int
+
+    fprintf(fp, "\txor rsi, rsi\n");
+    fprintf(fp, "\tmov r13, [rbp - %d]\n", base_offset * 8);
+    fprintf(fp, "\txor r14, r14\n");
+    fprintf(fp, "\txor r15, r15\n");
+    fprintf(fp, "\tmov r14d, [rbp - %d]\n", index_offset * 8);
+    fprintf(fp, "\tmov r15d, [rbp - %d]\n", start_offset * 8);
+    fprintf(fp, "\tsub r14d, r15d\n");
+    fprintf(fp, "\tmov esi, [r13 + r14 * 8]\n");
+
+    if(type == INTEGER)
+    {
+        fprintf(fp, "\tmov rdi, intFormat_out\n");
+        
+        fprintf(fp, "\tcall printf\n\n");
+        fprintf(fp, "\tlea rdi, [new_line]\n");
+        fprintf(fp, "\tcall printf\n\n");
+    }
+
+    else if(type == REAL)
+    {
+        printf("Real not handled\n");
+        exit(1);
+    }
+
+    else if(type == BOOLEAN)
+    {
+        char* f_label = generate_label();
+        char* p_label = generate_label();
+        fprintf(fp, "\tlea rdi, [strFormat_in]\n");
+        fprintf(fp, "\tcmp esi, 0\n");
         fprintf(fp, "\tjz %s\n", f_label);
         fprintf(fp, "\tlea rsi, [true_label]\n");
         fprintf(fp, "\tjmp %s\n\n", p_label);
@@ -934,6 +1064,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ioStmt") && n->child->node_marker == GET_VALUE)
     {
+
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->tree_node->lexeme, id_st);
 
         if(id_entry != NULL)
@@ -1063,6 +1194,38 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
         printf("here io1\n");
+        
+        // print constant
+        if(n->child->child->child == NULL)
+        {
+            if(n->child->child->node_marker == NUM)
+            {
+                int num = atoi(n->child->child->tree_node->lexeme);
+                fprintf(fp, "\tlea rdi, [intFormat_out]\n");
+                fprintf(fp, "xor rsi, rsi\n");
+                fprintf(fp, "\tmov esi, %d\n", num);
+                fprintf(fp, "\tcall printf\n");
+
+                fprintf(fp, "\tlea rdi, [new_line]\n");
+                fprintf(fp, "\tcall printf\n\n");
+            }
+            else
+            {
+                if(n->child->child->node_marker == TRUE)
+                {
+                    fprintf(fp, "lea rsi, [true_label]\n");
+                }
+                else
+                {
+                    fprintf(fp, "lea rsi, [false_label]\n");
+                }
+                fprintf(fp, "\tlea rdi, [strFormat_out]\n");
+                fprintf(fp, "\tcall printf\n");
+                
+            }
+            
+            return;
+        }
         printf("%s\n", n->child->child->child->tree_node->lexeme);
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
         
@@ -1074,11 +1237,52 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                 fprintf(fp, "\t;Printing ID\n\n");
                 print_id(fp,  id_entry->datatype->simple, id_entry->offset);
             }
-            else
+            else if(n->child->child->child->sibling == NULL)
             {
                 fprintf(fp, "\t;Printing array\n\n");
                 print_array(fp, id_entry->offset * 8, id_entry->datatype->arrtype->begin_offset * 8, id_entry->datatype->arrtype->end_offset * 8, id_entry->datatype->arrtype->base_type);
             }
+            else
+            {
+                astNode* index = n->child->child->child->sibling;
+                astNode* array_node = n->child->child->child;
+                int index_offset;
+                int base_offset = id_entry->offset;
+                int start_offset = id_entry->datatype->arrtype->begin_offset;
+                int end_offset = id_entry->datatype->arrtype->end_offset;
+                int line = array_node->tree_node->line; 
+                int type = id_entry->datatype->arrtype->base_type;
+                if(index->node_marker == ID) // A[k]
+                {
+                    ID_TABLE_ENTRY* index_entry = st_lookup(index->tree_node->lexeme, id_st);
+                    
+                    if(index_entry != NULL)
+                    {
+                        index_offset = index_entry->offset;
+                    }
+                    else
+                    {
+                        PARAMS* p = param_lookup(id_st->primogenitor->in_params ,n->child->child->child->tree_node->lexeme);
+                        if (p == NULL)
+                            p = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
+                        
+                        index_offset = p->offset;
+                    }
+                    
+                    
+                    
+                    bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
+                    print_array_id_dynamic(fp, type, base_offset, start_offset, index_offset);
+                }
+                else  // A[2]
+                {
+                    int index_value = atoi(index->tree_node->lexeme);
+                    bound_check(fp, start_offset, end_offset, index_value, line);
+                    print_array_id(fp, type, base_offset, start_offset, index_value);
+                }
+                
+            }
+            
         }
 
         else
