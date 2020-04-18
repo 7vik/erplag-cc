@@ -4,10 +4,11 @@ start
 	declare a:integer;
 	get_value(a);
 	get_value(b);
-	declare w, c:array[a..5] of integer;
+	declare w, c:array[a..b] of integer;
 	get_value(w);
 	get_value(c);
 	declare q:array[1..2] of boolean;
+	a := w[2];
 	get_value(q);
 	print(w);
 	print(c);

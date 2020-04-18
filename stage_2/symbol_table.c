@@ -411,14 +411,11 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
-        // printf("WOW %s\n", rhs->tree_node->node_symbol);
-        // if (lhs->tree_node->lexeme == NULL) printf("MILLA\n");
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
             // first do a non-recursive lookup
             ID_TABLE_ENTRY *i = st_lookup_nr(lhs->child->tree_node->lexeme, id_st);
-            // if (i == NULL) printf("GOTYA\n");
-            PARAMS *p;
+            PARAMS *p = NULL;
             if (i == NULL)      // then check for parameters
             {
                 p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
@@ -427,7 +424,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             }
             if (i == NULL && p == NULL) // finally do a recursive lookup
                 i = st_lookup(lhs->child->tree_node->lexeme, id_st);
-
+            
             if (i == NULL && p == NULL)
             {
                 if (error_line < lhs->child->tree_node->line)
@@ -443,6 +440,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
+            
+            //printf("%d here\n", p->datatype->arrtype->base_type);
             if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
                 if (error_line < lhs->child->tree_node->line)
