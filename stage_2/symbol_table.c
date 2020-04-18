@@ -249,7 +249,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Exppected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+                printf("Semantic Error on line %d. Type Mismatch Error.\n",ex->tree_node->line);
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
@@ -266,7 +266,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Expnected type '%s' for comparison, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+                printf("Semantic Error on line %d. Type Mismatch Error.\n",ex->tree_node->line);
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
@@ -284,7 +284,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         {
             // printf("ENTERIF\n");
             if (ex->tree_node->line > error_line)
-                printf("Semantic Error on line %d. Exprected type '%s' for arithmetic operation, gotten type '%s'.\n",ex->tree_node->line, variables_array[get_type_expr(ex->child, id_st)], variables_array[get_type_expr(ex->child->sibling, id_st)]);
+                printf("Semantic Error on line %d. Type Mismatch Error.\n",ex->tree_node->line);
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
@@ -308,7 +308,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
                 if (p == NULL)
                 {
-                    // if (ex->tree_node->line >= error_line)
+                    if (ex->child->tree_node->line > error_line)
                         printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
                     error_line = ex->tree_node->line;
                     hasSemanticError = true;
@@ -361,7 +361,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    printf("->\t%s\n", n->tree_node->node_symbol);
+    // printf("->\t%s\n", n->tree_node->node_symbol);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -382,7 +382,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             ID_TABLE_ENTRY *i = st_lookup_nr(temp->tree_node->lexeme, id_st);
             if (i != NULL)
             {
-                if (error_line < temp->tree_node->line)
+                // if (error_line < temp->tree_node->line)
                     printf("Semantic Error at line %d. Variable '%s' redeclared.\n", temp->tree_node->line, temp->tree_node->lexeme);
                 error_line = temp->tree_node->line;
                 hasSemanticError = true;
@@ -439,14 +439,14 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             if (i != NULL && (i->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
                 if (error_line < lhs->child->tree_node->line)
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[i->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                    printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->child->tree_node->line);
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
             if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
                 if (error_line < lhs->child->tree_node->line)
-                    printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->child->tree_node->line, variables_array[p->datatype->arrtype->base_type], variables_array[get_type_expr(rhs, id_st)]);
+                    printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->child->tree_node->line);
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
@@ -483,7 +483,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 if (i->datatype->simple != get_type_expr(rhs, id_st))
                 {
                     if (error_line < lhs->tree_node->line)
-                        printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                        printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->tree_node->line);
                     error_line = lhs->tree_node->line;
                     hasSemanticError = true;
                 }
@@ -496,7 +496,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
                 {
                     if (error_line < lhs->tree_node->line)
-                        printf("Semantic Error on line %d. Expected type '%s' for variable, gotten type '%s'.\n",lhs->tree_node->line, variables_array[p->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                        printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->tree_node->line);
                     error_line = lhs->tree_node->line;
                     hasSemanticError = true;
                 }
