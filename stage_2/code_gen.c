@@ -30,6 +30,7 @@ char* generate_func_label(char* func_name)
 void print_return(FILE* fp)
 {
 
+    fprintf(fp, "main_end:\n");
     fprintf(fp, "mov rsp, rbp\n");
     fprintf(fp, "pop rbp\n");
     fprintf(fp, "mov rax, 0\n");
@@ -70,6 +71,8 @@ void print_data_section(FILE* fp)
     fprintf(fp, "true_label     db        \"true \", 0\n");
     fprintf(fp, "false_label     db        \"false \", 0\n");
     fprintf(fp, "arr_outMsg   db        \"Printing array: \", 0\n");
+    fprintf(fp, "errorMsg1    db        \"RUN TIME ERROR: End index %%d of Array less than start index %%d at line %%d. Aborting\", 10, 0\n");
+    fprintf(fp, "errorMsg2    db        \"RUN TIME ERROR: Index %%d out of bounds %%d and %%d at line %%d. Aborting.\", 10, 0\n");
     fprintf(fp, "new_line       db       10, 0\n");
     fprintf(fp, "var1         dd        3\n");
     fprintf(fp, "var2         dd        6\n");
@@ -697,6 +700,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                         fprintf(fp, "mov [rbp - %d], r13\n", end_offset * 8);
                     }
 
+                    char* error_lablel = generate_label();
+                    char* exit_label = generate_label();
                     fprintf(fp, "; incrementing array_available address by array size\n\n"); 
                     fprintf(fp, "\txor r14, r14\n");
                     fprintf(fp, "\tmov r14d, [array_available_addr]\n");
@@ -704,12 +709,27 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "\txor rcx, rcx\n");
                     fprintf(fp, "\tmov eax, [rbp - %d]\n", start_offset * 8);
                     fprintf(fp, "\tmov ecx, [rbp - %d]\n", end_offset * 8);
+                    fprintf(fp, "\tcmp eax, ecx\n");
+                    fprintf(fp, "\tjg %s\n", error_lablel);
                     fprintf(fp, "\tsub ecx, eax\n");
                     fprintf(fp, "\tinc ecx\n");
                     //fprintf(fp, "\timul rcx, 8\n");
                     fprintf(fp, "\tadd r14d, ecx\n");
                     fprintf(fp, "\tmov [array_available_addr], r14\n\n");
-                    
+                    fprintf(fp, "\tjmp %s\n", exit_label);
+
+                    fprintf(fp, "\t%s:\n", error_lablel);
+                    fprintf(fp, "\tlea rdi, [errorMsg1]\n");
+                    // "errorMsg1    db        \"RUN TIME ERROR: End index %%d of Array less
+                    // than start index %%d at line %%d. Aborting\", 10, 0\n");
+                    fprintf(fp, "\tmov rsi, rcx\n");
+                    fprintf(fp, "\tmov rdx,  rax\n");
+                    fprintf(fp, "\txor rcx, rcx\n");
+                    fprintf(fp, "\tmov rcx, %d\n", node->tree_node->line);
+                    fprintf(fp, "\txor rax, rax\n");
+                    fprintf(fp, "\tcall printf\n");
+                    fprintf(fp, "\tjmp main_end\n");
+                    fprintf(fp, "%s:\n", exit_label);
                 }
 
             }
