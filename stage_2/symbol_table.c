@@ -32,6 +32,7 @@ ID_SYMBOL_TABLE *create_id_st(ID_SYMBOL_TABLE *papa)
         id_table->id_table[iterator] = NULL;                        // no symbols initially in the table
     id_table->total_ids = 0;
     id_table->kid_table_count = 0;
+    id_table->visited = 0;
     if (papa != NULL)
         id_table->primogenitor = papa->primogenitor;
     for (short int i = 0; i < ST_KID_NUM; ++i)
@@ -136,6 +137,9 @@ ID_TABLE_ENTRY *st_lookup_nr(char *name, ID_SYMBOL_TABLE *st)
 ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st)
 {
     // first, compute the key where the variable would be stored
+
+    if (st == NULL)
+        return NULL;
     int key = st_hash(name);
     ID_TABLE_ENTRY *temp = st->id_table[key];
     while(temp)
@@ -147,7 +151,9 @@ ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st)
     if (st->id_st_parent == NULL)
         return NULL;                                // not found in any parents
     else
-        return st_lookup(name, (ID_SYMBOL_TABLE *)st->id_st_parent);         // assuming scope only broadens with nesting, uncomment as per the requirement
+    {
+        return st_lookup(name, st->id_st_parent);         // assuming scope only broadens with nesting, uncomment as per the requirement
+    }
 }
 
 int get_width(TYPE *t)

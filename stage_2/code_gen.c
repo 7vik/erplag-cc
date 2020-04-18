@@ -544,10 +544,13 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
     }
     if (ex->node_marker == ID)
     {
+        printf("here\n");
+        printf("var: %s\n", ex->tree_node->lexeme);
         ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
-    
+        printf("here2\n");
         if (i == NULL)
         {
+            printf("ayush\n");
             PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->tree_node->lexeme);
             if(p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
@@ -561,6 +564,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         }
         else        // is in ID_ST
         {
+            printf("here\n");
             if(i->datatype->simple != ARRAY)
             {
                 int offset = i->offset;
@@ -1036,8 +1040,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "\tmov rax, %d\n", end);
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
- 
-        generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+        printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[0], fp);
         id_st->visited++;
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");

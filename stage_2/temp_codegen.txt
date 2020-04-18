@@ -1,12 +1,12 @@
 <<<driver program>>>
 start
-	declare A:array[10..15] of integer;
-	declare k:integer;
-	get_value(k);
+	declare a, m, temp:integer;	
+	declare A, B, C: array[6..10] of integer;
 	get_value(A);
-	print(A[11]);
-	print(A[k]);
-	print(A);
-	print(true);
-	print(2);
+	get_value(B);
+	for(m in 6..20)
+    start
+		temp:= m;
+	end
+	print(C);
 end

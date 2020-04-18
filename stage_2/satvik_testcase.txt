@@ -1,9 +1,12 @@
 <<<driver program>>>
 start
-	declare w:array[1..3] of integer;
-	declare x: integer;
-	get_value(w);
-	w[2] := 3 * x; 
-	print(true);	
-	
+	declare a, m, temp:integer;	
+	declare A, B, C: array[6..10] of integer;
+	get_value(A);
+	get_value(B);
+	for(m in 6..20)
+    start
+		temp:= m;
+	end
+	print(C);
 end
