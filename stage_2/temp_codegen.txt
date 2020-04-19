@@ -5,6 +5,7 @@ start
 	get_value(A);
 	get_value(B);
 	get_value(a);
-	a := B[a];
+	B[7] := a + 10;
 	print(a);
+	print(B);
 end

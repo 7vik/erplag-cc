@@ -162,7 +162,6 @@ void bound_check(FILE* fp, int start_offset, int end_offset, int index, int line
     fprintf(fp, "\tcall printf\n");
     fprintf(fp, "\tjmp main_end\n");
     fprintf(fp, "%s:\n", exit_label);
-    fprintf(fp, "\tpop r14\n\tpop r13\n");
 }
 
 // for A[k] kind
@@ -198,7 +197,6 @@ void bound_check_dynamic(FILE* fp, int start_offset, int end_offset, int index_o
     fprintf(fp, "\tcall printf\n");
     fprintf(fp, "\tjmp main_end\n");
     fprintf(fp, "%s:\n", exit_label);
-    fprintf(fp, "\tpop r14\n\tpop r13\n");
 }
 
 void take_input(FILE* fp, int type, int offset)
@@ -540,15 +538,10 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
 // evaluates the rhs and stores the result in RCX
 void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 {
-    printf("Inside evaluate expr: %s\n", variables_array[ex->node_marker]);
-
-    /*
     if(ex->node_marker == var)
     {
-        printf("Inside var\n");
         evaluate_expr(ex->child, id_st, fp);
     }
-    */
     if (ex->node_marker == ID)
     {
         printf("here\n");
@@ -575,7 +568,6 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             if(i->datatype->simple != ARRAY)
             {
                 int offset = i->offset;
-                printf("Insidde cdhvggggggggggg\n");
                 fprintf(fp, "\txor rcx, rcx\n");
                 fprintf(fp, "\tmov ecx, [rbp - %d]\n", offset * 8);
                 return;
@@ -585,17 +577,17 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         }
     }
 
-    else if (ex->node_marker == RNUM)
+    if (ex->node_marker == RNUM)
     {
         ;
     }
-    else if (ex->node_marker == NUM)
+    if (ex->node_marker == NUM)
     {
         char* num = ex->tree_node->lexeme;
         fprintf(fp, "\tmov rcx, %s\n", num);
     }
 
-    else if (ex->node_marker == TRUE || ex->node_marker == FALSE)
+    if (ex->node_marker == TRUE || ex->node_marker == FALSE)
     {
         if(ex->node_marker == TRUE)
             fprintf(fp, "\tmov rcx, 1\n");
@@ -604,7 +596,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         
     }
 
-    else if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE)
+    if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE)
     {   
         evaluate_expr(ex->child, id_st, fp);
         
@@ -640,7 +632,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 
     }
 
-    else if (ex->node_marker == AND ||ex->node_marker == OR)
+    if (ex->node_marker == AND ||ex->node_marker == OR)
     {
         evaluate_expr(ex->child, id_st, fp);
         
@@ -656,15 +648,13 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             fprintf(fp, "or rcx, rdx\n");
     }
 
-    else if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL)
+    if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL)
     {
         evaluate_expr(ex->child, id_st, fp);
         
         fprintf(fp, "\tpush rcx\n");
         fprintf(fp, "\tpush rcx\n");
-        printf("evaluation started\n");
         evaluate_expr(ex->child->sibling, id_st, fp);
-        printf("evaluation ended\n");
         fprintf(fp, "\tpop rdx\n");
         fprintf(fp, "\tpop rdx\n");
 
@@ -696,12 +686,11 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             fprintf(fp, "\txor rdx, rdx\n");    
             fprintf(fp, "\tdiv rbx\n"); 
             fprintf(fp, "\tmov rcx, rax\n");
-            return;
         }
     
     }
 
-    else if (ex->node_marker == MINUS && ex->child->sibling == NULL)
+    if (ex->node_marker == MINUS && ex->child->sibling == NULL)
     {
         evaluate_expr(ex->child, id_st, fp);
         fprintf(fp, "\timul rcx, -1\n");
@@ -965,58 +954,53 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         {
             // first do a non-recursive lookup
             ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
-            int line = lhs->child->sibling->tree_node->line;
-            int base_offset, start_offset, end_offset, index, index_offset;
-
             printf("heren\n");
             if (i == NULL) printf("GOTYA\n");
             PARAMS *p = NULL;
-
-            // calculating offsets of arrays
             if (i == NULL)      // then check for parameters
             {
                 p = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
                 if (p == NULL)
                     p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
                 
-                base_offset = p->offset - 26;
-                start_offset = p->datatype->arrtype->begin_offset - 26;
-                end_offset = p->datatype->arrtype->end_offset - 26;
+                int base_offset = p->offset;
+                int start_offset = p->datatype->arrtype->begin_offset;
+                int end_offset = p->datatype->arrtype->end_offset;
+                int index = atoi(lhs->child->sibling->tree_node->lexeme);
+                int line = lhs->child->sibling->tree_node->line;
+                
+                bound_check(fp, start_offset, end_offset, index, line);
+                fprintf(fp, "\txor rax, rax\n");
+                fprintf(fp, "\txor rdx, rdx\n");
+                fprintf(fp, "\tmov eax, [rbp - %d + 208]\n", base_offset * 8);
+                fprintf(fp, "\tmov edx, [rbp - %d + 208]\n", start_offset * 8);
+                fprintf(fp, "\tmov ebx, %d\n", index);
+                fprintf(fp, "\tsub ebx, edx\n");
+                fprintf(fp, "\tmov [rax + rbx * 8], rcx \n");
+                return;
             }
 
-            else
-            {
-                printf("inside not function index\n");
-                base_offset = i->offset;
-                start_offset = i->datatype->arrtype->begin_offset;
-                end_offset = i->datatype->arrtype->end_offset;
-            }
+            int offset = i->offset;
+            int start_offset = i->datatype->arrtype->begin_offset;
+            int end_offset = i->datatype->arrtype->end_offset;
+            int line = lhs->child->tree_node->line;
+            fprintf(fp, "\txor rax, rax\n");
+            fprintf(fp, "\txor rdx, rdx\n");
+            fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);
+            fprintf(fp, "\tmov edx, [rbp - %d]\n", start_offset * 8);
 
             // A[2]
             if(lhs->child->sibling->node_marker != ID)
             {
-                index = atoi(lhs->child->sibling->tree_node->lexeme);
-                printf("index xxxxxxxxxx %d\n", index);
-                fprintf(fp, "\tpush rcx\n\tpush rcx\n");
+                int index = atoi(lhs->child->sibling->tree_node->lexeme);
                 bound_check(fp, start_offset, end_offset, index, line);
-                fprintf(fp, "\tpop rcx\n\tpop rcx\n");
-                fprintf(fp, "\txor rax, rax\n");
-                fprintf(fp, "\txor rdx, rdx\n");
-                fprintf(fp, "\tmov rax, [rbp - %d]\n", base_offset * 8);
-                fprintf(fp, "\tmov rdx, [rbp - %d]\n", start_offset * 8);
-                fprintf(fp, "\txor rbx, rbx\n");
                 fprintf(fp, "\tmov ebx, %d\n", index);
-                fprintf(fp, "\tsub ebx, edx\n");
-                fprintf(fp, "\tmov [rax + rbx * 8], rcx \n");
-
-                return;
             }
-            
-             // A[k]
-
+            // A[k]
             else
             {
-                ID_TABLE_ENTRY* index_entry = st_lookup(lhs->child->sibling->tree_node->lexeme, id_st);
+                int index_offset;
+                 ID_TABLE_ENTRY* index_entry = st_lookup(lhs->child->sibling->tree_node->lexeme, id_st);
                     
                 if(index_entry != NULL)
                 {
@@ -1028,20 +1012,17 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     if (p == NULL)
                         p = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
                     
-                    index_offset = p->offset - 26;
+                    index_offset = p->offset;
                 }
                 
                 bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
-                fprintf(fp, "\txor rax, rax\n");
-                fprintf(fp, "\txor rdx, rdx\n");
-                fprintf(fp, "\tmov eax, [rbp - %d]\n", base_offset * 8);
-                fprintf(fp, "\tmov edx, [rbp - %d]\n", start_offset * 8);
-                fprintf(fp, "\tmov ebx, [rbp - %d]\n", index_offset * 8);
-                fprintf(fp, "\tsub ebx, edx\n");
-                fprintf(fp, "\tmov [rax + rbx * 8], rcx\n");
-                return;
-            }   
-                
+                fprintf(fp, "\tmov ebx, [rbp - %d]\n", index_offset);
+            }
+                        
+            fprintf(fp, "\tsub ebx, edx\n");
+            //fprintf(fp, "\txor rcx, rcx\n");
+            fprintf(fp, "\tmov [rax + rbx * 8], rcx\n");
+            return;
         }
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
         if (id_entry != NULL)
