@@ -1,3 +1,5 @@
+declare module f1;
+
 <<<driver program>>>
 start
     declare w:integer;
@@ -6,14 +8,24 @@ start
     declare A: array[5..10] of integer;
     w:=10;
     b:=false;
-    switch(w)
+    switch(b)
 		start
 			case true: w:=20;
 				 break;
 			case false: w:=40;    
 				 break;
-			default: w:=30;       
-				 break;		 	
+			**default: w:=30;       
+				 break;**	 	
 		end
+    [A, w]:= use module f1 with parameters w;
     print(w);
 end
+
+<<module f1>>
+takes input [a:real, b: real, c:integer];
+returns [x:integer, z:real];
+start
+  declare a,b,c:integer;
+  use module f1 with parameters a,b,c;
+end
+

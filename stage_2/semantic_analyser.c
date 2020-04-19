@@ -41,18 +41,27 @@ void semantic_analyser(astNode* root, GST* global_st)
         if(temp->node_marker == moduleDeclarations)
         {
             check_moduleDeclarations_semantic(temp, global_st);
-            temp = temp->sibling;
+	    temp = temp->sibling;
         }
+	else if(temp->node_marker == EPS)
+	    temp = temp->sibling;
+	
         if(temp->node_marker == otherModules)
         {
             check_otherModules_semantic(temp, global_st);
-            temp = temp->sibling;
+	    temp = temp->sibling;
         }
+	else if(temp->node_marker == EPS)
+	    temp = temp->sibling;
+
         if(temp->node_marker == driverModule)
         {
             check_driverModule_semantic(temp, global_st);
-            temp = temp->sibling;
+	    temp = temp->sibling;
         }
+	else if(temp->node_marker == EPS)
+		temp = temp->sibling;
+
         if(temp->node_marker == otherModules)
         {
             check_otherModules_semantic(temp, global_st);
@@ -461,10 +470,18 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     Both of them are valid as per the specifications.
     */
 
+    // The language does not support DIRECT recursion.
+    FUNC_TABLE_ENTRY* rec_func = id_table->primogenitor;
+    if(strcmp(rec_func->func_name, func_entry->func_name) == 0)
+    {
+        printf("SEMANTIC ERROR at line %d: The language does not support direct recursion.\n", temp->sibling->tree_node->line);
+        hasSemanticError = true;
+    }
+
     // now, the node marker for temp is either ASSIGNOP or EPS
     if(temp->node_marker == EPS && func_entry->out_params != NULL)  // the function returns some value(s)
     {
-        printf("SEMANTIC ERROR at line %d: Function '%s' returns some value(s).\n", temp->tree_node->line, func_entry->func_name);
+        printf("SEMANTIC ERROR at line %d: Function '%s' returns some value(s).\n", temp->sibling->tree_node->line, func_entry->func_name);
         hasSemanticError = true;
     }
     else if(temp->node_marker != EPS && func_entry->out_params == NULL)  // the function does not return any value
@@ -501,7 +518,7 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     if(count_ret1 != count_ret2)
     {
-        printf("SEMANTIC ERROR at line %d: Mismatch in the number of return values in definition and usage of function '%s'.\n", temp->tree_node->line, func_entry->func_name);
+        printf("SEMANTIC ERROR at line %d: Mismatch in the number of return values in definition and usage of function '%s'.\n", temp->sibling->tree_node->line, func_entry->func_name);
         hasSemanticError = true;
     }
     else if(count_ret1 != 0 && count_ret2 != 0) /* count_ret1 equals count_ret2, now traverse again and match the types */
@@ -516,7 +533,7 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
                 return;
             if(lookup_id->datatype->simple != trav2->datatype->simple)
             {
-                printf("SEMANTIC ERROR at line %d: Variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
+                printf("SEMANTIC ERROR at line %d: Output variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
                 hasSemanticError = true;
             }
             trav1 = trav1->sibling;
@@ -538,7 +555,7 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
         if(lookup_id->datatype->simple != trav2->datatype->simple)
         {
-            printf("SEMANTIC ERROR at line %d: Variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
+            printf("SEMANTIC ERROR at line %d: Input variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
             hasSemanticError = true;
         }
         count_inp1++;
@@ -547,12 +564,23 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         trav2 = trav2->next;
     }
 
-    if(count_inp1 != count_inp2)
+    while(trav1->node_marker != EPS)
     {
-        printf("SEMANTIC ERROR at line %d: Mismatch in the number of input values in definition and usage of function '%s'.\n", temp->tree_node->line, func_entry->func_name);
-        hasSemanticError = true;
+        count_inp1++;
+        trav1 = trav1->sibling;
     }
 
+    while(trav2 != NULL)
+    {
+        count_inp2++;
+        trav2 = trav2->next;
+    }
+
+    if(count_inp1 != count_inp2)
+    {
+        printf("SEMANTIC ERROR at line %d: Mismatch in the number of input values in definition and usage of function '%s'.\n", temp->child->tree_node->line, func_entry->func_name);
+        hasSemanticError = true;
+    }
     // Rest of the semantics should be dealt with during type checking phase.
     // Comment out any check if already dealt with previously.
     return;
@@ -623,7 +651,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     return;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -667,4 +695,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/
+
