@@ -48,7 +48,7 @@ enum variables {    arithmeticExpr,arithmeticExpr_lr,
 #ifndef __VARIABLES_ARRAY
 #define __VARIABLES_ARRAY
 extern char *variables_array[114];
-
+extern int num_parse_nodes;
 typedef struct first_follow_node
 {
     bool first_set_array[MAX_BOOL_ARRAY_SIZE];

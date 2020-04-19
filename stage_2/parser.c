@@ -45,6 +45,8 @@ char *variables_array[] =  {
                             "TRUE","USE","WHILE","WITH"     
                         };
 
+int num_parse_nodes = 0;
+
 void remove_comments(FILE* f1)
 {
 
@@ -154,6 +156,8 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
     new->num_of_kids = 0;
     int end = N_ARY_LIM;
     while(--end >= 0) new->kids[end] = NULL;
+    num_parse_nodes++;
+    printf("%d\n", num_parse_nodes);
     return new;
 }
 
@@ -788,13 +792,7 @@ void pushr(PARSE_TREE *active, STACK **st, GRAMMAR_NODE *rule)
     active->num_of_kids++;
     pushr(active, st, rule->next);
     push(st, string_to_enum(rule->variable));
-}
-
-void error(FILE *f, TWIN_BUFFER *twin_buff, int *line_no)
-{
-    
-
-    return;
+    num_parse_nodes++;
 }
 
 void insert_parse_tree(PARSE_TREE **active, LEXEME *lex_tup)
