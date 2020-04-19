@@ -872,7 +872,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     else
                     {
                         int start = atoi(node->tree_node->lexeme);
-                        printf("%d\n", start);
                         fprintf(fp, "mov r13, %d\n", start);
                         fprintf(fp, "mov [rbp - %d], r13\n", start_offset * 8);
                     }
@@ -1069,7 +1068,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "\tmov rax, %d\n", end);
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
-        printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
         generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
         id_st->visited++;
 
@@ -1467,7 +1465,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             astNode* case_node = n->child->sibling->sibling->child;
             char* cases_exit = generate_label();
             char* case_exit = generate_label();
-            fprintf(fp, "\tcmp rax, %d\n", 1);
+
+            if(case_node->child->node_marker == TRUE)
+                fprintf(fp, "\tcmp rax, %d\n", 1);
+            else
+                fprintf(fp, "\tcmp rax, %d\n", 0);
             fprintf(fp, "\tjne %s\n", case_exit);
             fprintf(fp, "\tpush rax\n\tpush rax\n");
             generate_the_universe(case_node->child->sibling, id_st->kid_st[id_st->visited], fp);

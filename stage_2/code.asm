@@ -51,7 +51,7 @@ mov rbp, rsp
 	sub rsp, 64
 	;Taking id
 
-	mov rdi, int_inMsg
+	mov rdi, bool_inMsg
 	call printf
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 8]
@@ -70,30 +70,28 @@ mov rbp, rsp
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 24]
 	call scanf
-	xor rcx, rcx
-	mov ecx, [rbp - 8]
-	push rcx
-	push rcx
-	mov rcx, 2
-	pop rdx
-	pop rdx
-	mov eax, edx
-	mov ebx, ecx
-	xor edx, edx
-	div ebx
-	xor rcx, rcx
-	mov ecx, eax
-	mov [rbp - 24], rcx
+	xor rax, rax
+	mov eax, [rbp - 8]
+	cmp rax, 0
+	jne label1
+	push rax
+	push rax
 	;Printing ID
 
 	mov rdi, intFormat_out
 	xor rsi, rsi
-	mov esi, [rbp - 8]
+	mov esi, [rbp - 16]
 	call printf
 
 	lea rdi, [new_line]
 	call printf
 
+	pop rax
+	pop rax
+	jmp label0
+	label1:
+	push rax
+	push rax
 	;Printing ID
 
 	mov rdi, intFormat_out
@@ -104,6 +102,9 @@ mov rbp, rsp
 	lea rdi, [new_line]
 	call printf
 
+	pop rax
+	pop rax
+	label0:
 main_end:
 mov rsp, rbp
 pop rbp
