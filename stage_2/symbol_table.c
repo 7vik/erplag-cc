@@ -334,7 +334,6 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             {
                 if (error_line < ex->tree_node->line)
                     printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->tree_node->line, ex->tree_node->lexeme);
-                printf("%d\n", error_line);
                 error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
@@ -615,7 +614,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 hasSemanticError = true;
             }
 
-            else if ((p1 == NULL && p2 == NULL) && i != NULL)
+            else if (i != NULL)
             {
                 // types must match before assignment
                 if (i->datatype->simple != get_type_expr(rhs, id_st))
@@ -626,7 +625,16 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     hasSemanticError = true;
                 }
             }
-            else if ((p1 != NULL || p2 != NULL) && i == NULL)
+
+            else if(p1 != NULL && p2 != NULL)
+            {
+                if (error_line < lhs->tree_node->line)
+                        printf("Semantic Error on line %d. Variable %s can't be both input and output parameters.\n",lhs->tree_node->line, lhs->tree_node->lexeme);
+                error_line = lhs->tree_node->line;
+                hasSemanticError = true;
+            }
+
+            else
             {
                 // types must match before assignment
                 PARAMS* p = p1;
@@ -643,13 +651,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     hasSemanticError = true;
                 }
             }
-            else
-            {
-                if (error_line < lhs->tree_node->line)
-                        printf("Semantic Error on line %d. Variable %s can't be both input and output parameters.\n",lhs->tree_node->line, lhs->tree_node->lexeme);
-                error_line = lhs->tree_node->line;
-                hasSemanticError = true;
-            }
+            
         }
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
