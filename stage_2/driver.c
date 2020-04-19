@@ -5,7 +5,7 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// gcc driver.c code_gen.c symbol_table.c ast.c parser.c lexer.c hash.c bool.c
+// gcc driver.c semantic_analyser.c code_gen.c symbol_table.c ast.c parser.c lexer.c hash.c bool.c
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
         if(option == 6)                                         // Activation Record Size
         { 
-                        FILE* test_fp = fopen(argv[1], "r");
+            FILE* test_fp = fopen(argv[1], "r");
             if (test_fp == NULL)
             {
                 printf("Error in opening files. Exiting.\n");
@@ -174,8 +174,30 @@ int main(int argc, char *argv[])
 
         if(option == 8)                                         // Errors
         { 
-            printf("Exiting. Bye-Bye!\n");
-            exit(0);
+            FILE* test_fp = fopen(argv[1], "r");
+            if (test_fp == NULL)
+            {
+                printf("Error in opening files. Exiting.\n");
+                exit(1);
+            }
+            populate_ht(hash_table, KEYWORDS_FILE);
+            int line_count = 1;
+            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+            init_buffer(test_fp, twin_buff);
+            GRAMMAR* grammar = generate_grammar();
+            first_follow *ff = get_first_follow_table(grammar);
+            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+            create_parse_table(ff, parse_table, grammar);
+            STACK *stack = NULL;
+            PARSE_TREE *tree;
+            parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+            astNode* ast_root = buildAST(tree);
+            GST *st = create_global_st();
+            traverse_the_multiverse(ast_root, st);
+            semantic_analyser(ast_root, st);
+            fclose(test_fp);
+            free(twin_buff);
+            free(parse_table);
         }
 
         if(option == 9)                                        // Code Generation
