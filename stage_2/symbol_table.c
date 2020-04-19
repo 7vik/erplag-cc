@@ -1037,7 +1037,14 @@ void traverse_the_multiverse(astNode *n, GST *st)
             else
                 p2 = create_param(m->child->sibling->sibling->child);
             ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-            FUNC_TABLE_ENTRY *f = create_function(m->child, p1, p2, id_st);
+            FUNC_TABLE_ENTRY* f = global_st_lookup(m->child->tree_node->lexeme, st);
+            if(f != NULL)
+            {
+                printf("Semantic error at line %d: Function %s redefined\n", m->child->tree_node->line, m->child->tree_node->lexeme);    
+                hasSemanticError = true;
+                continue;
+            }
+            f = create_function(m->child, p1, p2, id_st);
             st_insert_func_entry(f, st);
             traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
             f->activation_record_size = current_offset;
