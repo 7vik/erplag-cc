@@ -691,11 +691,12 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         {
             // store dividend in rax, divisor in rbx --> quotient in rax, remainedr in rdx
             //@bharat debug this
-            fprintf(fp, "\tmov rax, rdx\n");
-            fprintf(fp, "\tmov rbx, rcx\n"); 
-            fprintf(fp, "\txor rdx, rdx\n");    
-            fprintf(fp, "\tdiv rbx\n"); 
-            fprintf(fp, "\tmov rcx, rax\n");
+            fprintf(fp, "\tmov eax, edx\n");
+            fprintf(fp, "\tmov ebx, ecx\n"); 
+            fprintf(fp, "\txor edx, edx\n");    
+            fprintf(fp, "\tdiv ebx\n");
+            fprintf(fp, "\txor rcx, rcx\n"); 
+            fprintf(fp, "\tmov ecx, eax\n");
             return;
         }
     

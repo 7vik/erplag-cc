@@ -1,11 +1,10 @@
 <<<driver program>>>
 start
 	declare a, m, temp:integer;	
-	declare A, B, C: array[6..10] of integer;
-	get_value(A);
-	get_value(B);
 	get_value(a);
-	B[a] := a + 10;
+	get_value(m);
+	get_value(temp);
+	temp := a / 2;
 	print(a);
-	print(B);
+	print(temp);
 end
