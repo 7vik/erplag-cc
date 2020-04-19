@@ -540,24 +540,13 @@ void print_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, 
 // evaluates the rhs and stores the result in RCX
 void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 {
-    printf("Inside evaluate expr: %s\n", variables_array[ex->node_marker]);
 
-    /*
-    if(ex->node_marker == var)
-    {
-        printf("Inside var\n");
-        evaluate_expr(ex->child, id_st, fp);
-    }
-    */
+
     if (ex->node_marker == ID)
     {
-        printf("here\n");
-        printf("var: %s\n", ex->tree_node->lexeme);
         ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
-        printf("here2\n");
         if (i == NULL)
         {
-            printf("ayush\n");
             PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->tree_node->lexeme);
             if(p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
@@ -566,8 +555,6 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             fprintf(fp, "\txor rcx, rcx\n");
             fprintf(fp, "\tmov ecx, [rbp - %d + 208]\n", offset * 8);
 
-            // else if (p1 != NULL) return p1->datatype->simple;
-            // else if (p2 != NULL) return p2->datatype->simple;
         }
         else        // is in ID_ST
         {
@@ -662,9 +649,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         
         fprintf(fp, "\tpush rcx\n");
         fprintf(fp, "\tpush rcx\n");
-        printf("evaluation started\n");
         evaluate_expr(ex->child->sibling, id_st, fp);
-        printf("evaluation ended\n");
         fprintf(fp, "\tpop rdx\n");
         fprintf(fp, "\tpop rdx\n");
 
@@ -689,8 +674,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 
         else
         {
-            // store dividend in rax, divisor in rbx --> quotient in rax, remainedr in rdx
-            //@bharat debug this
+            // store dividend in eax, divisor in ebx --> quotient in eax, remainedr in edx
             fprintf(fp, "\tmov eax, edx\n");
             fprintf(fp, "\tmov ebx, ecx\n"); 
             fprintf(fp, "\txor edx, edx\n");    
@@ -720,7 +704,6 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             int line = ex->child->sibling->tree_node->line;
             int base_offset, start_offset, end_offset, index, index_offset;
 
-            if (i == NULL) printf("GOTYA\n");
             PARAMS *p = NULL;
 
             // calculating offsets of arrays
@@ -737,7 +720,6 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 
             else
             {
-                printf("inside not function index\n");
                 base_offset = i->offset;
                 start_offset = i->datatype->arrtype->begin_offset;
                 end_offset = i->datatype->arrtype->end_offset;
@@ -747,7 +729,6 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             if(ex->child->sibling->node_marker != ID)
             {
                 index = atoi(ex->child->sibling->tree_node->lexeme);
-                printf("index xxxxxxxxxx %d\n", index);
                 fprintf(fp, "\tpush rcx\n\tpush rcx\n");
                 bound_check(fp, start_offset, end_offset, index, line);
                 fprintf(fp, "\tpop rcx\n\tpop rcx\n");
@@ -797,36 +778,13 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
                 
         }
     }
-    /*
-    {
-    }
-    */
-    /*
     
-    if (ex->node_marker == var)
-    {
-        if (ex->child->sibling == NULL)     // not an array element
-            return get_type_expr(ex->child, id_st);
-        else                                // array element
-        {
-            // printf("WHYTHO2?\n");
-            ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
-            
-        
-        }
-    }
-    if (ex->node_marker == ARRAY)
-        return ARRAY;
-    */
     return;
 }
 
 // trav a single function and generate the ASM code
 void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 {
-    printf("visited: %d\n", id_st->visited);
-    // printf("aasdfasdf\n");
-    printf("SMALL\t%s\n", variables_array[n->node_marker]);
     if (is(n, "moduleDef"))
     {
         generate_the_universe(n->child->sibling, id_st, fp);
@@ -844,22 +802,12 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         while(temp->node_marker != EPS)
         {
-            // if (stack_count % 2 == 0)
-            //     fprintf(fp, "\tsub rsp, 16\n");
-            // stack_count++;
-
-            // if array 
+            
             ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_st);
 
             if(id_entry->datatype->simple == ARRAY)
             {
                 int offset = id_entry->offset;
-                // if (stack_count % 2 == 0)
-                //     fprintf(fp, "\tsub rsp, 16\n");
-                // stack_count++;
-                // if (stack_count % 2 == 0)
-                //     fprintf(fp, "\tsub rsp, 16\n");
-                // stack_count++;
 
                 //storing base address of this array: part of array_buffer
                 fprintf(fp, "\txor r14, r14\n");
@@ -959,15 +907,12 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     fprintf(fp, "\tjg %s\n", error_lablel);
                     fprintf(fp, "\tsub ecx, eax\n");
                     fprintf(fp, "\tinc ecx\n");
-                    //fprintf(fp, "\timul rcx, 8\n");
                     fprintf(fp, "\tadd r14d, ecx\n");
                     fprintf(fp, "\tmov [array_available_addr], r14\n\n");
                     fprintf(fp, "\tjmp %s\n", exit_label);
 
                     fprintf(fp, "\t%s:\n", error_lablel);
                     fprintf(fp, "\tlea rdi, [errorMsg1]\n");
-                    // "errorMsg1    db        \"RUN TIME ERROR: End index %%d of Array less
-                    // than start index %%d at line %%d. Aborting\", 10, 0\n");
                     fprintf(fp, "\tmov rsi, rcx\n");
                     fprintf(fp, "\tmov rdx,  rax\n");
                     fprintf(fp, "\txor rcx, rcx\n");
@@ -1125,8 +1070,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
         printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
-        generate_the_universe(range->sibling->sibling, id_st->kid_st[0], fp);
-        //id_st->visited++;
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
+        id_st->visited++;
 
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
@@ -1282,7 +1227,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
-        printf("here io1\n");
         
         // print constant
         if(n->child->child->child == NULL)
@@ -1322,7 +1266,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         {
             if (id_entry->datatype->simple != ARRAY)
             {
-                printf("here io\n");
                 fprintf(fp, "\t;Printing ID\n\n");
                 print_id(fp,  id_entry->datatype->simple, id_entry->offset);
             }
@@ -1428,7 +1371,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             }
             else
             {
-                printf("here\n");
                 fprintf(fp, "\t;Printing array\n\n");
                 int base_offset = p->offset * 8;
                 int lower_offset = p->datatype->arrtype->begin_offset * 8;
@@ -1607,14 +1549,12 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
     {
-        printf("satvik\n");
        char* func_name = n->child->sibling->tree_node->lexeme;
 
         astNode* id_list_node = n->child->sibling->sibling->child;
         int count = 0;
         while(id_list_node->node_marker != EPS)
         {
-            printf("here3\n");
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
             int offset = id_entry->offset;
             if(id_entry->datatype->simple != ARRAY)
@@ -1647,10 +1587,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         }
         fprintf(fp, "\tcall %s\n", func_name);
 
-        printf("here1\n");
         id_list_node = n->child->child;
         count = 0;
-        printf("here2\n");
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
@@ -1659,7 +1597,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             id_list_node = id_list_node->sibling;
             count++;
         }
-        printf("here3\n");
 
     }
     return;
@@ -1737,20 +1674,11 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     if (is(n, "driverModule"))
     {
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
-        printf("visted inside driver: %d, %p\n", f->local_id_table->visited, &((f->local_id_table)->visited));
-        id_st_print(f->local_id_table);
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
-        printf("driver module started\n");
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
         fprintf(fp, "\tsub rsp, %d\n", (f->activation_record_size) * 16);
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
-        id_st_print(f->local_id_table);
-        //stack_count = 0;
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
         generate_the_universe(n->child, f->local_id_table, fp);
-        printf("driver module ended\n");
     }
     if (is(n, "EPS"))
         return;         // bliss
