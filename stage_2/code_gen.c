@@ -1686,6 +1686,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     return;
 }
 
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 4)
@@ -1743,3 +1744,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
+*/
