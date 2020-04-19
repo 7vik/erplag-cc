@@ -777,6 +777,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 // trav a single function and generate the ASM code
 void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 {
+    printf("visited: %d\n", id_st->visited);
     // printf("aasdfasdf\n");
     printf("SMALL\t%s\n", variables_array[n->node_marker]);
     if (is(n, "moduleDef"))
@@ -980,16 +981,44 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             }
 
             int offset = i->offset;
-            int index = atoi(lhs->child->sibling->tree_node->lexeme);
             int start_offset = i->datatype->arrtype->begin_offset;
             int end_offset = i->datatype->arrtype->end_offset;
             int line = lhs->child->tree_node->line;
-            bound_check(fp, start_offset, end_offset, index, line);
             fprintf(fp, "\txor rax, rax\n");
             fprintf(fp, "\txor rdx, rdx\n");
             fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);
             fprintf(fp, "\tmov edx, [rbp - %d]\n", start_offset * 8);
-            fprintf(fp, "\tmov ebx, %d\n", index);
+
+            // A[2]
+            if(lhs->child->sibling->node_marker != ID)
+            {
+                int index = atoi(lhs->child->sibling->tree_node->lexeme);
+                bound_check(fp, start_offset, end_offset, index, line);
+                fprintf(fp, "\tmov ebx, %d\n", index);
+            }
+            // A[k]
+            else
+            {
+                int index_offset;
+                 ID_TABLE_ENTRY* index_entry = st_lookup(lhs->child->sibling->tree_node->lexeme, id_st);
+                    
+                if(index_entry != NULL)
+                {
+                    index_offset = index_entry->offset;
+                }
+                else
+                {
+                    PARAMS* p = param_lookup(id_st->primogenitor->in_params ,n->child->child->child->tree_node->lexeme);
+                    if (p == NULL)
+                        p = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
+                    
+                    index_offset = p->offset;
+                }
+                
+                bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
+                fprintf(fp, "\tmov ebx, [rbp - %d]\n", index_offset);
+            }
+                        
             fprintf(fp, "\tsub ebx, edx\n");
             //fprintf(fp, "\txor rcx, rcx\n");
             fprintf(fp, "\tmov [rax + rbx * 8], rcx\n");
@@ -1041,7 +1070,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
         printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
-        generate_the_universe(range->sibling->sibling, id_st->kid_st[0], fp);
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[40], fp);
         id_st->visited++;
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
@@ -1263,6 +1292,9 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     if(index_entry != NULL)
                     {
                         index_offset = index_entry->offset;
+                        bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
+                        print_array_id_dynamic(fp, type, base_offset, start_offset, index_offset);
+                        return;
                     }
                     else
                     {
@@ -1271,12 +1303,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                             p = param_lookup(id_st->primogenitor->out_params ,n->child->child->child->tree_node->lexeme);
                         
                         index_offset = p->offset;
+                        bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
+                        print_array_id_dynamic(fp, type, base_offset, start_offset, index_offset);
                     }
                     
                     
-                    
-                    bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
-                    print_array_id_dynamic(fp, type, base_offset, start_offset, index_offset);
                 }
                 else  // A[2]
                 {

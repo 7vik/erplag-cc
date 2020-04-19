@@ -4,9 +4,7 @@ start
 	declare A, B, C: array[6..10] of integer;
 	get_value(A);
 	get_value(B);
-	for(m in 6..20)
-    start
-		temp:= m;
-	end
-	print(C);
+	get_value(a);
+	a := B[a];
+	print(a);
 end

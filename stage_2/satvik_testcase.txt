@@ -6,7 +6,9 @@ start
 	get_value(B);
 	for(m in 6..20)
     start
-		temp:= m;
+		declare k:integer;
+		get_value(k);
+		temp:= k;
 	end
 	print(C);
 end
