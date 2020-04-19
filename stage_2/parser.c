@@ -892,7 +892,6 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
                 a = get_token(f, twin_buff, line_no);
                 while (table->matrix[X][(temp1 = string_to_enum(a->token)) - num_nt] == -1)
                 {
-                    printf("nfnfj\n");
                     if (temp1 == DOLLAR)
                         break; break;
                     continue;
