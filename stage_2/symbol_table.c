@@ -351,6 +351,15 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
         return BOOLEAN;
     if (ex->node_marker ==  LE||ex->node_marker ==  GE||ex->node_marker ==  LT||ex->node_marker ==  GT||ex->node_marker ==  EQ||ex->node_marker ==  NE||0)
     {
+        astNode* lhs = ex->child;
+        astNode* rhs = ex->child->sibling;
+        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
+            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
+        {
+            printf("Semantic error at line %d: Logical operations on arrays not allowed\n", lhs->child->tree_node->line);
+            hasSemanticError = true;
+            return 0;
+        }
         // printf("REE1\n");
         int t1 = get_type_expr(ex->child, id_st);
         // printf("REE2 %s\n", variables_array[t1]);
@@ -368,11 +377,17 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker == AND ||ex->node_marker == OR||0)
     {
-        // printf("FRT1\n");
+        astNode* lhs = ex->child;
+        astNode* rhs = ex->child->sibling;
+        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
+            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
+        {
+            printf("Semantic error at line %d: Logical operations on arrays not allowed\n", lhs->child->tree_node->line);
+            hasSemanticError = true;
+            return 0;
+        }
         int t1 = get_type_expr(ex->child, id_st);
-        // printf("FRT2 %s\n", variables_array[t1]);
         int t2 = get_type_expr(ex->child->sibling, id_st); 
-        // printf("FRT3 %s\n", variables_array[t2]);
         if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
@@ -385,6 +400,15 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker ==  PLUS    || (ex->node_marker ==  MINUS && ex->child->sibling != NULL)   || ex->node_marker ==  DIV     || ex->node_marker ==  MUL     ||0 )
     {
+        astNode* lhs = ex->child;
+        astNode* rhs = ex->child->sibling;
+        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
+            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
+        {
+            printf("Semantic error at line %d: Arithmetic operations on arrays not allowed\n", lhs->child->tree_node->line);
+            hasSemanticError = true;
+            return 0;
+        }
         int t1 = get_type_expr(ex->child, id_st);
         int t2 = get_type_expr(ex->child->sibling, id_st);
         if (t1 != t2 && t1 != 0 && t2 != 0)
