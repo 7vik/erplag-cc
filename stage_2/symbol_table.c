@@ -199,7 +199,7 @@ char *show_type(TYPE *t)
 void id_st_print(ID_SYMBOL_TABLE *st)
 {
     if (st == NULL) return;
-    printf("visited %d, %p\n", st->visited, &(st->visited));
+    // printf("visited %d, %p\n", st->visited, &(st->visited));
     if (st->id_st_parent == NULL)
         printf("\tID ST with %d ids:\n\n", st->total_ids);
     else
@@ -259,17 +259,15 @@ ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st)
 
 int get_width(TYPE *t)
 {
-    // printf("IN GET WITDH\n");
-   int size = t->simple == INTEGER  ? 4
-            : t->simple == REAL     ? 8
+   int size = t->simple == INTEGER  ? 2
+            : t->simple == REAL     ? 4
             : t->simple == BOOLEAN  ? 1
-            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (4 * (t->arrtype->end - t->arrtype->begin + 1))
-                                :       t->arrtype->base_type == REAL   ? (8 * (t->arrtype->end - t->arrtype->begin + 1))
+            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (2 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == REAL   ? (4 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       0
             : 0;
-    // printf("OUT GET WITDH\n");
-    if (size > 1000 || size < -1000) return 1;
+    if (size > 1000 || size < -1000) return 1;                  // if garbage value, just put a 1 for a pointer
     return size;
 }
 
@@ -440,8 +438,23 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     error_line = ex->tree_node->line;
                     hasSemanticError = true;
                 }
-                else
+                else        // it is an array, and index is an integer
                 {
+                    // only if its a static array with a static index
+                    ARRAY_TYPE_DATA *at = p->datatype->arrtype;
+                    astNode *index_node = ex->child->sibling;  
+                    if (at->is_dynamic == false && index_node->node_marker == NUM)
+                    {
+                        int index = atoi(index_node->tree_node->lexeme);
+                        // check for bounds, and if they don't fit,
+                        if (index > at->end || index < at->begin)
+                        {
+                            if (ex->tree_node->line > error_line)
+                                printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->tree_node->line);
+                            error_line = ex->tree_node->line;
+                            hasSemanticError = true;
+                        }
+                    }
                     return p->datatype->arrtype->base_type;
                 }
             }
@@ -459,8 +472,22 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
-            else
+            else    // it is an array, and index is an integer
             {
+                ARRAY_TYPE_DATA *at = i->datatype->arrtype;
+                astNode *index_node = ex->child->sibling;  
+                if (at->is_dynamic == false && index_node->node_marker == NUM)
+                {
+                    int index = atoi(index_node->tree_node->lexeme);
+                    // check for bounds, and if they don't fit,
+                    if (index > at->end || index < at->begin)
+                    {
+                        if (ex->child->tree_node->line > error_line)
+                            printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->child->tree_node->line);
+                        error_line = ex->tree_node->line;
+                        hasSemanticError = true;
+                    }
+                }
                 return i->datatype->arrtype->base_type;
             }
         }
@@ -474,7 +501,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
     // printf("->\t%s\n", n->tree_node->node_symbol);
-    printf("st %d\n", id_st->visited);
+    // printf("st %d\n", id_st->visited);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -840,7 +867,7 @@ void traverse_the_multiverse(astNode *n, GST *st)
     if (is(n, "driverModule"))
     {
         ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-        printf("visited in st: %d\n", id_st->visited);
+        // printf("visited in st: %d\n", id_st->visited);
         FUNC_TABLE_ENTRY *fnew = create_function(NULL, NULL, NULL, id_st);
         st_insert_func_entry(fnew, st);
         // printf("mil\n");
@@ -955,10 +982,6 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
     fill_param_offsets(f->out_params, OUT_PARAM_OFFSET);                    // output parameter offsets
     return;
 }
-
-
-
-
 
 
 // helper function to print the global symbol table
