@@ -1,10 +1,16 @@
 <<<driver program>>>
 start
-	declare a, m, temp:integer;	
-	get_value(a);
-	get_value(m);
-	get_value(temp);
-	temp := a / 2;
-	print(a);
-	print(temp);
+	declare x:integer;
+	get_value(x);
+	switch(x)
+	start
+		case 1: print(1);
+                break;
+		case 2: print(2);
+                break;
+		case 3: print(3);
+                break;
+        default:print(false);
+			     break;
+	end
 end
