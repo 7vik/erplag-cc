@@ -302,15 +302,29 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     astNode* temp = root->child;
 
     ID_TABLE_ENTRY* id_entry = st_lookup(temp->tree_node->lexeme, id_table);
+    TYPE* datatype;
+    if(id_entry == NULL)
+    {
+        PARAMS* p = param_lookup(id_table->primogenitor->in_params, temp->tree_node->lexeme);
+        if(p == NULL)
+            p = param_lookup(id_table->primogenitor->out_params, temp->tree_node->lexeme);
+        datatype = p->datatype;
+    }
 
-    if(id_entry->datatype->simple == ARRAY) // How can the switch variable be an array variable?
+    else
+    {
+        datatype = id_entry->datatype;
+    }
+    
+
+    if(datatype->simple == ARRAY) // How can the switch variable be an array variable?
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
 	    return;
     }
 
-    else if(id_entry->datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
+    else if(datatype->simple == REAL) // Nah, still not over; this cannot be of type "real" as well.
     {
         printf("SEMANTIC ERROR at line %d: %s is a variable of type real.\n", temp->tree_node->line, temp->tree_node->lexeme);
         hasSemanticError = true;
@@ -589,6 +603,10 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 {
     assert(root->node_marker == var);
+
+    return;
+
+    
     // if two nodes, then it is arr, bound checking
     if(root->child->sibling != NULL)
     {
@@ -615,6 +633,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         
         else  //bound check: it would obviously enter 'else' in case the array is static
         {
+            
             if (index_node->node_marker == ID)
                 return;
             else
