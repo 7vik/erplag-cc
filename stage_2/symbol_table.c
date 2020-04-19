@@ -323,7 +323,7 @@ PARAMS *param_lookup(PARAMS *plist, char *var)
 
 int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 {
-    if(ex->node_marker == var)
+    if(ex->node_marker == var  && ex->child->sibling == NULL)
     {
         ID_TABLE_ENTRY* i = st_lookup(ex->child->tree_node->lexeme, id_st);
         int datatype;
@@ -383,13 +383,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     {
         astNode* lhs = ex->child;
         astNode* rhs = ex->child->sibling;
-        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
-            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
-        {
-            printf("Semantic error at line %d: Logical operations on arrays not allowed\n", lhs->child->tree_node->line);
-            hasSemanticError = true;
-            return 0;
-        }
+        
         // printf("REE1\n");
         int t1 = get_type_expr(ex->child, id_st);
         // printf("REE2 %s\n", variables_array[t1]);
@@ -402,6 +396,14 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
+        else if(t1 == ARRAY)
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Logical operation not supported for arrays.\n",ex->tree_node->line);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+            return 0;
+        }
         else
             return BOOLEAN;
     }
@@ -409,13 +411,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     {
         astNode* lhs = ex->child;
         astNode* rhs = ex->child->sibling;
-        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
-            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
-        {
-            printf("Semantic error at line %d: Logical operations on arrays not allowed\n", lhs->child->tree_node->line);
-            hasSemanticError = true;
-            return 0;
-        }
+        
         int t1 = get_type_expr(ex->child, id_st);
         int t2 = get_type_expr(ex->child->sibling, id_st); 
         if (t1 != t2 && t1 != 0 && t2 != 0)
@@ -425,6 +421,14 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
+        else if(t1 == ARRAY)
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Logical operation not supported for arrays.\n",ex->tree_node->line);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+            return 0;
+        }
         else
             return BOOLEAN;
     }
@@ -432,19 +436,20 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     {
         astNode* lhs = ex->child;
         astNode* rhs = ex->child->sibling;
-        if((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
-            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
-        {
-            printf("Semantic error at line %d: Arithmetic operations on arrays not allowed\n", lhs->child->tree_node->line);
-            hasSemanticError = true;
-            return 0;
-        }
+        
         int t1 = get_type_expr(ex->child, id_st);
         int t2 = get_type_expr(ex->child->sibling, id_st);
         if (t1 != t2 && t1 != 0 && t2 != 0)
         {
             if (ex->tree_node->line > error_line)
                 printf("Semantic Error on line %d. Type Mismatch Error.\n",ex->tree_node->line);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+        }
+        else if(t1 == ARRAY)
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Arithmetic operation not supported for arrays.\n",ex->tree_node->line);
             error_line = ex->tree_node->line;
             hasSemanticError = true;
         }
@@ -495,8 +500,8 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     // check for bounds, and if they don't fit,
                     if (index > at->end || index < at->begin)
                     {
-                        if (ex->tree_node->line > error_line)
-                            printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->tree_node->line);
+                        if (ex->child->tree_node->line > error_line)
+                            printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->child->tree_node->line);
                         error_line = ex->tree_node->line;
                         hasSemanticError = true;
                     }
@@ -595,8 +600,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
-        // both arrays A = B
 
+        // start handling from here @satvik
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
             // first do a ID table recursive lookup
@@ -635,6 +640,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
+
+            
         }
         else    
         {
