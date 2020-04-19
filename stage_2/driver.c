@@ -53,21 +53,9 @@ int main(int argc, char *argv[])
             printf("Exiting. Bye-Bye!\n");
             exit(0);
         }
-    }
-    return 0;
-}
 
-/*
-        
-        else if (option == 1)
-        {
-            FILE* test_fp = fopen(argv[1], "r");
-            remove_comments_driver(test_fp);
-            printf("\n\nComments removed. SUCCESS.\n");
-            fclose(test_fp);
-        }
-        else if (option == 2)
-        {
+        if(option == 1)                                                                 // LEXER
+        { 
             FILE* test_fp = fopen(argv[1], "r");
             populate_ht(hash_table, KEYWORDS_FILE);
             int line_count = 1;
@@ -79,11 +67,12 @@ int main(int argc, char *argv[])
                 print_lexeme(temp);
                 temp = get_token(test_fp, twin_buff, &line_count);
             }
-            printf("\n\n Lexing done. SUCCESS.\n");
+            printf("\nLexing Finished. SUCCESS!\n\n");
             fclose(test_fp);
             free(twin_buff);
         }
-        else if (option == 3)
+
+        if(option == 2)                                                             // PARSER
         { 
             FILE* test_fp = fopen(argv[1], "r");
             FILE* test_parse_fp = fopen(argv[2], "w");
@@ -105,6 +94,58 @@ int main(int argc, char *argv[])
             fclose(test_parse_fp);
             free(twin_buff);
             free(parse_table);
+        }
+
+        if(option == 3)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 4)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 5)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 6)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 7)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 8)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+
+        if(option == 9)
+        { 
+            printf("Exiting. Bye-Bye!\n");
+            exit(0);
+        }
+    }
+    return 0;
+}
+
+/*
+        
+        else if (option == 3)
+        { 
+            
         }
         else if(option == 4)
         { 
