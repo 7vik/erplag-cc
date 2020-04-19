@@ -546,6 +546,110 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
+        
+        // both arrays A = B
+        if ((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
+            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
+        {
+            // lookup array
+            ID_TABLE_ENTRY* i1 = st_lookup(lhs->child->tree_node->lexeme, id_st);
+            PARAMS* p1 = NULL;
+            int t1;
+            bool is_dynamic1;
+            int start1, end1;
+            if(i1 == NULL)
+            {
+                p1 = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
+                if(p1 == NULL)
+                    p1 = param_lookup(id_st->primogenitor->out_params, lhs->child->tree_node->lexeme);
+                if(p1 == NULL)
+                {
+                    printf("Semantic Error on line %d. Varriable '%s' not declared.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
+                    error_line = lhs->child->tree_node->line;
+                    hasSemanticError = true;
+                    return;
+                }
+
+                t1 = p1->datatype->arrtype->base_type;
+                start1 = p1->datatype->arrtype->begin;
+                end1 = p1->datatype->arrtype->end;
+                is_dynamic1 = p1->datatype->arrtype->is_dynamic;
+            }
+
+            else
+            {
+                t1 = i1->datatype->arrtype->base_type;
+                start1 = i1->datatype->arrtype->begin;
+                end1 = i1->datatype->arrtype->end;
+                is_dynamic1 = i1->datatype->arrtype->is_dynamic;
+            }
+            
+
+            ID_TABLE_ENTRY* i2 = st_lookup(rhs->child->tree_node->lexeme, id_st);
+            PARAMS* p2 = NULL;
+            int t2;
+            int start2, end2;
+            bool is_dynamic2;
+            if(i2 == NULL)
+            {
+                p2 = param_lookup(id_st->primogenitor->in_params ,rhs->child->tree_node->lexeme);
+                if(p2 == NULL)
+                    p2 = param_lookup(id_st->primogenitor->out_params, rhs->child->tree_node->lexeme);
+                if(p2 == NULL)
+                {
+                    printf("Semantic Error on line %d. Varriable '%s' not declared.\n", rhs->child->tree_node->line, rhs->child->tree_node->lexeme);
+                    error_line = rhs->child->tree_node->line;
+                    hasSemanticError = true;
+                    return;
+                }
+
+                t2 = p2->datatype->arrtype->base_type;
+                start2 = p2->datatype->arrtype->begin;
+                end2 = p2->datatype->arrtype->end;
+                is_dynamic2 = p2->datatype->arrtype->is_dynamic;
+            }
+
+            else
+            {
+                t2 = i2->datatype->arrtype->base_type;
+                start2 = i2->datatype->arrtype->begin;
+                end2 = i2->datatype->arrtype->end;
+                is_dynamic2 = i2->datatype->arrtype->is_dynamic;
+            }
+            
+
+            // type check
+            if(t1 != t2)
+            {
+                printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->child->tree_node->line);
+                error_line = lhs->tree_node->line;
+                hasSemanticError = true;
+                return;
+            }
+
+            // if any array dynamic, don't do type checking
+            if(is_dynamic1 || is_dynamic2)
+                return;
+            
+            // start and end must be same.
+            else
+            {
+                if((start1 != start2) || (end1 != end2))
+                {
+                    printf("Semantic error on line %d. Range of %s: \
+                            %d..%d should be same as range of %s: %d..%d\n", 
+                        lhs->child->tree_node->line, lhs->child->tree_node->lexeme,
+                        start1, end1, rhs->child->tree_node->lexeme, start2, end2);
+                    hasSemanticError = true;
+                    return;
+                }
+            }
+            
+
+            return;
+            
+        }
+
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
             // first do a ID table recursive lookup
