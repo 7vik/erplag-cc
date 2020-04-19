@@ -53,7 +53,7 @@ start
 **using parameter C - dynamic array**
 	sum3:=0;
 	print(C);
-	declare index:integer
+	declare index:integer;
 	for(i in 1..4)
 	start
 		get_value(index);
