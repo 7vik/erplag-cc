@@ -948,8 +948,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             int line = lhs->child->sibling->tree_node->line;
             int base_offset, start_offset, end_offset, index, index_offset;
 
-            printf("heren\n");
-            if (i == NULL) printf("GOTYA\n");
             PARAMS *p = NULL;
 
             // calculating offsets of arrays
@@ -1031,15 +1029,11 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         }
         else
         {
-            printf("hetre\n");
             
             PARAMS* p = param_lookup(id_st->primogenitor->in_params ,lhs->tree_node->lexeme);
-            printf("gerevgbhf\n");
             if (p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
-            if (p == NULL) printf("7vik's fault\n");
             int offset = p->offset;
-            printf("here123\n");
             fprintf(fp, "\tmov [rbp - %d + 208], rcx\n", offset * 8);
         }
         
@@ -1449,8 +1443,20 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "conditionalStmt"))
     {
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
-        
-        int offset = id_entry->offset;
+
+        int offset;
+        if(id_entry == NULL)
+        {
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params ,n->child->tree_node->lexeme);
+            if (p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params ,n->child->tree_node->lexeme);
+            
+            offset = p->offset - 26;
+        }
+        else
+        {
+            offset = id_entry->offset;
+        }
         
         fprintf(fp, "\txor rax, rax\n");
         fprintf(fp, "\tmov eax, [rbp - %d]\n", offset * 8);

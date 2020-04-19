@@ -1,15 +1,16 @@
 <<<driver program>>>
 start
-	declare x:boolean;
-	declare a, b:integer;
+	declare x:integer;
 	get_value(x);
-	get_value(a);
-	get_value(b);
 	switch(x)
 	start
-		case false: print(a);
+		case 1: print(1);
                 break;
-		case true: print(b);
+		case 2: print(2);
                 break;
+		case 3: print(3);
+                break;
+        default:print(false);
+			     break;
 	end
 end
