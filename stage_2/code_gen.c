@@ -1730,8 +1730,8 @@ int main(int argc, char* argv[])
     // Test Symbol table
     GST *st = create_global_st();
     traverse_the_multiverse(ast_root, st);
-    gst_print(st);
-
+    // gst_print(st);                                                   // instead of cool, beautiful print,
+    v_gst_print(st);                                                    // do boring print
     printf("Performing further semantic analysis\n\n");
     //semantic_analyser(ast_root, st);
     printf("No semantic errors found\n\n");

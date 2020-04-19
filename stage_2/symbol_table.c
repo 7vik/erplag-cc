@@ -168,6 +168,7 @@ int get_width(TYPE *t)
                                 :       0
             : 0;
     // printf("OUT GET WITDH\n");
+    if (size > 1000 || size < -1000) return 1;
     return size;
 }
 
@@ -851,6 +852,105 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
     return;
 }
 
+// print the GST as per requirements
+void v_gst_print(GST *st)
+{
+    // first, print the header
+    printf("Symbol Table:\n");
+    printf(
+            "%15s %15s %10s %10s %15s %10s %10s %10s\n",
+            "variable_name",
+            "scope (module)",
+            "width",
+            "isArray",
+            "static/dynamic",
+            "type",
+            "offset",
+            "nesting"
+            );
+    // and finally, traverse over all the functions,
+    for(int i = 0; i < GST_SIZE; i++)
+    {
+        FUNC_TABLE_ENTRY *temp = st->func_table[i];
+        while(temp)
+        {
+            // print their parameters,
+            v_print_params(temp->in_params, temp->func_name);
+            v_print_params(temp->out_params, temp->func_name);
+            // and print their local ID ST with depth 1
+            v_id_st_print(temp->local_id_table, 1);
+            temp = temp->next;
+        }
+    }
+    return;
+}
+
+void v_print_params(PARAMS *pl, char *fn)
+{
+    PARAMS *temp = pl;
+    while(temp)
+    {
+        char *scope = fn;                                       // first, calculate
+        unsigned width = get_width(temp->datatype);             // all the things
+        char *is_array = temp->datatype->simple == ARRAY ?      // that we are
+                                "yes" : "no";                   // required to print
+        char *sd = temp->datatype->simple != ARRAY ?
+                            "---" :  temp->datatype->arrtype->is_dynamic == true ?
+                                                            "dynamic" : "static";
+        unsigned type = temp->datatype->arrtype == NULL ?
+                    temp->datatype->simple : temp->datatype->arrtype->base_type;
+        unsigned offset = temp->offset;
+        printf("%15s %15s %10u %10s %15s %10s %10u %10u\n",
+                temp->param_name,
+                scope,
+                width,
+                is_array,
+                sd,
+                variables_array[type],
+                offset,
+                0);
+	    temp = temp->next;
+    }
+    return;
+}
+
+// print the ID ST as per requirements
+void v_id_st_print(ID_SYMBOL_TABLE *st, unsigned depth)
+{
+    // printf("H2\n");
+    if (st == NULL)                                                 // for a null table,
+        return;                                                     // don't bother
+    for(int i = 0; i < ST_ID_SIZE; i++)                             // else, traverse
+    {
+        ID_TABLE_ENTRY *temp = st->id_table[i];                     // for each id entry,
+        while(temp)
+        {
+            char *scope = st->primogenitor->func_name;              // first, calculate
+            unsigned width = temp->width;                           // all the things
+            char *is_array = temp->datatype->simple == ARRAY ?      // that we are
+                                    "yes" : "no";                   // required to print
+            char *sd = temp->datatype->simple != ARRAY ?
+                                "---" :  temp->datatype->arrtype->is_dynamic == true ?
+                                                                "dynamic" : "static";
+            unsigned type = temp->datatype->arrtype == NULL ?
+                        temp->datatype->simple : temp->datatype->arrtype->base_type;
+            unsigned offset = temp->offset;
+            printf("%15s %15s %10u %10s %15s %10s %10u %10u\n",
+                    temp->lexeme,
+                    scope,
+                    width,
+                    is_array,
+                    sd,
+                    variables_array[type],
+                    offset,
+                    depth);
+            temp = temp->next;
+        }
+    }
+    for (int j = 0; j < st->kid_table_count; ++j)                   // finally, print all kid
+        v_id_st_print(st->kid_st[j], 1 + depth);                                 // tables with depth
+    return;
+}
 // helper function to print the global symbol table
 void gst_print(GST *st)
 {
