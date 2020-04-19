@@ -1,14 +1,14 @@
-#ifndef __SYMBOL_TABLE_ID
-#define __SYMBOL_TABLE_ID
-
+#ifndef __SYMBOL_TABLE
+#define __SYMBOL_TABLE
+               // type data
+#include <assert.h>
 #include<stdio.h>
-#include "ast.h"                // Our AST will be used for extracting the function and variable identifiers
 #include<stdlib.h>              // malloc() , exit()
 #include<string.h>              // strcmp()
-#include "parser.h"             // TREE_NODE structure
-#include "type.h"               // type data
-#include <assert.h>
 #include "bool.h"
+#include "parser.h"             // TREE_NODE structure
+#include "type.h"
+#include "ast.h"                // Our AST will be used for extracting the function and variable identifiers
 
 #define ST_ID_SIZE 32            // max size of the id symbol table, for testing purposes, change later
 #define ST_KID_NUM 32            // max no of kids of an ID symbol table, change later
