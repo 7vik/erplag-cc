@@ -714,51 +714,86 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
             evaluate_expr(ex->child, id_st, fp);
         else                                // array element
         {
+            // first do a non-recursive lookup
             ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
-            if (i == NULL)
+            int line = ex->child->sibling->tree_node->line;
+            int base_offset, start_offset, end_offset, index, index_offset;
+
+            if (i == NULL) printf("GOTYA\n");
+            PARAMS *p = NULL;
+
+            // calculating offsets of arrays
+            if (i == NULL)      // then check for parameters
             {
-                PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
+                p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
                 if (p == NULL)
                     p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
                 
+                base_offset = p->offset - 26;
+                start_offset = p->datatype->arrtype->begin_offset - 26;
+                end_offset = p->datatype->arrtype->end_offset - 26;
+            }
 
-                int base_offset = p->offset;
-                int start_offset = p->datatype->arrtype->begin_offset;
-                int end_offset = p->datatype->arrtype->end_offset;
-                int index = atoi(ex->child->sibling->tree_node->lexeme);
-                int line = ex->child->sibling->tree_node->line;
-                
+            else
+            {
+                printf("inside not function index\n");
+                base_offset = i->offset;
+                start_offset = i->datatype->arrtype->begin_offset;
+                end_offset = i->datatype->arrtype->end_offset;
+            }
+
+            // A[2]
+            if(ex->child->sibling->node_marker != ID)
+            {
+                index = atoi(ex->child->sibling->tree_node->lexeme);
+                printf("index xxxxxxxxxx %d\n", index);
+                fprintf(fp, "\tpush rcx\n\tpush rcx\n");
                 bound_check(fp, start_offset, end_offset, index, line);
+                fprintf(fp, "\tpop rcx\n\tpop rcx\n");
                 fprintf(fp, "\txor rax, rax\n");
                 fprintf(fp, "\txor rdx, rdx\n");
-                fprintf(fp, "\tmov eax, [rbp - %d + 208]\n", base_offset * 8);
-                fprintf(fp, "\tmov edx, [rbp - %d + 208]\n", start_offset * 8);
+                fprintf(fp, "\tmov rax, [rbp - %d]\n", base_offset * 8);
+                fprintf(fp, "\tmov rdx, [rbp - %d]\n", start_offset * 8);
+                fprintf(fp, "\txor rbx, rbx\n");
                 fprintf(fp, "\tmov ebx, %d\n", index);
                 fprintf(fp, "\tsub ebx, edx\n");
                 fprintf(fp, "\txor rcx, rcx\n");
                 fprintf(fp, "\tmov ecx, [rax + rbx * 8]\n");
+
                 return;
-                //return value 
             }
+            
+             // A[k]
+
             else
             {
-                int base_offset = i->offset;
-                int start_offset = i->datatype->arrtype->begin_offset;
-                int end_offset = i->datatype->arrtype->end_offset;
-                int index = atoi(ex->child->sibling->tree_node->lexeme);
-                int line = ex->child->sibling->tree_node->line;
+                ID_TABLE_ENTRY* index_entry = st_lookup(ex->child->sibling->tree_node->lexeme, id_st);
+                    
+                if(index_entry != NULL)
+                {
+                    index_offset = index_entry->offset;
+                }
+                else
+                {
+                    PARAMS* p = param_lookup(id_st->primogenitor->in_params ,ex->child->sibling->tree_node->lexeme);
+                    if (p == NULL)
+                        p = param_lookup(id_st->primogenitor->out_params ,ex->child->sibling->tree_node->lexeme);
+                    
+                    index_offset = p->offset - 26;
+                }
                 
-                bound_check(fp, start_offset, end_offset, index, line);
+                bound_check_dynamic(fp, start_offset, end_offset, index_offset, line);
                 fprintf(fp, "\txor rax, rax\n");
                 fprintf(fp, "\txor rdx, rdx\n");
                 fprintf(fp, "\tmov eax, [rbp - %d]\n", base_offset * 8);
                 fprintf(fp, "\tmov edx, [rbp - %d]\n", start_offset * 8);
-                fprintf(fp, "\tmov ebx, %d\n", index);
+                fprintf(fp, "\tmov ebx, [rbp - %d]\n", index_offset * 8);
                 fprintf(fp, "\tsub ebx, edx\n");
                 fprintf(fp, "\txor rcx, rcx\n");
                 fprintf(fp, "\tmov ecx, [rax + rbx * 8]\n");
                 return;
-            }
+            }   
+                
         }
     }
     /*
