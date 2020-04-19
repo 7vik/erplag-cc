@@ -1682,7 +1682,8 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     if (is(n, "driverModule"))
     {
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
-        printf("visted inside driver: %d, %p\n", f->local_id_table->visited, &((f->local_id_table)->visited));
+        printf("pointer inside drver: %p", &(*(f->local_id_table)));
+        printf("visted inside driver: %d, %p\n", (f->local_id_table)->visited, &((f->local_id_table)->visited));
         id_st_print(f->local_id_table);
         printf("visted inside driver: %d\n", f->local_id_table->visited);
         printf("driver module started\n");

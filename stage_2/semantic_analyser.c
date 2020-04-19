@@ -314,6 +314,8 @@ void check_conditionalStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     printf("%s\n", variables_array[temp->node_marker]);
     // now, we are on START
+
+    printf("visited: %d\n", id_table->visited);
     ID_SYMBOL_TABLE* id_child_table = id_table->kid_st[id_table->visited];
     temp = temp->sibling;
     

@@ -1,10 +1,13 @@
 <<<driver program>>>
 start
-	declare a, m, temp:integer;	
+	declare m, temp:integer;	
 	declare A, B, C: array[6..10] of integer;
 	get_value(A);
 	get_value(B);
-	get_value(a);
-	a := B[a];
-	print(a);
+	get_value(temp);
+	for(m in 6..10)
+        start
+		print(temp);
+	end
+	print(A);
 end
