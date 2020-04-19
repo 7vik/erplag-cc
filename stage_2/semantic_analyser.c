@@ -35,39 +35,36 @@ void semantic_analyser(astNode* root, GST* global_st)
     if(root != NULL)
     {
         assert(root->node_marker == program);
-        
         astNode* temp = root->child;
-        //printf("%s\n",variables_array[temp->node_marker]);
         if(temp->node_marker == moduleDeclarations)
         {
             check_moduleDeclarations_semantic(temp, global_st);
-	    temp = temp->sibling;
+	        temp = temp->sibling;
         }
-	else if(temp->node_marker == EPS)
-	    temp = temp->sibling;
-	
+	    else if(temp->node_marker == EPS)
+	        temp = temp->sibling;
+    
         if(temp->node_marker == otherModules)
         {
             check_otherModules_semantic(temp, global_st);
-	    temp = temp->sibling;
+	        temp = temp->sibling;
         }
-	else if(temp->node_marker == EPS)
-	    temp = temp->sibling;
+	    else if(temp->node_marker == EPS)
+	        temp = temp->sibling;
 
         if(temp->node_marker == driverModule)
         {
             check_driverModule_semantic(temp, global_st);
-	    temp = temp->sibling;
+	        temp = temp->sibling;
         }
-	else if(temp->node_marker == EPS)
-		temp = temp->sibling;
+	    else if(temp->node_marker == EPS)
+	    	temp = temp->sibling;
 
         if(temp->node_marker == otherModules)
         {
             check_otherModules_semantic(temp, global_st);
         }
-        return;
-
+    return;
     }
 
     else
@@ -542,10 +539,21 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         while(trav2 != NULL)
         {
             lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
-
+            PARAMS *p = NULL;
+            TYPE *dt = NULL;
             if (lookup_id == NULL)
-                return;
-            if(lookup_id->datatype->simple != trav2->datatype->simple)
+            {
+                p = param_lookup(id_table->primogenitor->in_params, trav1->tree_node->lexeme);
+                if (p == NULL)
+                    p = param_lookup(id_table->primogenitor->out_params, trav1->tree_node->lexeme);
+                if (p == NULL)
+                    return;
+                else
+                    dt = p->datatype;
+            }
+            else
+                dt = lookup_id->datatype;
+            if(dt->simple != trav2->datatype->simple)
             {
                 printf("SEMANTIC ERROR at line %d: Output variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
                 hasSemanticError = true;
@@ -566,8 +574,22 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     while(trav1 != NULL && trav1->node_marker != EPS && trav2 != NULL)
     {
+        PARAMS *p = NULL;
+        TYPE *dt = NULL;
         lookup_id = st_lookup(trav1->tree_node->lexeme, id_table);
-        if(lookup_id->datatype->simple != trav2->datatype->simple)
+        if (lookup_id == NULL)
+        {
+            p = param_lookup(id_table->primogenitor->in_params ,trav1->tree_node->lexeme);
+            if (p == NULL)
+                p = param_lookup(id_table->primogenitor->out_params ,trav1->tree_node->lexeme);
+            if (p == NULL)
+                return;
+            else
+                dt = p->datatype;
+        }
+        else
+            dt = lookup_id->datatype; 
+        if(dt->simple != trav2->datatype->simple)
         {
             printf("SEMANTIC ERROR at line %d: Input variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
             hasSemanticError = true;
@@ -670,7 +692,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     return;
 }
 
-
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -679,7 +701,6 @@ int main(int argc, char* argv[])
         printf("\nAborting Execution!!\n");
         exit(2);
     }
-
     FILE* test_fp = fopen(argv[1], "r");
     FILE* test_parse_fp = fopen(argv[2], "w");
     populate_ht(hash_table, KEYWORDS_FILE);
@@ -701,17 +722,17 @@ int main(int argc, char* argv[])
     astNode* ast_root = buildAST(tree);
     print_ast_json(ast_root, "output_ast_tree.json");
 
-
     // Test Symbol table
     GST *st = create_global_st();
     traverse_the_multiverse(ast_root, st);
     gst_print(st);
 
     semantic_analyser(ast_root, st);
+
     fclose(test_fp);
     fclose(test_parse_fp);
     free(twin_buff);
     free(parse_table);
     return 0;
 }
-
+*/
