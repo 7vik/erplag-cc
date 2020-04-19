@@ -121,5 +121,6 @@ PARSE_TREE *create_new_node (TREE_NODE *data);
 TABLE *create_parse_table(first_follow *f, TABLE *t, GRAMMAR *g);
 void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN_BUFFER *twin_buff, int *line_no);
 void print_parse_tree(PARSE_TREE *tree, FILE* f);
+void v_print_parse_tree(PARSE_TREE *tree);
 void remove_comments_driver(FILE* fp);
 #endif

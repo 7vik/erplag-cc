@@ -75,7 +75,6 @@ int main(int argc, char *argv[])
         if(option == 2)                                                             // PARSER
         { 
             FILE* test_fp = fopen(argv[1], "r");
-            FILE* test_parse_fp = fopen(argv[2], "w");
             populate_ht(hash_table, KEYWORDS_FILE);
             int line_count = 1;
             TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
@@ -87,11 +86,9 @@ int main(int argc, char *argv[])
             STACK *stack = NULL;
             PARSE_TREE *tree;
             parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
-            fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
-            print_parse_tree(tree, test_parse_fp);
-            printf("Printed Parse Tree in file '%s'.\n", argv[2]);
+            printf("%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
+            v_print_parse_tree(tree);
             fclose(test_fp);
-            fclose(test_parse_fp);
             free(twin_buff);
             free(parse_table);
         }
