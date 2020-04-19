@@ -34,7 +34,6 @@ typedef struct ID_SYMBOL_TABLE
     int total_ids;  
     int kid_table_count;
     int visited;   
-    int bharat;                                     // the genius that is ruslan spivak
     struct ID_SYMBOL_TABLE *kid_st[ST_KID_NUM];         // n-ary tree of STs 
 } ID_SYMBOL_TABLE;
 
@@ -53,7 +52,6 @@ typedef struct FUNC_TABLE_ENTRY
     char *func_name;                                    //function name from lexer (hash on this)
     PARAMS *in_params, *out_params;                     //list of input and output parameters
     int width;                                          // total size of all local variables (why tho?)
-    int satvik;
     ID_SYMBOL_TABLE *local_id_table;                    // nested ID table for each function
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
     int is_declared;                                    // to check if it is declared (semantix)
@@ -99,5 +97,6 @@ void gst_print(GST *st);
 void v_id_st_print(ID_SYMBOL_TABLE *st, unsigned depth);
 void v_print_params(PARAMS *pl, char *fn);
 void v_gst_print(GST *st);
+void v_activation_print(GST *g);
 
 #endif

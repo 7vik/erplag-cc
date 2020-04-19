@@ -983,6 +983,21 @@ void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *st)
     return;
 }
 
+// print activation record size for each function, including widths for all variables
+void v_activation_print(GST *g)
+{
+    for(int i = 0; i < GST_SIZE; i++)
+    {
+        FUNC_TABLE_ENTRY *temp = g->func_table[i];
+        while(temp)
+        {
+            printf("\t%20s\t\t%d\n", temp->func_name, get_total_width(temp->local_id_table));
+            temp = temp->next;
+        }
+    }
+    return;
+}
+
 
 // helper function to print the global symbol table
 void gst_print(GST *st)
@@ -1072,22 +1087,19 @@ int get_total_width(ID_SYMBOL_TABLE *st)
 {
     if(st == NULL)	// No symbol table of identifiers <=> no local variables of function
 	return 0;
-
     int total = 0;
     ID_TABLE_ENTRY *temp = NULL;
     for(int i = 0; i < ST_ID_SIZE; i++)	// summing up the widths of each identifier in the current ST.
     {
         temp = st->id_table[i];
         while(temp)
-	{
-	    total += temp->width;
+	    {
+	        total += temp->width;
     	    temp = temp->next;
         }
     }
-
     for(int j = 0; j < st->kid_table_count; j++)
-	total += get_total_width(st->kid_st[j]);
-
+	    total += get_total_width(st->kid_st[j]);
     return total;
 }
 
