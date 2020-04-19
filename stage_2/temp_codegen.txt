@@ -1,16 +1,6 @@
 <<<driver program>>>
 start
 	declare x:integer;
-	get_value(x);
-	switch(x)
-	start
-		case 1: print(1);
-                break;
-		case 2: print(2);
-                break;
-		case 3: print(3);
-                break;
-        default:print(false);
-			     break;
-	end
+	declare b:array
+	b[2]:= u+m[25];	
 end

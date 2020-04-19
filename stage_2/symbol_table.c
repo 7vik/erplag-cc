@@ -323,6 +323,33 @@ PARAMS *param_lookup(PARAMS *plist, char *var)
 
 int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 {
+    if(ex->node_marker == var)
+    {
+        ID_TABLE_ENTRY* i = st_lookup(ex->child->tree_node->lexeme, id_st);
+        int datatype;
+        PARAMS* p = NULL;
+        if(i == NULL)
+        {
+            p = param_lookup(id_st->primogenitor->in_params, ex->child->tree_node->lexeme);
+            if(p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params, ex->child->tree_node->lexeme);
+            if(p == NULL)
+            {
+                if (error_line < ex->tree_node->line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
+                error_line = ex->child->tree_node->line;
+                hasSemanticError = true;
+                return 0;
+            }
+            
+            datatype = p->datatype->simple;
+        }
+        else
+            datatype = i->datatype->simple;
+
+        return datatype;
+        
+    }
     if (ex->node_marker == ID)
     {
         ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
@@ -336,12 +363,15 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->tree_node->line, ex->tree_node->lexeme);
                 error_line = ex->tree_node->line;
                 hasSemanticError = true;
+                return 0;
             }
             else if (p1 != NULL) return p1->datatype->simple;
             else if (p2 != NULL) return p2->datatype->simple;
         }
         else
+        {
             return i->datatype->simple;
+        }
     }
     if (ex->node_marker == RNUM)
         return REAL;
@@ -423,61 +453,24 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     }
     if (ex->node_marker == MINUS && ex->child->sibling == NULL)
         return  get_type_expr(ex->child, id_st);
-    if (ex->node_marker == var)
+    if (ex->node_marker == ARRAY || (ex->node_marker == var && ex->child->sibling != NULL))
     {
-        if (ex->child->sibling == NULL)     // not an array element
-            return get_type_expr(ex->child, id_st);
-        else                                // array element
+                                     // array element
+        ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
+        if (i == NULL)
         {
-            ID_TABLE_ENTRY *i = st_lookup(ex->child->tree_node->lexeme, id_st);
-            if (i == NULL)
+            PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
+            if (p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
+            if (p == NULL)
             {
-                PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->child->tree_node->lexeme);
-                if (p == NULL)
-                    p = param_lookup(id_st->primogenitor->out_params ,ex->child->tree_node->lexeme);
-                if (p == NULL)
-                {
-                    if (ex->child->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                    return 0;
-                }
-                else if (p->datatype->simple != ARRAY)
-                {
-                    if (ex->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                }
-                else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
-                {
-                    if (ex->tree_node->line > error_line)
-                        printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
-                    error_line = ex->tree_node->line;
-                    hasSemanticError = true;
-                }
-                else        // it is an array, and index is an integer
-                {
-                    // only if its a static array with a static index
-                    ARRAY_TYPE_DATA *at = p->datatype->arrtype;
-                    astNode *index_node = ex->child->sibling;  
-                    if (at->is_dynamic == false && index_node->node_marker == NUM)
-                    {
-                        int index = atoi(index_node->tree_node->lexeme);
-                        // check for bounds, and if they don't fit,
-                        if (index > at->end || index < at->begin)
-                        {
-                            if (ex->tree_node->line > error_line)
-                                printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->tree_node->line);
-                            error_line = ex->tree_node->line;
-                            hasSemanticError = true;
-                        }
-                    }
-                    return p->datatype->arrtype->base_type;
-                }
+                if (ex->child->tree_node->line > error_line)
+                    printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
+                error_line = ex->tree_node->line;
+                hasSemanticError = true;
+                return 0;
             }
-            else if (i->datatype->simple != ARRAY)
+            else if (p->datatype->simple != ARRAY)
             {
                 if (ex->tree_node->line > error_line)
                     printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
@@ -491,9 +484,10 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 error_line = ex->tree_node->line;
                 hasSemanticError = true;
             }
-            else    // it is an array, and index is an integer
+            else        // it is an array, and index is an integer
             {
-                ARRAY_TYPE_DATA *at = i->datatype->arrtype;
+                // only if its a static array with a static index
+                ARRAY_TYPE_DATA *at = p->datatype->arrtype;
                 astNode *index_node = ex->child->sibling;  
                 if (at->is_dynamic == false && index_node->node_marker == NUM)
                 {
@@ -501,18 +495,49 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                     // check for bounds, and if they don't fit,
                     if (index > at->end || index < at->begin)
                     {
-                        if (ex->child->tree_node->line > error_line)
-                            printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->child->tree_node->line);
+                        if (ex->tree_node->line > error_line)
+                            printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->tree_node->line);
                         error_line = ex->tree_node->line;
                         hasSemanticError = true;
                     }
                 }
-                return i->datatype->arrtype->base_type;
+                return p->datatype->arrtype->base_type;
             }
         }
+        else if (i->datatype->simple != ARRAY)
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Variable '%s' is not an array.\n", ex->tree_node->line, ex->child->tree_node->lexeme);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+        }
+        else if (get_type_expr(ex->child->sibling, id_st) != INTEGER)
+        {
+            if (ex->tree_node->line > error_line)
+                printf("Semantic Error on line %d. Array index not an integer.\n", ex->tree_node->line);
+            error_line = ex->tree_node->line;
+            hasSemanticError = true;
+        }
+        else    // it is an array, and index is an integer
+        {
+            ARRAY_TYPE_DATA *at = i->datatype->arrtype;
+            astNode *index_node = ex->child->sibling;  
+            if (at->is_dynamic == false && index_node->node_marker == NUM)
+            {
+                int index = atoi(index_node->tree_node->lexeme);
+                // check for bounds, and if they don't fit,
+                if (index > at->end || index < at->begin)
+                {
+                    if (ex->child->tree_node->line > error_line)
+                        printf("Semantic Error on line %d. Array index out-of-bounds error.\n", ex->child->tree_node->line);
+                    error_line = ex->tree_node->line;
+                    hasSemanticError = true;
+                }
+            }
+            return i->datatype->arrtype->base_type;
+        }
     }
-    if (ex->node_marker == ARRAY)
-        return ARRAY;
+
     // printf("BAZINGA %s %s\n", variables_array[ex->node_marker], ex->tree_node->lexeme);
     return 0;      // hopefully never
 }
@@ -570,109 +595,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         // printf("AAYA\n");
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
-        
         // both arrays A = B
-        if ((lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
-            && (rhs->node_marker == ARRAY || (rhs->node_marker == var && rhs->child->sibling != NULL)))
-        {
-            // lookup array
-            ID_TABLE_ENTRY* i1 = st_lookup(lhs->child->tree_node->lexeme, id_st);
-            PARAMS* p1 = NULL;
-            int t1;
-            bool is_dynamic1;
-            int start1, end1;
-            if(i1 == NULL)
-            {
-                p1 = param_lookup(id_st->primogenitor->in_params ,lhs->child->tree_node->lexeme);
-                if(p1 == NULL)
-                    p1 = param_lookup(id_st->primogenitor->out_params, lhs->child->tree_node->lexeme);
-                if(p1 == NULL)
-                {
-                    printf("Semantic Error on line %d. Varriable '%s' not declared.\n", lhs->child->tree_node->line, lhs->child->tree_node->lexeme);
-                    error_line = lhs->child->tree_node->line;
-                    hasSemanticError = true;
-                    return;
-                }
-
-                t1 = p1->datatype->arrtype->base_type;
-                start1 = p1->datatype->arrtype->begin;
-                end1 = p1->datatype->arrtype->end;
-                is_dynamic1 = p1->datatype->arrtype->is_dynamic;
-            }
-
-            else
-            {
-                t1 = i1->datatype->arrtype->base_type;
-                start1 = i1->datatype->arrtype->begin;
-                end1 = i1->datatype->arrtype->end;
-                is_dynamic1 = i1->datatype->arrtype->is_dynamic;
-            }
-            
-
-            ID_TABLE_ENTRY* i2 = st_lookup(rhs->child->tree_node->lexeme, id_st);
-            PARAMS* p2 = NULL;
-            int t2;
-            int start2, end2;
-            bool is_dynamic2;
-            if(i2 == NULL)
-            {
-                p2 = param_lookup(id_st->primogenitor->in_params ,rhs->child->tree_node->lexeme);
-                if(p2 == NULL)
-                    p2 = param_lookup(id_st->primogenitor->out_params, rhs->child->tree_node->lexeme);
-                if(p2 == NULL)
-                {
-                    printf("Semantic Error on line %d. Varriable '%s' not declared.\n", rhs->child->tree_node->line, rhs->child->tree_node->lexeme);
-                    error_line = rhs->child->tree_node->line;
-                    hasSemanticError = true;
-                    return;
-                }
-
-                t2 = p2->datatype->arrtype->base_type;
-                start2 = p2->datatype->arrtype->begin;
-                end2 = p2->datatype->arrtype->end;
-                is_dynamic2 = p2->datatype->arrtype->is_dynamic;
-            }
-
-            else
-            {
-                t2 = i2->datatype->arrtype->base_type;
-                start2 = i2->datatype->arrtype->begin;
-                end2 = i2->datatype->arrtype->end;
-                is_dynamic2 = i2->datatype->arrtype->is_dynamic;
-            }
-            
-
-            // type check
-            if(t1 != t2)
-            {
-                printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->child->tree_node->line);
-                error_line = lhs->tree_node->line;
-                hasSemanticError = true;
-                return;
-            }
-
-            // if any array dynamic, don't do type checking
-            if(is_dynamic1 || is_dynamic2)
-                return;
-            
-            // start and end must be same.
-            else
-            {
-                if((start1 != start2) || (end1 != end2))
-                {
-                    printf("Semantic error on line %d. Range of %s: \
-                            %d..%d should be same as range of %s: %d..%d\n", 
-                        lhs->child->tree_node->line, lhs->child->tree_node->lexeme,
-                        start1, end1, rhs->child->tree_node->lexeme, start2, end2);
-                    hasSemanticError = true;
-                    return;
-                }
-            }
-            
-
-            return;
-            
-        }
 
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
@@ -713,26 +636,23 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 hasSemanticError = true;
             }
         }
-        else    // not an array
+        else    
         {
             PARAMS *p1, *p2 = NULL;
             ID_TABLE_ENTRY *i = NULL;
+            int datatype;
+            PARAMS* p = NULL;
             if (lhs->node_marker == var)
             {
-                // printf("DOD1\n");
                 p1 = param_lookup(id_st->primogenitor->in_params, lhs->child->tree_node->lexeme);
                 p2 = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
                 i = st_lookup(lhs->child->tree_node->lexeme, id_st);   
-                // printf("DOD2\n");         
             }
             else        // not var
             {
-                // printf("DOD3\n");
                 p1 = param_lookup(id_st->primogenitor->in_params, lhs->tree_node->lexeme);
                 p2 = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
                 i = st_lookup(lhs->tree_node->lexeme, id_st);
-                // hopefully we can't assign to input params
-                // printf("DOD4\n");
             }
             if (p1 == NULL && i == NULL && p2 == NULL)
             {
@@ -740,6 +660,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     printf("Semantic Error on line %d. Varriable '%s' not declared.\n", lhs->tree_node->line, lhs->tree_node->lexeme);
                 error_line = lhs->tree_node->line;
                 hasSemanticError = true;
+                return;
             }
 
             else if (i != NULL)
@@ -751,7 +672,10 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                         printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->tree_node->line);
                     error_line = lhs->tree_node->line;
                     hasSemanticError = true;
+                    return;
                 }
+                datatype = i->datatype->simple;
+                
             }
 
             else if(p1 != NULL && p2 != NULL)
@@ -760,25 +684,110 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                         printf("Semantic Error on line %d. Variable %s can't be both input and output parameters.\n",lhs->tree_node->line, lhs->tree_node->lexeme);
                 error_line = lhs->tree_node->line;
                 hasSemanticError = true;
+                return;
             }
 
             else
             {
                 // types must match before assignment
-                PARAMS* p = p1;
+                
                 if (p == NULL)
                 {
                     p = p2;
                     p2->is_assigned = true;
                 }
+                
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
                 {
                     if (error_line < lhs->tree_node->line)
                         printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->tree_node->line);
                     error_line = lhs->tree_node->line;
                     hasSemanticError = true;
+                    return;
                 }
+                else
+                    datatype = p->datatype->simple;
             }
+            if(datatype == ARRAY)
+            {
+                // check if start and end are same
+
+                ID_TABLE_ENTRY* i_left = i;
+                int datatype;
+                PARAMS* p_left = NULL;
+                int t_left;
+                bool is_dynamic_left;
+                int start_left, end_left;
+                if(i_left == NULL)
+                {
+                    p_left = p;
+                    t_left = p_left->datatype->arrtype->base_type;
+                    start_left = p_left->datatype->arrtype->begin;
+                    end_left = p_left->datatype->arrtype->end;
+                    is_dynamic_left = p_left->datatype->arrtype->is_dynamic;
+                }
+
+                else
+                {
+                    
+                    t_left = i_left->datatype->arrtype->base_type;
+                    start_left = i_left->datatype->arrtype->begin;
+                    end_left = i_left->datatype->arrtype->end;
+                    is_dynamic_left = i_left->datatype->arrtype->is_dynamic;
+                }
+                
+
+                ID_TABLE_ENTRY* i_right = st_lookup(rhs->child->tree_node->lexeme, id_st);
+                PARAMS* p_right = NULL;
+                int t_right;
+                int start_right, end_right;
+                bool is_dynamic_right;
+                if(i_right == NULL)
+                {
+                    p_right = param_lookup(id_st->primogenitor->in_params ,rhs->child->tree_node->lexeme);
+                    if(p_right == NULL)
+                        p_right = param_lookup(id_st->primogenitor->out_params, rhs->child->tree_node->lexeme);
+
+                    t_right = p_right->datatype->arrtype->base_type;
+                    start_right = p_right->datatype->arrtype->begin;
+                    end_right = p_right->datatype->arrtype->end;
+                    is_dynamic_right = p_right->datatype->arrtype->is_dynamic;
+                }
+
+                else
+                {
+                    t_right = i_right->datatype->arrtype->base_type;
+                    start_right = i_right->datatype->arrtype->begin;
+                    end_right = i_right->datatype->arrtype->end;
+                    is_dynamic_right = i_right->datatype->arrtype->is_dynamic;
+                }
+                
+
+                // if any array dynamic, don't do type checking
+                if(is_dynamic_left || is_dynamic_right)
+                    return;
+                
+                // start and end must be same.
+                else
+                {
+                    if(t_left != t_right)
+                    {
+                        printf("Semantic error at line %d. Type mismatch.\n", rhs->child->tree_node->line);
+                        hasSemanticError = true;
+                        return;
+                    }
+                    if((start_left != start_right) || (end_left != end_right))
+                    {
+                        printf("Semantic error on line %d. Range of %s: %d..%d should be same as range of %s: %d..%d\n", 
+                            rhs->child->tree_node->line, rhs->child->tree_node->lexeme,
+                            start_left, end_left, rhs->child->tree_node->lexeme, start_right, end_right);
+                        hasSemanticError = true;
+                        return;
+                    }
+                }
+
+            }
+
             
         }
     }
