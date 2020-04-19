@@ -8,7 +8,7 @@ typedef struct vars
     int num_byte_vars;      // 1 byte
     int num_word_vars;      // 2 bytes
     int num_double_vars;    // 4 bytes
-    int num_quad_words;      // 8 bytes
+    int num_quad_words;     // 8 bytes
 }VARS;
 
 

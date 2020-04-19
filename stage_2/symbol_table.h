@@ -64,27 +64,34 @@ typedef struct FUNC_SYMBOL_TABLE                        // the final beautiful S
 }GST;     
 
 int st_hash(char *s261);
+
 ID_SYMBOL_TABLE *create_id_st(ID_SYMBOL_TABLE *papa);
-void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st);
-void id_st_print(ID_SYMBOL_TABLE *st);
-ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st);
-ID_TABLE_ENTRY *st_lookup_nr(char *name, ID_SYMBOL_TABLE *st);
-int get_width(TYPE *datatype);
 ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type);
+GST *create_global_st();
+FUNC_TABLE_ENTRY *create_function(astNode *ast_node, PARAMS *in, PARAMS *out, ID_SYMBOL_TABLE *id_st);
+PARAMS *create_param(astNode *plist);
+
+void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st);
+void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *gst);
+
+int get_width(TYPE *datatype);
 int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st);
+int get_total_width(ID_SYMBOL_TABLE *st);
+
 void fill_param_offsets(PARAMS *p, unsigned int off);
 
-GST *create_global_st();
-void st_insert_func_entry(FUNC_TABLE_ENTRY *f, GST *gst);
-void global_st_print(GST *gst);
-void print_params(PARAMS *pl);
+ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st);
+ID_TABLE_ENTRY *st_lookup_nr(char *name, ID_SYMBOL_TABLE *st);
 FUNC_TABLE_ENTRY *global_st_lookup(char *, GST *);
-FUNC_TABLE_ENTRY *create_function(astNode *ast_node, PARAMS *in, PARAMS *out, ID_SYMBOL_TABLE *id_st);
-int get_total_width(ID_SYMBOL_TABLE *st);
-PARAMS *create_param(astNode *plist);
-void gst_print(GST *st);
 PARAMS *param_lookup(PARAMS *plist, char *var);
+
 void traverse_the_multiverse(astNode *node, GST *st);
 int is(astNode *node, char *comp);
 void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);
+
+void id_st_print(ID_SYMBOL_TABLE *st);
+void print_params(PARAMS *pl);
+void gst_print(GST *st);
+
+
 #endif
