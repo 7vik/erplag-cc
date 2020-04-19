@@ -44,11 +44,252 @@ extern exit
 
 section  .text
 
+compute_expr:
+
+	push rbp
+	mov rbp, rsp
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+	sub rsp, 96
+	push rbp
+	push rbp
+	mov rbp, rsp
+	sub rsp, 80
+	;Taking id
+
+	mov rdi, int_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 24]
+	call scanf
+	;Taking id
+
+	mov rdi, int_inMsg
+	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 16]
+	call scanf
+	xor rcx, rcx
+	mov ecx, [rbp - 8 + 208]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 16 + 208]
+	pop rdx
+	pop rdx
+	imul rdx, rcx
+	mov rcx, rdx
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 24]
+	push rcx
+	push rcx
+	mov rcx, 2
+	pop rdx
+	pop rdx
+	imul rdx, rcx
+	mov rcx, rdx
+	pop rdx
+	pop rdx
+	add rdx, rcx
+	mov rcx, rdx
+	push rcx
+	push rcx
+	mov rcx, 3
+	pop rdx
+	pop rdx
+	sub rdx, rcx
+	mov rcx, rdx
+	mov [rbp - 8], rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 24 + 208]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 8 + 208]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 16 + 208]
+	pop rdx
+	pop rdx
+	cmp rdx, rcx
+	jle label0
+	mov rcx, 0
+jmp label1
+label0:
+	mov rcx, 1
+label1:	pop rdx
+	pop rdx
+and rcx, rdx
+	mov [rbp - 32], rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 8]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 16]
+	pop rdx
+	pop rdx
+	add rdx, rcx
+	mov rcx, rdx
+	mov [rbp - 104 + 208], rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 32]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 8]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 16]
+	pop rdx
+	pop rdx
+	cmp rdx, rcx
+	jle label2
+	mov rcx, 0
+jmp label3
+label2:
+	mov rcx, 1
+label3:	pop rdx
+	pop rdx
+or rcx, rdx
+	mov [rbp - 112 + 208], rcx
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 8 + 208]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 16 + 208]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	lea rdi, [strFormat_in]
+	mov sil, [rbp - 24 + 208]
+
+	cmp sil, 0
+	jz label4
+	lea rsi, [true_label]
+	jmp label5
+
+label4: 
+	lea rsi, [false_label]
+
+label5: 
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 24]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 8]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 16]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 104 + 208]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	lea rdi, [strFormat_in]
+	mov sil, [rbp - 112 + 208]
+
+	cmp sil, 0
+	jz label6
+	lea rsi, [true_label]
+	jmp label7
+
+label6: 
+	lea rsi, [false_label]
+
+label7: 
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+
+	mov rsp, rbp
+	pop rbp
+	pop rbp
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+	mov rsp, rbp
+	pop rbp
+	ret
 main:
 
 push rbp
 mov rbp, rsp
-	sub rsp, 32
+	sub rsp, 96
 	;Taking id
 
 	mov rdi, int_inMsg
@@ -56,57 +297,77 @@ mov rbp, rsp
 	mov rdi, intFormat_in
 	lea rsi, [rbp - 8]
 	call scanf
-	xor rax, rax
-	mov eax, [rbp - 8]
-	cmp rax, 1
-	jne label1
-	push rax
-	push rax
-	lea rdi, [intFormat_out]
-xor rsi, rsi
-	mov esi, 1
+	;Taking id
+
+	mov rdi, int_inMsg
 	call printf
+	mov rdi, intFormat_in
+	lea rsi, [rbp - 16]
+	call scanf
+	mov rcx, 0
+	mov [rbp - 40], rcx
+xor r15, r15
+mov r15d, [rbp - 8]
+	mov rdi, r15
+xor r15, r15
+mov r15d, [rbp - 16]
+	mov rsi, r15
+xor r15, r15
+mov r15d, [rbp - 40]
+	mov rdx, r15
+	call compute_expr
+mov [rbp - 24], rdi
+mov [rbp - 32], rsi
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 8]
+	call printf
+
 	lea rdi, [new_line]
 	call printf
 
-	pop rax
-	pop rax
-	jmp label0
-	label1:
-	cmp rax, 2
-	jne label2
-	push rax
-	push rax
-	lea rdi, [intFormat_out]
-xor rsi, rsi
-	mov esi, 2
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 16]
 	call printf
+
 	lea rdi, [new_line]
 	call printf
 
-	pop rax
-	pop rax
-	jmp label0
-	label2:
-	cmp rax, 3
-	jne label3
-	push rax
-	push rax
-	lea rdi, [intFormat_out]
-xor rsi, rsi
-	mov esi, 3
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 24]
 	call printf
+
 	lea rdi, [new_line]
 	call printf
 
-	pop rax
-	pop rax
-	jmp label0
-	label3:
-lea rsi, [false_label]
-	lea rdi, [strFormat_out]
+	;Printing ID
+
+	lea rdi, [strFormat_in]
+	mov sil, [rbp - 32]
+
+	cmp sil, 0
+	jz label8
+	lea rsi, [true_label]
+	jmp label9
+
+label8: 
+	lea rsi, [false_label]
+
+label9: 
 	call printf
-label0:
+
+	lea rdi, [new_line]
+	call printf
+
+
 main_end:
 mov rsp, rbp
 pop rbp

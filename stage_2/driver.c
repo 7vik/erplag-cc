@@ -230,6 +230,7 @@ int main(int argc, char *argv[])
             generate_the_multiverse(ast_root, st, code_fp);
             print_return(code_fp);
             fclose(test_fp);
+            fclose(code_fp);
             free(twin_buff);
             free(parse_table);
         }
