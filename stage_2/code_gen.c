@@ -1070,8 +1070,9 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
         printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
-        generate_the_universe(range->sibling->sibling, id_st->kid_st[40], fp);
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
         id_st->visited++;
+
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
         fprintf(fp, "\tinc qword [rbp - %d]\n", offset * 8);
@@ -1730,8 +1731,8 @@ int main(int argc, char* argv[])
     // Test Symbol table
     GST *st = create_global_st();
     traverse_the_multiverse(ast_root, st);
-    // gst_print(st);                                                   // instead of cool, beautiful print,
-    v_gst_print(st);                                                    // do boring print
+    gst_print(st);                                                   // instead of cool, beautiful print,
+    //v_gst_print(st);                                                    // do boring print
     printf("Performing further semantic analysis\n\n");
     //semantic_analyser(ast_root, st);
     printf("No semantic errors found\n\n");

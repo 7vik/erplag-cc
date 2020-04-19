@@ -373,6 +373,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
     // printf("->\t%s\n", n->tree_node->node_symbol);
+    printf("st %d\n", id_st->visited);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))
@@ -711,6 +712,7 @@ void traverse_the_multiverse(astNode *n, GST *st)
             traverse_the_multiverse(temp,st);
         }
         traverse_the_multiverse(d, st);
+
     }
 
     if (is(n, "moduleDeclarations"))
@@ -737,6 +739,7 @@ void traverse_the_multiverse(astNode *n, GST *st)
     if (is(n, "driverModule"))
     {
         ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
+        printf("visited in st: %d\n", id_st->visited);
         FUNC_TABLE_ENTRY *fnew = create_function(NULL, NULL, NULL, id_st);
         st_insert_func_entry(fnew, st);
         // printf("mil\n");

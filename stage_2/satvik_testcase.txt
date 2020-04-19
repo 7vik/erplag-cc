@@ -4,11 +4,6 @@ start
 	declare A, B, C: array[6..10] of integer;
 	get_value(A);
 	get_value(B);
-	for(m in 6..20)
-    start
-		declare k:integer;
-		get_value(k);
-		temp:= k;
-	end
+	
 	print(C);
 end

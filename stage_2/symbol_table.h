@@ -92,8 +92,8 @@ void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);
 void id_st_print(ID_SYMBOL_TABLE *st);
 void print_params(PARAMS *pl);
 void gst_print(GST *st);
-
-void v_gst_print(GST *st);
 void v_id_st_print(ID_SYMBOL_TABLE *st, unsigned dwpth);
 void v_print_params(PARAMS *pl, char *fn);
+void v_gst_print(GST *st);
+
 #endif
