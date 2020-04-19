@@ -15,6 +15,16 @@ G = Geoffrey Hinton (2018)
 
 This project is part of our course requirement for CS-F363 "Compiler Construction", and mentored by Prof. Vandana Agarwal. 
 
+# How to run (to test for different pointer problem)
+```
+$ cd stage_2
+$ make assembler
+$ ./stage2exe satvik_testcase.txt delete.asm new.new
+```
+
+In the console output, look for the 2 pointers just below two lines starting with `BIG` near the top of the output.
+
+
 # References:
 
 - https://www.cs.cmu.edu/~aplatzer/course/Compilers/waitegoos.pdf: Seems to be an excellent reference for implementation.
