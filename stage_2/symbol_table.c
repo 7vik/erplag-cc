@@ -1450,25 +1450,25 @@ void check_caseStmts_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID
     {
         if(temp->sibling == NULL) // we need to have 2 cases, only one case present
         {
-            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have a single case.\n", temp->tree_node->line);
+            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have a single case.\n", temp->child->tree_node->line);
             hasSemanticError = true;
         }
         else if(temp->sibling->sibling != NULL) // we're having >=3 cases! Binary system: 0, 1, and ?? => Error
         {
-            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have more than two cases.\n", temp->sibling->sibling->tree_node->line);
+            printf("SEMANTIC ERROR at line %d: boolean conditional statement cannot have more than two cases.\n", temp->sibling->sibling->child->tree_node->line);
             hasSemanticError = true;
         }
         // if we haven't entered any aforementioned condition, we now have 2 case statements in the construct
 
         else if(temp->child->node_marker == TRUE && temp->sibling->child->node_marker == TRUE)
         {
-            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable TRUE.\n", temp->sibling->tree_node->line);
+            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable TRUE.\n", temp->sibling->child->tree_node->line);
             hasSemanticError = true;
         }        
 
         else if(temp->child->node_marker == FALSE && temp->sibling->child->node_marker == FALSE)
         {
-            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable FALSE.\n", temp->sibling->tree_node->line);
+            printf("SEMANTIC ERROR at line %d: The two boolean conditions cannot have the same case variable FALSE.\n", temp->sibling->child->tree_node->line);
             hasSemanticError = true;
         }
     }
@@ -1487,7 +1487,7 @@ void check_caseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, ID_
     assert(root->node_marker == caseStmt);
     astNode* temp = root->child;
 
-    // ARRAY!
+    // ARRAY! - No need of it, though, we would never enter this condition!
     if(id_entry->datatype->simple == ARRAY)
     {
         printf("SEMANTIC ERROR at line %d: %s is an array variable.\n", temp->tree_node->line, id_entry->lexeme);
@@ -1524,15 +1524,15 @@ void check_default_nt_semantic(astNode* root, ID_SYMBOL_TABLE* id_child_table, I
         return;
     }
 
-    assert(root->node_marker == default_nt);
-
-    if(id_entry->datatype->simple == BOOLEAN)   // Now, why default?
+    else if(root->node_marker == default_nt && id_entry->datatype->simple == BOOLEAN)   // Now, why default?
     {
-        printf("SEMANTIC ERROR at line %d: A default statement shouldn't have been present here.\n", root->tree_node->line);
+        printf("SEMANTIC ERROR at line %d: A default statement shouldn't have been present here.\n", root->sibling->tree_node->line);
         hasSemanticError = true;
+        return;
     }
 
-    check_statements_semantic(root->child, id_child_table);
+    if(id_entry->datatype->simple == INTEGER)
+        check_statements_semantic(root->child, id_child_table);
 
     return;
 }
