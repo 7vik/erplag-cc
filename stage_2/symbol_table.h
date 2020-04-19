@@ -68,6 +68,7 @@ ID_SYMBOL_TABLE *create_id_st(ID_SYMBOL_TABLE *papa);
 void st_insert_id_entry(ID_TABLE_ENTRY *sym, ID_SYMBOL_TABLE *st);
 void id_st_print(ID_SYMBOL_TABLE *st);
 ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st);
+ID_TABLE_ENTRY *st_lookup_nr(char *name, ID_SYMBOL_TABLE *st);
 int get_width(TYPE *datatype);
 ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type);
 int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st);

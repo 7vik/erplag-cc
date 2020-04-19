@@ -79,8 +79,8 @@ char *show_type(TYPE *t)
         int x2 = t->arrtype->end_offset;
         int l1 = snprintf( NULL, 0, "%d", x1);
         int l2 = snprintf( NULL, 0, "%d", x2);
-        char* str1 = malloc( l1 + 1 );
-        char* str2 = malloc( l2 + 1 );
+        char* str1 = malloc( l1 + 1 );                              // very small malloc, so trusting C and
+        char* str2 = malloc( l2 + 1 );                              // not putting malloc_error
         snprintf( str1, l1 + 1, "%d", x1);
         snprintf( str2, l2 + 1, "%d", x2);
         //
@@ -183,6 +183,7 @@ ID_TABLE_ENTRY *create_symbol(astNode *node, TYPE *type)
     new->width = get_width(type);
     new->next = NULL;
     new->is_declared = false;
+    // new->offset will be filled in later, no point in initializing
     return new;
 }
 
@@ -774,8 +775,9 @@ PARAMS *create_param(astNode *plist)
         malloc_error
     new->param_name = plist->child->tree_node->lexeme;
     new->datatype = get_type(plist->child);
+    // new->offset will be filled later, no point in initializing
     TYPE *t = new->datatype;
-    astNode *temp = plist->child->sibling->child;       // rangeArr
+    astNode *temp = plist->child->sibling->child;       // on rangeArr
     if (t->simple == ARRAY)
     {
         t->arrtype->base_type = temp->sibling->node_marker;
