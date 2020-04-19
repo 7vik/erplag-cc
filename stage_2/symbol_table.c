@@ -631,7 +631,10 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // types must match before assignment
                 PARAMS* p = p1;
                 if (p == NULL)
+                {
                     p = p2;
+                    p2->is_assigned = true;
+                }
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
                 {
                     if (error_line < lhs->tree_node->line)
@@ -907,6 +910,7 @@ PARAMS *create_param(astNode *plist)
         malloc_error
     new->param_name = plist->child->tree_node->lexeme;
     new->datatype = get_type(plist->child);
+    new->is_assigned = false;
     // new->offset will be filled later, no point in initializing
     TYPE *t = new->datatype;
     astNode *temp = plist->child->sibling->child;       // on rangeArr
