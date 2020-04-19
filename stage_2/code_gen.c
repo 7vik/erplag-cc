@@ -544,13 +544,13 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
     }
     if (ex->node_marker == ID)
     {
-        printf("here\n");
-        printf("var: %s\n", ex->tree_node->lexeme);
+        // printf("here\n");
+        // printf("var: %s\n", ex->tree_node->lexeme);
         ID_TABLE_ENTRY *i = st_lookup(ex->tree_node->lexeme, id_st);
-        printf("here2\n");
+        // printf("here2\n");
         if (i == NULL)
         {
-            printf("ayush\n");
+            // printf("ayush\n");
             PARAMS *p = param_lookup(id_st->primogenitor->in_params ,ex->tree_node->lexeme);
             if(p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,ex->tree_node->lexeme);
@@ -564,7 +564,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         }
         else        // is in ID_ST
         {
-            printf("here\n");
+            // printf("here\n");
             if(i->datatype->simple != ARRAY)
             {
                 int offset = i->offset;
@@ -777,9 +777,9 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 // trav a single function and generate the ASM code
 void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 {
-    printf("visited: %d\n", id_st->visited);
+    // printf("visited: %d\n", id_st->visited);
     // printf("aasdfasdf\n");
-    printf("SMALL\t%s\n", variables_array[n->node_marker]);
+    // printf("SMALL\t%s\n", variables_array[n->node_marker]);
     if (is(n, "moduleDef"))
     {
         generate_the_universe(n->child->sibling, id_st, fp);
@@ -943,10 +943,10 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ASSIGNOP"))
     {
-        printf("jdnn\n");
+        // printf("jdnn\n");
         evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
        
-        printf("evaluated\n");
+        // printf("evaluated\n");
        
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
@@ -954,8 +954,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         {
             // first do a non-recursive lookup
             ID_TABLE_ENTRY *i = st_lookup(lhs->child->tree_node->lexeme, id_st);
-            printf("heren\n");
-            if (i == NULL) printf("GOTYA\n");
+            // printf("heren\n");
+            // if (i == NULL) printf("GOTYA\n");
             PARAMS *p = NULL;
             if (i == NULL)      // then check for parameters
             {
@@ -1032,15 +1032,15 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         }
         else
         {
-            printf("hetre\n");
+            // printf("hetre\n");
             
             PARAMS* p = param_lookup(id_st->primogenitor->in_params ,lhs->tree_node->lexeme);
-            printf("gerevgbhf\n");
+            // printf("gerevgbhf\n");
             if (p == NULL)
                 p = param_lookup(id_st->primogenitor->out_params ,lhs->tree_node->lexeme);
             if (p == NULL) printf("7vik's fault\n");
             int offset = p->offset;
-            printf("here123\n");
+            // printf("here123\n");
             fprintf(fp, "\tmov [rbp - %d + 208], rcx\n", offset * 8);
         }
         
@@ -1069,7 +1069,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "\tmov rax, %d\n", end);
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
-        printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
+        // printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
         generate_the_universe(range->sibling->sibling, id_st->kid_st[0], fp);
         //id_st->visited++;
 
@@ -1227,7 +1227,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ioStmt") && n->child->node_marker == printOpt)
     {
-        printf("here io1\n");
+        // printf("here io1\n");
         
         // print constant
         if(n->child->child->child == NULL)
@@ -1267,7 +1267,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         {
             if (id_entry->datatype->simple != ARRAY)
             {
-                printf("here io\n");
+                // printf("here io\n");
                 fprintf(fp, "\t;Printing ID\n\n");
                 print_id(fp,  id_entry->datatype->simple, id_entry->offset);
             }
@@ -1373,7 +1373,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             }
             else
             {
-                printf("here\n");
+                // printf("here\n");
                 fprintf(fp, "\t;Printing array\n\n");
                 int base_offset = p->offset * 8;
                 int lower_offset = p->datatype->arrtype->begin_offset * 8;
@@ -1552,14 +1552,14 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "moduleReuseStmt") && n->child->node_marker != EPS)
     {
-        printf("satvik\n");
+        // printf("satvik\n");
        char* func_name = n->child->sibling->tree_node->lexeme;
 
         astNode* id_list_node = n->child->sibling->sibling->child;
         int count = 0;
         while(id_list_node->node_marker != EPS)
         {
-            printf("here3\n");
+            // printf("here3\n");
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
             int offset = id_entry->offset;
             if(id_entry->datatype->simple != ARRAY)
@@ -1592,10 +1592,10 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         }
         fprintf(fp, "\tcall %s\n", func_name);
 
-        printf("here1\n");
+        // printf("here1\n");
         id_list_node = n->child->child;
         count = 0;
-        printf("here2\n");
+        // printf("here2\n");
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
@@ -1604,7 +1604,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             id_list_node = id_list_node->sibling;
             count++;
         }
-        printf("here3\n");
+        // printf("here3\n");
 
     }
     return;
@@ -1614,7 +1614,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 // trav the ast and create ASM code 
 void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 {
-    printf("BIG\t%s\n", variables_array[n->node_marker]);
+    // printf("BIG\t%s\n", variables_array[n->node_marker]);
     if (is(n,"program"))
     {
         for(astNode *temp = n->child; temp; temp = temp->sibling)
@@ -1682,18 +1682,18 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     if (is(n, "driverModule"))
     {
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
-        printf("visted inside driver: %d, %p\n", f->local_id_table->visited, &((f->local_id_table)->visited));
-        id_st_print(f->local_id_table);
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
-        printf("driver module started\n");
+        // printf("visted inside driver: %d, %p\n", f->local_id_table->visited, &((f->local_id_table)->visited));
+        // id_st_print(f->local_id_table);
+        // printf("visted inside driver: %d\n", f->local_id_table->visited);
+        // printf("driver module started\n");
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
         fprintf(fp, "\tsub rsp, %d\n", (f->activation_record_size) * 16);
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
-        id_st_print(f->local_id_table);
+        // printf("visted inside driver: %d\n", f->local_id_table->visited);
+        // id_st_print(f->local_id_table);
         //stack_count = 0;
-        printf("visted inside driver: %d\n", f->local_id_table->visited);
+        // printf("visted inside driver: %d\n", f->local_id_table->visited);
         generate_the_universe(n->child, f->local_id_table, fp);
         printf("driver module ended\n");
     }
@@ -1702,7 +1702,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 
     return;
 }
-
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 4)
@@ -1760,3 +1760,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
+*/

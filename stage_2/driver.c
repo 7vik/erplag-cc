@@ -5,6 +5,8 @@
 //      ~^~^~^`- ~^ ~^ '~^~^~^~                                                                         //////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// gcc driver.c code_gen.c symbol_table.c ast.c parser.c lexer.c hash.c bool.c
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -17,11 +19,76 @@
 
 #include "code_gen.h"
 
+int main(int argc, char *argv[])
+{
+    printf("Hi. Welcome to ERPLAG. Choose from 1-10 as:\n");
+}
+
+/*
+int main(int argc, char* argv[])
+{
+    if(argc != 4)
+    {
+        printf("Invalid argument count. Expected 4 arguments as in './executable testcase parse_outfile code.asm'.");
+        printf("\nAborting Execution!!\n");
+        exit(2);
+    }
+    FILE* test_fp = fopen(argv[1], "r");
+    FILE* test_parse_fp = fopen(argv[2], "w");
+    if (test_fp == NULL || test_parse_fp == NULL)
+    {
+        printf("Error in opening files. Exitting.\n");
+        exit(1);
+    }
+    populate_ht(hash_table, KEYWORDS_FILE);
+    int line_count = 1;
+    TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+    init_buffer(test_fp, twin_buff);
+    GRAMMAR* grammar = generate_grammar();
+    first_follow *ff = get_first_follow_table(grammar);
+    TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+    create_parse_table(ff, parse_table, grammar);
+    STACK *stack = NULL;
+    PARSE_TREE *tree;
+    parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+    fprintf(test_parse_fp, "%20s\t%20s\t%20s\t%20s\t%20s\t%20s\t%20s%20s\n\n", "LEXEME", "LINE_NO", "VALUE (if num)", "TOKENAME",  "PARENT", "IS LEAF?", "NODE SYMBOL", "RULE_NUMBER");
+    print_parse_tree(tree, test_parse_fp);
+    print_parse_tree_json(tree, "output_parse_tree.json");
+    astNode* ast_root = buildAST(tree);
+    print_ast_json(ast_root, "output_ast_tree.json");
+    // Test Symbol table
+    GST *st = create_global_st();
+    traverse_the_multiverse(ast_root, st);
+    gst_print(st);                                                   // instead of cool, beautiful print,
+    //v_gst_print(st);                                                    // do boring print
+    printf("Performing further semantic analysis\n\n");
+    //semantic_analyser(ast_root, st);
+    printf("No semantic errors found\n\n");
+
+    if (hasSemanticError == true)
+    {
+        printf("Semantic errors detected. Code generation aborted. Exitting\n");
+        exit(3);
+    }
+    // test code generation
+    printf("Starting code generation\n");
+    FILE* code_fp = fopen(argv[3], "w");
+    initialise_file(code_fp);
+    generate_the_multiverse(ast_root, st, code_fp);
+    print_return(code_fp);
+    fclose(test_fp);
+    fclose(test_parse_fp);
+    free(twin_buff);
+    free(parse_table);
+    return 0;
+}
+*/
+/*
 int main(int argc, char* argv[])            // main for driver
 {
     if(argc != 3)
     {
-        printf("Invalid argument count. Expected 3 arguments as in './executable testcase parse_outfile'.");
+        printf("Invalid argument count. Expected 3 arguments as in './executable testcase code.asm'.");
         printf("\nAborting Execution!!\n");
         exit(2);
     }
@@ -129,3 +196,4 @@ int main(int argc, char* argv[])            // main for driver
     }
     return 0;
 }
+*/
