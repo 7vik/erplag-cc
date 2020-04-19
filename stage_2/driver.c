@@ -15,7 +15,7 @@
 #include <assert.h> 
 #include <unistd.h>
 
-#include "parser.h"
+#include "code_gen.h"
 
 int main(int argc, char* argv[])            // main for driver
 {

@@ -259,17 +259,15 @@ ID_TABLE_ENTRY *st_lookup(char *name, ID_SYMBOL_TABLE *st)
 
 int get_width(TYPE *t)
 {
-    // printf("IN GET WITDH\n");
-   int size = t->simple == INTEGER  ? 4
-            : t->simple == REAL     ? 8
+   int size = t->simple == INTEGER  ? 2
+            : t->simple == REAL     ? 4
             : t->simple == BOOLEAN  ? 1
-            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (4 * (t->arrtype->end - t->arrtype->begin + 1))
-                                :       t->arrtype->base_type == REAL   ? (8 * (t->arrtype->end - t->arrtype->begin + 1))
+            : t->simple == ARRAY    ?   t->arrtype->base_type == INTEGER? (2 * (t->arrtype->end - t->arrtype->begin + 1))
+                                :       t->arrtype->base_type == REAL   ? (4 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       t->arrtype->base_type == BOOLEAN? (1 * (t->arrtype->end - t->arrtype->begin + 1))
                                 :       0
             : 0;
-    // printf("OUT GET WITDH\n");
-    if (size > 1000 || size < -1000) return 1;
+    if (size > 1000 || size < -1000) return 1;                  // if garbage value, just put a 1 for a pointer
     return size;
 }
 
