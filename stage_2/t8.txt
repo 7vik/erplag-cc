@@ -1,0 +1,31 @@
+<<module arraySum>>
+takes input[list:array[1..15] of    real, n:integer];
+returns  [sum:real];
+start
+	declare index:integer;
+	declare t:boolean;
+	sum:=0.0;
+	for(index in  1..15)
+	start
+		t:= index<=n;
+		switch(t)
+		start
+			case true: print(list[index]);
+				   sum:=sum+list[index];
+				   break;
+			case false: print(sum);
+				    print(index);
+				    break;
+		end
+	end
+	print(sum);
+end
+<<<driver program>>
+start
+	declare A:array[1..15] of real;
+	declare k:integer;
+	declare s:real;
+	get_value(k);
+	[s]:= use module arraySum with parameters A,k;
+	print(s);
+end

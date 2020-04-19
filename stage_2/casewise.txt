@@ -1,0 +1,23 @@
+<<<driver program>>>
+start
+declare index, n: integer;
+declare list: array [1..15] of real;
+declare t: boolean;
+declare sum: real;
+
+for(index in 1..15)							**ERROR 3**
+	start
+		**t:= index<=n;**
+		switch(t)
+		start
+			case true: print(list[index]);
+				   sum:=sum+list[index];			**ERROR 4**
+				   break;
+			case false: print(sum);
+				    print(index);
+				    **prints the values of sum and index  15-n times**
+				    break;
+		end
+		** no need to increment the value of index as it will be taken care by the semantic rules associated with for construct, but an increment statement does not make its syntax incorrect**
+	end
+end

@@ -1,0 +1,10 @@
+<<<driver program>>>
+start
+	declare a, m, temp:integer;	
+	declare A, B, C: array[6..10] of integer;
+	get_value(A);
+	get_value(B);
+	get_value(a);
+	a := B[a];
+	print(a);
+end

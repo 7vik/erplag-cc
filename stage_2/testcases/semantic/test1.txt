@@ -1,0 +1,60 @@
+declare module a;
+declare module a;
+declare module b;        **ERROR: module b is declared but not defined **
+declare module c;
+declare module zxy;    **ERROR: module b is declared but not defined **
+
+<<module c>> takes input[list:array[1..15] of real, n:integer];
+start 
+	a := 1;
+end 
+
+<<<driver program>>>
+start
+	declare index:integer;
+	declare t:boolean;
+	declare temp: real;
+	for(index in  1..15)
+	start
+		t:= index<=5;
+		declare temp:integer;
+		switch(temp)	
+		start
+			case 1: print(temp);
+				   break;
+			case 2: print(0);
+			            break;
+			case true: break;
+			default: print(3);
+				 break;
+		end
+	end
+end
+
+<<module a>> takes input[list:array[1..15] of real, n:integer];
+start
+	declare a: array [1..12] of integer;
+	declare sum: integer;
+	declare i, value1:integer;
+	sum:= 0;
+	for(i in 1..7)
+	start 
+		get_value(value1);
+		a[i]:= value1;
+		sum:= sum+a[i];
+	end
+	print(sum);
+end
+
+<<module xyz>> takes input[a: real, n:integer];
+start
+	declare a: integer;
+	a:=2;
+	ere := 7;
+	while(i<=65)
+	start 
+		print(i);
+		i:= 2*i;
+	end
+end
+

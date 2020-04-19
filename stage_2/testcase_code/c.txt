@@ -1,0 +1,20 @@
+**Code Generation test case 9: Function call implementation
+
+Multiple modules with the driver module with single level of nesting 
+Variant of test case 8
+
+
+**
+<<module compute_expr>>
+takes input[ a: integer];
+start
+	
+	u:= p+q;
+
+end
+
+<<<driver program>>>
+start
+	
+end
+
