@@ -1,7 +1,7 @@
 #ifndef __CODEGEN
 #define __CODEGEN
 
-#include "semantic_analyser.h"
+#include "symbol_table.h"
 
 typedef struct vars
 {

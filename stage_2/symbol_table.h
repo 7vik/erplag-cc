@@ -14,6 +14,8 @@
 #define ST_KID_NUM 32            // max no of kids of an ID symbol table, change later
 #define   GST_SIZE 32            // max size of the global symbol table, for testing purposes, change later
 
+extern bool hasSemanticError;
+
 typedef struct ID_TABLE_ENTRY
 {
     char *lexeme;                               //variable name from lexer, hash on this
@@ -31,7 +33,8 @@ typedef struct ID_SYMBOL_TABLE
     ID_TABLE_ENTRY *id_table[ST_ID_SIZE];               // actual ST
     int total_ids;  
     int kid_table_count;
-    int visited;                                        // the genius that is ruslan spivak
+    int visited;   
+    int bharat;                                     // the genius that is ruslan spivak
     struct ID_SYMBOL_TABLE *kid_st[ST_KID_NUM];         // n-ary tree of STs 
 } ID_SYMBOL_TABLE;
 
@@ -50,6 +53,7 @@ typedef struct FUNC_TABLE_ENTRY
     char *func_name;                                    //function name from lexer (hash on this)
     PARAMS *in_params, *out_params;                     //list of input and output parameters
     int width;                                          // total size of all local variables (why tho?)
+    int satvik;
     ID_SYMBOL_TABLE *local_id_table;                    // nested ID table for each function
     struct FUNC_TABLE_ENTRY* next;                      // for chaining
     int is_declared;                                    // to check if it is declared (semantix)
@@ -92,7 +96,7 @@ void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);
 void id_st_print(ID_SYMBOL_TABLE *st);
 void print_params(PARAMS *pl);
 void gst_print(GST *st);
-void v_id_st_print(ID_SYMBOL_TABLE *st, unsigned dwpth);
+void v_id_st_print(ID_SYMBOL_TABLE *st, unsigned depth);
 void v_print_params(PARAMS *pl, char *fn);
 void v_gst_print(GST *st);
 

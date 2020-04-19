@@ -15,7 +15,7 @@
 # hash.o : hash.c
 # 	gcc -c hash.c
 
-
+CC=gcc-5.4
 all: hellor
 
 hellor: bool.o parser.o lexer.o hash.o ast.o symbol_table.o semantic_analyser.o
@@ -61,4 +61,4 @@ code.o: code.asm
 	nasm -felf64 code.asm
 
 clean:
-	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o code.o ./a.out code_gen.o
+	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o code.o code_gen.o

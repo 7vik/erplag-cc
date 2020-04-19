@@ -1,9 +1,8 @@
 <<<driver program>>>
 start
-	declare a, m, temp:integer;	
-	declare A, B, C: array[6..10] of integer;
-	get_value(A);
-	get_value(B);
-	
-	print(C);
+declare i:integer;
+    for(i in 1..5)
+    start
+
+    end
 end

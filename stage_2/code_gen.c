@@ -1070,8 +1070,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         fprintf(fp, "%s:\n", for_label);
         fprintf(fp, "\tpush rcx\n\tpush rax\n");
         printf("id_st visited: %d, kid tables: %d\n", id_st->visited, id_st->kid_table_count);
-        generate_the_universe(range->sibling->sibling, id_st->kid_st[id_st->visited], fp);
-        id_st->visited++;
+        generate_the_universe(range->sibling->sibling, id_st->kid_st[0], fp);
+        //id_st->visited++;
 
  
         fprintf(fp, "\tpop rax\n\t pop rcx\n");
@@ -1682,12 +1682,18 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     if (is(n, "driverModule"))
     {
         FUNC_TABLE_ENTRY *f = global_st_lookup("driverModule", st);
+        printf("visted inside driver: %d, %p\n", f->local_id_table->visited, &((f->local_id_table)->visited));
+        id_st_print(f->local_id_table);
+        printf("visted inside driver: %d\n", f->local_id_table->visited);
         printf("driver module started\n");
         fprintf(fp, "main:\n\n");
         fprintf(fp, "push rbp\n");
         fprintf(fp, "mov rbp, rsp\n");
         fprintf(fp, "\tsub rsp, %d\n", (f->activation_record_size) * 16);
+        printf("visted inside driver: %d\n", f->local_id_table->visited);
+        id_st_print(f->local_id_table);
         //stack_count = 0;
+        printf("visted inside driver: %d\n", f->local_id_table->visited);
         generate_the_universe(n->child, f->local_id_table, fp);
         printf("driver module ended\n");
     }
