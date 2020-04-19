@@ -207,6 +207,35 @@ void print_parse_tree(PARSE_TREE *tree, FILE* f)
     return;
 }
 
+// recursive
+void v_print_parse_tree(PARSE_TREE *tree)
+{
+    // prints the given parse tree in an output file in inorder traversal
+    // for an n-ary tree, inorder traversal means:
+    //          leftmost kid, then pop, then other kids
+    
+    if (tree == NULL)   
+        return;         // print nothing
+    else
+    {
+        v_print_parse_tree(tree->kids[0]);
+        printf("%20s\t%15u\t%20s\t%20s\t%20s\t%20s\t%20s%20u\n",
+                    stylish_print_charstar(tree->data->lexeme),
+                    tree->data->line,
+                    stylish_print_charstar(tree->data->value_if_number),
+                    stylish_print_charstar(tree->data->token_name),
+                    super_stylish_print_charstar(tree->data->parent_node_pointer),
+                    stylish_pr_intttttttt(tree->data->is_leaf_node),
+                    stylish_print_charstar(tree->data->node_symbol),
+                    tree->data->rule_number
+                    );
+        int temp = tree->num_of_kids;
+        for (int i = 1; i < temp; i++)
+            v_print_parse_tree(tree->kids[i]);
+    }
+    return;
+}
+
 // returns 0 if the token is non-terminal
 int is_terminal(char* variable)
 {
