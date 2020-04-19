@@ -16,10 +16,13 @@
 # 	gcc -c hash.c
 
 CC=gcc-5.4
-all: hellor
+all: compile_all
 
 hellor: bool.o parser.o lexer.o hash.o ast.o symbol_table.o semantic_analyser.o
 	gcc -o stage2exe symbol_table.o ast.o bool.o parser.o lexer.o hash.o semantic_analyser.o
+
+compile_all: driver.o code_gen.o symbol_table.o ast.o parser.o lexer.o hash.o bool.o semantic_analyser.o
+	gcc -o driver.c code_gen.c symbol_table.c ast.c parser.c lexer.c hash.c bool.c semantic_analyser.c
  
 hellos: bool.o parser.o lexer.o hash.o ast.o symbol_table.o
 	gcc -o stage2exe symbol_table.o ast.o parser.o lexer.o hash.o bool.o
@@ -60,5 +63,8 @@ code_gen.o: code_gen.c
 code.o: code.asm
 	nasm -felf64 code.asm
 
+driver.o: driver.c
+	gcc -c driver.c
+
 clean:
-	rm ast.o symbol_table.o hash.o bool.o parser.o lexer.o code.o code_gen.o
+	rm *.o
