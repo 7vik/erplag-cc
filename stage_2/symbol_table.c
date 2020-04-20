@@ -601,7 +601,6 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
 
-        // start handling from here @satvik
         if (lhs->node_marker == ARRAY || (lhs->node_marker == var && lhs->child->sibling != NULL))
         {
             // first do a ID table recursive lookup
@@ -613,8 +612,6 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 if (p == NULL)
                     p = param_lookup(id_st->primogenitor->out_params ,lhs->child->tree_node->lexeme);
             }
-            // if (i == NULL && p == NULL) // finally do a recursive lookup  (no this concept is flawed)
-            //     i = st_lookup(lhs->child->tree_node->lexeme, id_st);
             
             if (i == NULL && p == NULL)
             {
@@ -631,7 +628,25 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
-            
+            else if (i != NULL)   // if everything else is fine,
+            {           // check for array-out-of bounds error
+                if (i->datatype->arrtype->is_dynamic == false && lhs->child->sibling->node_marker == NUM)
+                {
+                    int ar_begin = i->datatype->arrtype->begin;
+                    int ar_end   = i->datatype->arrtype->end;
+                    int ar_mid   = atoi(lhs->child->sibling->tree_node->lexeme);
+                    if (ar_mid < ar_begin || ar_mid > ar_end)
+                    {
+                        if (error_line < lhs->tree_node->line)
+                        {
+                            printf("Semantic error at line %d. Array index out-of-bounds Error.\n",
+                            lhs->tree_node->line);
+                            error_line = lhs->tree_node->line;
+                            hasSemanticError = true;
+                        }
+                    }
+                }
+            }
             //printf("%d here\n", p->datatype->arrtype->base_type);
             if (p != NULL && (p->datatype->arrtype->base_type != get_type_expr(rhs, id_st)))
             {
@@ -640,10 +655,27 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 error_line = n->child->tree_node->line;
                 hasSemanticError = true;
             }
-
-            
+            else if (p != NULL)   // if everything else is fine,
+            {           // check for array-out-of bounds error
+                if (p->datatype->arrtype->is_dynamic == false && lhs->child->sibling->node_marker == NUM)
+                {
+                    int ar_begin = p->datatype->arrtype->begin;
+                    int ar_end   = p->datatype->arrtype->end;
+                    int ar_mid   = atoi(lhs->child->sibling->tree_node->lexeme);
+                    if (ar_mid < ar_begin || ar_mid > ar_end)
+                    {
+                        if (error_line < lhs->child->tree_node->line)
+                        {
+                            printf("Semantic error at line %d. Array index out-of-bounds Error.\n",
+                            lhs->child->tree_node->line);
+                            error_line = lhs->child->tree_node->line;
+                            hasSemanticError = true;
+                        }
+                    }
+                }
+            }  
         }
-        else    
+        else    // it's an ID
         {
             PARAMS *p1, *p2 = NULL;
             ID_TABLE_ENTRY *i = NULL;
@@ -700,8 +732,13 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 
                 if (p == NULL)
                 {
-                    p = p2;
-                    p2->is_assigned = true;
+                    if (p1 == NULL)
+                    {
+                        p = p2;
+                        p2->is_assigned = true;
+                    }
+                    else 
+                        p = p1;
                 }
                 
                 if (p->datatype->simple != get_type_expr(rhs, id_st))
@@ -794,8 +831,6 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 }
 
             }
-
-            
         }
     }
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
