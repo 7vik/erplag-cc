@@ -28,12 +28,6 @@ Finally, use [nasm](https://www.nasm.us/pub/nasm/releasebuilds/?C=M;O=D) to run 
 $ nasm -felf64 code.asm && gcc -o exec code.o && ./exec
 ```
 
-## Authors
-
-* Ayush Jain (<f20170093@pilani-bits-pilani.ac.in>)
-* Satvik Golechha (<f20170117@pilani-bits-pilani.ac.in>)
-* Bharat Bhargava (<f20170025@pilani-bits-pilani.ac.in>)
-
 ## Compilation Steps
 
 The compilation is broken into the following steps. (see [Dragon Book](https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools)):
@@ -47,7 +41,7 @@ The compilation is broken into the following steps. (see [Dragon Book](https://e
 
 Visualization for each of these steps is available. For instance, this is how a part of the Syntax Tree looks like:
 
-![ast](ast_visual.png)
+<img src="https://github.com/7vik/erplag-cc/blob/master/ast_visual.png" width="400" height="350">
 
 ## Features:
 
@@ -59,6 +53,12 @@ Some salient features of `ERPLAG` are:
 - Direct, user-prompt input support for arrays
 
 Other features like loops, conditionals, scopes, declarations are similar to their Pascal/C counterparts.
+
+## Authors
+
+* Ayush Jain (<f20170093@pilani-bits-pilani.ac.in>)
+* Satvik Golechha (<f20170117@pilani-bits-pilani.ac.in>)
+* Bharat Bhargava (<f20170025@pilani-bits-pilani.ac.in>)
 
 ## Notes:
 
