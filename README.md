@@ -41,7 +41,7 @@ The compilation is broken into the following steps. (see [Dragon Book](https://e
 
 Visualization for each of these steps is available. For instance, this is how a part of the Syntax Tree looks like:
 
-<img src="https://github.com/7vik/erplag-cc/blob/master/ast_visual.png" width="400" height="350">
+<img src="https://github.com/7vik/erplag-cc/blob/master/ast_visual.png" width="500" height="300">
 
 ## Features:
 
