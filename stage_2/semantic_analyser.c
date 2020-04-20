@@ -26,9 +26,10 @@ etc. (More semantics will be made available in the test cases)
 
 ******************************************/
 
-#include "semantic_analyser.h"
+
 #include <assert.h>
 #include <stdlib.h>
+#include "semantic_analyser.h"
 
 void semantic_analyser(astNode* root, GST* global_st)
 {
@@ -689,7 +690,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
 
     return;
 
-    
+    /*
     // if two nodes, then it is arr, bound checking
     if(root->child->sibling != NULL)
     {
@@ -751,6 +752,7 @@ void check_var_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
         
     }
     return;
+    */
 }
 
 /*
