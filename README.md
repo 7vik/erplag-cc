@@ -34,7 +34,7 @@ $ nasm -felf64 code.asm && gcc -o exec code.o && ./exec
 * Satvik Golechha (<f20170117@pilani-bits-pilani.ac.in>)
 * Bharat Bhargava (<f20170025@pilani-bits-pilani.ac.in>)
 
-## Compilation
+## Compilation Steps
 
 The compilation is broken into the following steps. (see [Dragon Book](https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools)):
 
@@ -47,7 +47,7 @@ The compilation is broken into the following steps. (see [Dragon Book](https://e
 
 Visualization for each of these steps is available. For instance, this is how a part of the Syntax Tree looks like:
 
-![ast](ast_visual.png)
+![ast](ast_visual2.png)
 
 # Features:
 
