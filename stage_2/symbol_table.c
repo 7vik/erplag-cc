@@ -637,11 +637,11 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     int ar_mid   = atoi(lhs->child->sibling->tree_node->lexeme);
                     if (ar_mid < ar_begin || ar_mid > ar_end)
                     {
-                        if (error_line < lhs->tree_node->line)
+                        if (error_line < lhs->child->tree_node->line)
                         {
                             printf("Semantic error at line %d. Array index out-of-bounds Error.\n",
-                            lhs->tree_node->line);
-                            error_line = lhs->tree_node->line;
+                            lhs->child->tree_node->line);
+                            error_line = lhs->child->tree_node->line;
                             hasSemanticError = true;
                         }
                     }
