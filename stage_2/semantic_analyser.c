@@ -594,6 +594,14 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
             printf("SEMANTIC ERROR at line %d: Input variable %s should have type %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme, variables_array[trav2->datatype->simple]);
             hasSemanticError = true;
         }
+        else if(dt->simple == ARRAY && trav2->datatype->simple == ARRAY)
+        {
+            if((trav2->datatype->arrtype->begin != dt->arrtype->begin) || (trav2->datatype->arrtype->end != dt->arrtype->end))
+            {
+                printf("SEMANTIC ERROR at line %d: Inconsistent type of array actual parameter %s due to improper begin and/or end index.\n", trav1->tree_node->line, trav1->tree_node->lexeme);
+                hasSemanticError = true;
+            }
+        }
         count_inp1++;
         count_inp2++;
         trav1 = trav1->sibling;
