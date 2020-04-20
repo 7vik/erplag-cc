@@ -44,7 +44,7 @@ extern exit
 
 section  .text
 
-array_parameter_demo:
+arraySum:
 
 	push rbp
 	mov rbp, rsp
@@ -64,7 +64,37 @@ array_parameter_demo:
 	push rbp
 	push rbp
 	mov rbp, rsp
-	sub rsp, 240
+	sub rsp, 64
+	mov [rbp - 104 + 208], rcx
+; for loop
+
+	mov qword [rbp - 8], 1
+	mov rcx, 1
+	mov rax, 15
+label0:
+	push rcx
+	push rax
+	xor rcx, rcx
+	mov ecx, [rbp - 8]
+	push rcx
+	push rcx
+	xor rcx, rcx
+	mov ecx, [rbp - 16]
+	pop rdx
+	pop rdx
+	cmp rdx, rcx
+	jle label1
+	mov rcx, 0
+jmp label2
+label1:
+	mov rcx, 1
+label2:	mov [rbp - 24], rcx
+	xor rax, rax
+	mov eax, [rbp - 24]
+	cmp rax, 1
+	jne label4
+	push rax
+	push rax
 	;Printing array
 
 ; printing array
@@ -80,151 +110,147 @@ sub r12d, r13d
 inc r12d
 xor r13, r13
 
-label0:
-	lea rdi, [intFormat_out]
+label5:
+lea rdi, [realFormat_out]
 	xor r14, r14
 	mov r14d, [rbp - 8 + 208]
-	mov rsi, [r14 + r13 * 8]
+	lea rsi, [r14 + r13 * 8]
 	call printf
 
 	inc r13d
 	cmp r13d, r12d
-	jne label0
+	jne label5
 	lea rdi, [new_line]
 	call printf
 
 
-	;Printing array
-
-; printing array
-lea rdi, [arr_outMsg]
-call printf
-; stores the count
-
-xor r12, r12
-xor r13, r13
-mov r12d, [rbp - 48 + 208]
-mov r13d, [rbp - 40 + 208]
-sub r12d, r13d
-inc r12d
-xor r13, r13
-
-label1:
-	lea rdi, [intFormat_out]
-	xor r14, r14
-	mov r14d, [rbp - 32 + 208]
-	mov rsi, [r14 + r13 * 8]
-	call printf
-
-	inc r13d
-	cmp r13d, r12d
-	jne label1
-	lea rdi, [new_line]
-	call printf
-
-
-	;Taking id
-
-	mov rdi, int_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 24]
-	call scanf
-	;Taking id
-
-	mov rdi, int_inMsg
-	call printf
-	mov rdi, intFormat_in
-	lea rsi, [rbp - 32]
-	call scanf
-	xor r14, r14
-	mov r14d, [array_available_addr]
-	lea rax, [array_buffer + r14 * 8]
-	mov [rbp - 40], rax
-
-mov r14d, r14d
-	mov r14d, [array_available_addr]
-	add r14, 5
-	mov [array_available_addr], r14
-
-; loading array offsets
-mov r13, 10
-mov [rbp - 48], r13
-mov r13, 14
-mov [rbp - 56], r13
-
-	xor r14, r14
-	mov r14d, [array_available_addr]
-	lea rax, [array_buffer + r14 * 8]
-	mov [rbp - 64], rax
-
-mov r14d, r14d
-	mov r14d, [array_available_addr]
-	add r14, 5
-	mov [array_available_addr], r14
-
-; loading array offsets
-mov r13, 10
-mov [rbp - 72], r13
-mov r13, 14
-mov [rbp - 80], r13
-
-	xor r14, r14
-	mov r14d, [array_available_addr]
-	lea rax, [array_buffer + r14 * 8]
-	mov [rbp - 88], rax
-
-	xor rax, rax
-	mov eax, [rbp - 24]
-	mov [rbp - 96], rax
-	xor rax, rax
-	mov eax, [rbp - 32]
-	mov [rbp - 104], rax
-; incrementing array_available address by array size
-
-	xor r14, r14
-	mov r14d, [array_available_addr]
-	xor rax, rax
 	xor rcx, rcx
-	mov eax, [rbp - 96]
-	mov ecx, [rbp - 104]
-	cmp eax, ecx
-	jg label2
-	sub ecx, eax
-	inc ecx
-	add r14d, ecx
-	mov [array_available_addr], r14
-
-	jmp label3
-	label2:
-	lea rdi, [errorMsg1]
-	mov rsi, rcx
-	mov rdx,  rax
-	xor rcx, rcx
-	mov rcx, 19
-	xor rax, rax
-	call printf
-	jmp main_end
-label3:
-	;Taking array
-
-; prompts user for input
-	mov ecx, [rbp - 48]
-	mov r8d, [rbp - 56]
-	mov esi, r8d
-	sub esi, ecx
-	inc esi
-	mov rdi, arr_inMsg
-mov rdx, type_int
-	xor rcx, rcx
-	xor r8, r8
-	mov ecx, [rbp - 48]
-	mov r8d, [rbp - 56]
-	call printf
-
-	; stores the count
-
-	xor r12, r12
+	mov ecx, [rbp - 104 + 208]
+	push rcx
+	push rcx
+; bound checking
+	push r13
+	push r14
 	xor r13, r13
-	mov r12d, [rbp - 56]
-	mov
+	xor r14, r14
+	xor r15, r15
+	mov r13d, [rbp - -192]
+	mov r14d, [rbp - -184]
+	mov r15d, [rbp - 8]
+	cmp r13d, r15d
+	jg label6
+	cmp r14d, r15d
+	jl label6
+	jmp label7
+	label6: 
+	lea rdi, [errorMsg2]
+	mov rsi, r15
+	mov rdx,  r13
+	xor rcx, rcx
+	mov rcx, r14
+	mov r8, 16
+	xor rax, rax
+	call printf
+	call exit
+label7:
+	pop r14
+	pop r13
+	xor rax, rax
+	xor rdx, rdx
+	mov eax, [rbp - -200]
+	mov edx, [rbp - -192]
+	mov ebx, [rbp - 8]
+	sub ebx, edx
+	xor rcx, rcx
+	mov ecx, [rax + rbx * 8]
+	pop rdx
+	pop rdx
+	add rdx, rcx
+	mov rcx, rdx
+	mov [rbp - 104 + 208], rcx
+	pop rax
+	pop rax
+	jmp label3
+	label4:
+	push rax
+	push rax
+	;Printing ID
+
+	mov rdi, realFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 104 + 208]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	;Printing ID
+
+	mov rdi, intFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 8]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	pop rax
+	pop rax
+	label3:
+	pop rax
+	 pop rcx
+	inc qword [rbp - 8]
+	inc rcx
+	cmp rcx, rax
+	jle label0
+	;Printing ID
+
+	mov rdi, realFormat_out
+	xor rsi, rsi
+	mov esi, [rbp - 104 + 208]
+	call printf
+
+	lea rdi, [new_line]
+	call printf
+
+	mov rsp, rbp
+	pop rbp
+	pop rbp
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+	mov rsp, rbp
+	pop rbp
+	ret
+main:
+
+push rbp
+mov rbp, rsp
+	sub rsp, 144
+	xor r14, r14
+	mov r14d, [array_available_addr]
+	lea rax, [array_buffer + r14 * 8]
+	mov [rbp - 8], rax
+
+mov r14d, r14d
+	mov r14d, [array_available_addr]
+	add r14, 15
+	mov [array_available_addr], r14
+
+; loading array offsets
+mov r13, 1
+mov [rbp - 16], r13
+mov r13, 15
+mov [rbp - 24], r13
+
+	xor r14, r14
+	mov r14d, [array_availa
