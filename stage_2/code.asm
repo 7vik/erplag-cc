@@ -1,9 +1,9 @@
 section .data
 
-int_inMsg    db        "Enter an integer value" , 10, 0
-real_inMsg   db        "Enter a real value", 10, 0
-bool_inMsg   db        "Enter a boolean value", 10, 0
-arr_inMsg    db        "Enter %d elements of %s type for array range %d to %d", 10, 0
+int_inMsg    db        "Input: Enter an integer value" , 10, 0
+real_inMsg   db        "Input: Enter a real value", 10, 0
+bool_inMsg   db        "Input: Enter a boolean value", 10, 0
+arr_inMsg    db        "Input: Enter %d elements of %s type for array range %d to %d", 10, 0
 intFormat     db        "%d", 0
 type_int      db        "integer", 0
 type_real     db        "real", 0

@@ -55,10 +55,10 @@ void print_data_section(FILE* fp)
 {
     fprintf(fp, "section .data\n\n");
 
-    fprintf(fp, "int_inMsg    db        \"Enter an integer value\" , 10, 0\n"); 
-    fprintf(fp, "real_inMsg   db        \"Enter a real value\", 10, 0\n");
-    fprintf(fp, "bool_inMsg   db        \"Enter a boolean value\", 10, 0\n");
-    fprintf(fp, "arr_inMsg    db        \"Enter %%d elements of %%s type for array range %%d to %%d\", 10, 0\n");
+    fprintf(fp, "int_inMsg    db        \"Input: Enter an integer value\" , 10, 0\n"); 
+    fprintf(fp, "real_inMsg   db        \"Input: Enter a real value\", 10, 0\n");
+    fprintf(fp, "bool_inMsg   db        \"Input: Enter a boolean value\", 10, 0\n");
+    fprintf(fp, "arr_inMsg    db        \"Input: Enter %%d elements of %%s type for array range %%d to %%d\", 10, 0\n");
     fprintf(fp, "intFormat     db        \"%%d\", 0\n");
     fprintf(fp, "type_int      db        \"integer\", 0\n");
     fprintf(fp, "type_real     db        \"real\", 0\n");
@@ -1521,11 +1521,32 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         astNode* id_list_node = n->child->sibling->sibling->child;
         int count = 0;
+        int start_offset, end_offset;
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
-            int offset = id_entry->offset;
-            if(id_entry->datatype->simple != ARRAY)
+            int offset;
+            TYPE* datatype;
+            int start_offset, end_offset;
+            if(id_entry == NULL)
+            {
+                PARAMS* p = param_lookup(id_st->primogenitor->in_params, id_list_node->tree_node->lexeme);
+                if(p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
+                offset = p->offset - 26;
+                datatype = p->datatype;
+                start_offset = p->datatype->arrtype->begin_offset - 26;
+                end_offset = p->datatype->arrtype->end_offset - 26;
+            }
+            else
+            {
+                offset = id_entry->offset;
+                datatype = id_entry->datatype;
+                start_offset = id_entry->datatype->arrtype->begin_offset;
+                end_offset = id_entry->datatype->arrtype->end_offset;
+
+            }
+            if(datatype->simple != ARRAY)
             {
                 fprintf(fp, "xor r15, r15\n");
                 fprintf(fp,"mov r15d, [rbp - %d]\n", offset * 8);
@@ -1534,10 +1555,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                 count++;
             }
 
-            else if(id_entry->datatype->simple == ARRAY)
+            else if(datatype->simple == ARRAY)
             {
-                int start_offset = id_entry->datatype->arrtype->begin_offset;
-                int end_offset = id_entry->datatype->arrtype->end_offset;
                 fprintf(fp, "xor r15, r15\n");
                 fprintf(fp, "mov r15d, [rbp - %d]\n", offset * 8);
                 fprintf(fp, "\tmov %s, r15\n", registers_array[count]);
@@ -1561,11 +1580,13 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
         astNode* id_list_node = n->child->sibling->sibling->child;
         int count = 0;
+        int start_offset, end_offset;
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
             int offset;
             TYPE* datatype;
+            int start_offset, end_offset;
             if(id_entry == NULL)
             {
                 PARAMS* p = param_lookup(id_st->primogenitor->in_params, id_list_node->tree_node->lexeme);
@@ -1573,11 +1594,15 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
                 offset = p->offset - 26;
                 datatype = p->datatype;
+                start_offset = p->datatype->arrtype->begin_offset - 26;
+                end_offset = p->datatype->arrtype->end_offset - 26;
             }
             else
             {
                 offset = id_entry->offset;
                 datatype = id_entry->datatype;
+                start_offset = id_entry->datatype->arrtype->begin_offset;
+                end_offset = id_entry->datatype->arrtype->end_offset;
             }
             if(datatype->simple != ARRAY)
             {
@@ -1590,8 +1615,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
             else if(datatype->simple == ARRAY)
             {
-                int start_offset = datatype->arrtype->begin_offset;
-                int end_offset = datatype->arrtype->end_offset;
                 fprintf(fp, "xor r15, r15\n");
                 fprintf(fp, "mov r15d, [rbp - %d]\n", offset * 8);
                 fprintf(fp, "\tmov %s, r15\n", registers_array[count]);

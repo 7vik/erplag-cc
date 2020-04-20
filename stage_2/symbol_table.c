@@ -1028,7 +1028,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 
         if(type != INTEGER && type!= BOOLEAN)
         {
-            printf("caught: %d\n", n->child->tree_node->line);
+            // we don't do type checks if switch is not integer or boolean
             return;
         }
 
