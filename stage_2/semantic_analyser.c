@@ -274,12 +274,29 @@ void check_iterativeStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
     
     if(temp->node_marker == ID) // it's for construct
     {
+        astNode* index_node = temp;
         temp = temp->sibling;   // temp points to range
 
         temp = temp->sibling;   // temp points to START
         id_child_table = id_table->kid_st[id_table->visited];
     
         temp = temp->sibling;   // temp points to statements construct
+        astNode* stmt = temp->child; //at stmt node
+        //iterate over statements
+        while(stmt != NULL)
+        {
+            if(stmt->node_marker == assignmentStmt)
+            {
+                if(strcmp(stmt->child->child->tree_node->lexeme, index_node->tree_node->lexeme) == 0)
+                {
+                    printf("SEMANTIC ERROR at line %d: for loop variable cannot be assigned a value\n", stmt->child->child->tree_node->line);
+                    hasSemanticError = true;
+                }
+            }
+
+            stmt = stmt->sibling;
+        }
+
         check_statements_semantic(temp, id_child_table);
 
         temp = temp->sibling;   // temp points to END
