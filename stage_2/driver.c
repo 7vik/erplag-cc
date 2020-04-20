@@ -93,10 +93,38 @@ int main(int argc, char *argv[])
             free(parse_table);
         }
 
-        if(option == 3)                                 // AST Print. Ayush is writing this.
+        if(option == 3)                                 // AST Print
         { 
-            printf("Exiting. Bye-Bye!\n");
-            exit(0);
+            FILE* test_fp = fopen(argv[1], "r");
+            if (test_fp == NULL)
+            {
+                printf("Error in opening files. Exiting.\n");
+                exit(1);
+            }
+            populate_ht(hash_table, KEYWORDS_FILE);
+            int line_count = 1;
+            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+            init_buffer(test_fp, twin_buff);
+            GRAMMAR* grammar = generate_grammar();
+            first_follow *ff = get_first_follow_table(grammar);
+            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+            create_parse_table(ff, parse_table, grammar);
+            STACK *stack = NULL;
+            PARSE_TREE *tree;
+            parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+            astNode* ast_root = buildAST(tree);
+            printf("\tPrinting AST using Pre-order Traversal:\n\n");
+            printf("%20s%10s%20s%20s\n\n",
+                    "AST NODE MARKER",
+                    "IS LEAF?",
+                    "PARENT",
+                    "SIBLING"
+                    );
+            v_print_ast_tree(ast_root);
+            putchar('\n');
+            fclose(test_fp);
+            free(twin_buff);
+            free(parse_table);
         }
 
         if(option == 4)                                 // Memory. Ayush/Bharat have written some part of it.

@@ -574,7 +574,7 @@ void check_moduleReuseStmt_semantic(astNode* root, ID_SYMBOL_TABLE* id_table)
                     p = param_lookup(id_table->primogenitor->out_params, trav1->tree_node->lexeme);
                 if (p == NULL)
                 {   
-                    printf("SEMANTIC ERROR at line %d: Undeclared variable %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme);
+                    //printf("SEMANTIC ERROR at line %d: Undeclared variable %s.\n", trav1->tree_node->line, trav1->tree_node->lexeme);
                     hasSemanticError = true;
                     trav1 = trav1->sibling;
                     trav2 = trav2->next;
