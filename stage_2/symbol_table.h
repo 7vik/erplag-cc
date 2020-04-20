@@ -88,8 +88,10 @@ FUNC_TABLE_ENTRY *global_st_lookup(char *, GST *);
 PARAMS *param_lookup(PARAMS *plist, char *var);
 
 void traverse_the_multiverse(astNode *node, GST *st);
-int is(astNode *node, char *comp);
 void traverse_the_universe(astNode *node, ID_SYMBOL_TABLE *id_st);
+void array_the_multiverse(astNode *node);
+int is(astNode *node, char *comp);
+void array_the_universe(astNode *node, char *f);
 
 void id_st_print(ID_SYMBOL_TABLE *st);
 void print_params(PARAMS *pl);

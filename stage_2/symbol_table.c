@@ -547,10 +547,79 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
     return 0;      // hopefully never
 }
 
+void array_the_universe(astNode *n, char *f)
+{
+    if (is(n, "moduleDef"))
+        array_the_universe(n->child->sibling, f);
+    if (is(n, "statements"))
+        for(astNode *temp = n->child; temp; temp = temp->sibling)
+            array_the_universe(temp, f);
+    if (is(n, "declareStmt"))
+    {
+        astNode *temp = n->child;
+        while(temp->node_marker != EPS) temp = temp->sibling;   // so temp is EPS
+        astNode *type_node = temp;
+        astNode *range_node = temp->sibling->child;        // at rangeArr
+        for(temp = n->child; temp->node_marker != EPS; temp = temp->sibling)
+        {
+            TYPE *t = get_type(type_node);
+            if (t->simple == ARRAY)
+            {
+                t->arrtype->base_type = range_node->sibling->node_marker;
+                if (range_node->child->node_marker != NUM || range_node->child->sibling->node_marker != NUM)
+                {
+                    printf("%20s%10s%10s\t[%5s, %5s]\t%10s\n",
+                            f,
+                            temp->tree_node->lexeme,
+                            "dynamic",
+                            range_node->child->tree_node->lexeme,
+                            range_node->child->sibling->tree_node->lexeme,
+                            variables_array[t->arrtype->base_type]
+                    );
+                }
+                else
+                {
+                    printf("%20s%10s%10s\t[%5s, %5s]\t%10s\n",
+                            f,
+                            temp->tree_node->lexeme,
+                            "static",
+                            range_node->child->tree_node->lexeme,
+                            range_node->child->sibling->tree_node->lexeme,
+                            variables_array[t->arrtype->base_type]
+                    );
+                }
+            }
+        }
+    }
+    if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
+        array_the_universe(n->child->sibling->sibling->sibling, f);
+    if (is(n, "iterativeStmt") && (1 - is(n->child, "ID")))   // while lup
+        array_the_universe(n->child->sibling->sibling, f);
+    if (is(n, "conditionalStmt"))
+        array_the_universe(n->child->sibling->sibling, f);
+    if (is(n, "caseStmts"))
+        for (astNode *temp = n->child; temp; temp = temp->sibling)
+            array_the_universe(temp, f);
+    if (is(n, "caseStmt"))
+        array_the_universe(n->child->sibling, f);
+    return;
+}
+
+void array_the_multiverse(astNode *n)
+{
+    if (is(n,"program"))
+        for(astNode *temp = n->child; temp; temp = temp->sibling)
+            array_the_multiverse(temp);
+    if (is(n, "driverModule"))
+        array_the_universe(n->child, "driver");
+    if (is(n, "otherModules"))
+        for (astNode *m = n->child; m; m = m->sibling)
+            array_the_universe(m->child->sibling->sibling->sibling, m->child->tree_node->lexeme);
+    return;
+}
+
 void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
 {
-    // printf("->\t%s\n", n->tree_node->node_symbol);
-    // printf("st %d\n", id_st->visited);
     if (is(n, "moduleDef"))
         traverse_the_universe(n->child->sibling, id_st);
     if (is(n, "statements"))

@@ -220,8 +220,37 @@ int main(int argc, char *argv[])
 
         if(option == 7)                                        // Static and Dynamic Arrays
         { 
-            printf("Exiting. Bye-Bye!\n");
-            exit(0);
+            FILE* test_fp = fopen(argv[1], "r");
+            if (test_fp == NULL)
+            {
+                printf("Error in opening files. Exiting.\n");
+                exit(1);
+            }
+            populate_ht(hash_table, KEYWORDS_FILE);
+            int line_count = 1;
+            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+            init_buffer(test_fp, twin_buff);
+            GRAMMAR* grammar = generate_grammar();
+            first_follow *ff = get_first_follow_table(grammar);
+            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+            create_parse_table(ff, parse_table, grammar);
+            STACK *stack = NULL;
+            PARSE_TREE *tree;
+            parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+            astNode* ast_root = buildAST(tree); 
+            printf("\n%20s%10s%10s\t[%5s, %5s]\t%10s\n\n",
+                    "Module Name",
+                    "Array Name",
+                    "Static/Dyn",
+                    "begin",
+                    "end",
+                    "Base Type"
+                    );   
+            array_the_multiverse(ast_root);
+            putchar('\n');
+            fclose(test_fp);
+            free(twin_buff);
+            free(parse_table);
         }
 
         if(option == 8)                                         // Errors
