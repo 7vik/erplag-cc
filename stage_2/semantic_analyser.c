@@ -83,7 +83,6 @@ void check_moduleDeclarations_semantic(astNode* root, GST* global_st)
     assert(root->node_marker == moduleDeclarations);
 
     astNode* temp = root->child;
-
     while(temp != NULL)
     {
         FUNC_TABLE_ENTRY* func = global_st_lookup(temp->tree_node->lexeme, global_st);
@@ -145,7 +144,7 @@ void check_module_semantic(astNode* root, GST* global_st)
 
     astNode* temp = root->child;  //name of function is here
     FUNC_TABLE_ENTRY* func_entry = global_st_lookup(temp->tree_node->lexeme, global_st);
-
+    PARAMS *out_par = NULL;
     if (func_entry == NULL)
     {
         hasSemanticError = true;
@@ -155,6 +154,16 @@ void check_module_semantic(astNode* root, GST* global_st)
     else // the function is defined
     {
         func_entry->is_declared += 1;
+        out_par = func_entry->out_params;
+        while(out_par != NULL)
+        {
+            if(out_par->is_assigned == 0)
+            {
+                hasSemanticError = true;
+                printf("Semantic error in the definition of function '%s'. Output formal parameter '%s' not assigned any value in the body.\n", func_entry->func_name, out_par->param_name);
+            }
+            out_par = out_par->next;
+        }
     }
     
     check_moduleDef_semantic(temp->sibling->sibling->sibling, func_entry);
