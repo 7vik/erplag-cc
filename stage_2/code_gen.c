@@ -781,6 +781,7 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
 // trav a single function and generate the ASM code
 void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 {
+    //printf("Small: %s\n", variables_array[n->node_marker]);
     if (is(n, "moduleDef"))
     {
         generate_the_universe(n->child->sibling, id_st, fp);
@@ -1535,15 +1536,21 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
                 offset = p->offset - 26;
                 datatype = p->datatype;
-                start_offset = p->datatype->arrtype->begin_offset - 26;
-                end_offset = p->datatype->arrtype->end_offset - 26;
+                if(datatype->simple == ARRAY)
+                {
+                    start_offset = datatype->arrtype->begin_offset - 26;
+                    end_offset = datatype->arrtype->end_offset - 26;
+                }
             }
             else
             {
                 offset = id_entry->offset;
                 datatype = id_entry->datatype;
-                start_offset = id_entry->datatype->arrtype->begin_offset;
-                end_offset = id_entry->datatype->arrtype->end_offset;
+                if(datatype->simple == ARRAY)
+                {
+                    start_offset = datatype->arrtype->begin_offset;
+                    end_offset = datatype->arrtype->end_offset;
+                }
 
             }
             if(datatype->simple != ARRAY)
@@ -1594,15 +1601,21 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                     p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
                 offset = p->offset - 26;
                 datatype = p->datatype;
-                start_offset = p->datatype->arrtype->begin_offset - 26;
-                end_offset = p->datatype->arrtype->end_offset - 26;
+                if(datatype->simple == ARRAY)
+                {
+                    start_offset = datatype->arrtype->begin_offset - 26;
+                    end_offset = datatype->arrtype->end_offset - 26;
+                }
             }
             else
             {
                 offset = id_entry->offset;
                 datatype = id_entry->datatype;
-                start_offset = id_entry->datatype->arrtype->begin_offset;
-                end_offset = id_entry->datatype->arrtype->end_offset;
+                if(datatype->simple == ARRAY)
+                {
+                    start_offset = datatype->arrtype->begin_offset;
+                    end_offset = datatype->arrtype->end_offset;
+                }
             }
             if(datatype->simple != ARRAY)
             {
@@ -1660,6 +1673,7 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 // trav the ast and create ASM code 
 void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 {
+    //printf("BIG: %s\n", variables_array[n->node_marker]);
     if (is(n,"program"))
     {
         for(astNode *temp = n->child; temp; temp = temp->sibling)

@@ -1,6 +1,0 @@
-<<<driver program>>>
-start
-	declare x:integer;
-	declare b:array
-	b[2]:= u+m[25];	
-end

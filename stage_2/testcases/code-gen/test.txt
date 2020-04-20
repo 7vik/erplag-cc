@@ -1,8 +1,0 @@
-<<<driver program>>>
-start
-	declare a: boolean;
-	declare b,c,d: integer;
-	a := 2.5 > 1.5;
-	**a := ((b>a) OR (c>b));**
-end
-

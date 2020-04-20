@@ -1,7 +1,0 @@
-<<<driver program>>>
-start
-	declare x:integer;
-	declare b: array[a..19] of integer;
-    declare a: array[2..20] of integer;
-    a := b + a;
-end
