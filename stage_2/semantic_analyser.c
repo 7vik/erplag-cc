@@ -32,6 +32,7 @@ etc. (More semantics will be made available in the test cases)
 
 void semantic_analyser(astNode* root, GST* global_st)
 {
+    printf("Starting PASS-2 of Semantic Analysis.\n");
     if(root != NULL)
     {
         assert(root->node_marker == program);
