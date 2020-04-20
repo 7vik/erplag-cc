@@ -1,6 +1,15 @@
 # erplag-cc
 
-ERPLAG-CC is a compiler for the language "ERPLAG". (see specs), written in C.
+**erplag-cc** is a compiler for the language `ERPLAG`. (see [specs](erplag_specs.pdf)), written in C. The compiler generates assembly code that can be run on a Linux machine. `(NASM, v2.14.0, 64-bit)`
+
+Compilation is broken into:
+
+* [Lexer](lexer.c) (tokenizer)
+* [Parser](parser.c) (and syntax checking)
+* [Abstract Syntax Tree](ast.c) (with ~60% compression)
+* [Symbol Table](symbol_table.c) (and static type checking)
+* [Semantic Analysis](semantic_analyser.c)
+* [Code Generation](code_gen.c) (and runtime checking)
 
 ERPLAG is derived from names of these 6 Turing Award Winners:
 
