@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
         printf("\nPlease try again. Bye!\n");
         exit(2);
     }
-    clock_t start_time, end_time;
-    double total_CPU_time, total_CPU_time_in_seconds;
 	printf("LEVEL 4:\tSymbol Table/Type Checking/ Semantic Analysis/ Static,Dynamic Arrays in Type Checking/Code Generation Done.\n");
 
     while (1)                                                                               // loop forever
@@ -127,10 +125,33 @@ int main(int argc, char *argv[])
             free(parse_table);
         }
 
-        if(option == 4)                                 // Memory. Ayush/Bharat have written some part of it.
+        if(option == 4)                                 // Memory
         { 
-            printf("Exiting. Bye-Bye!\n");
-            exit(0);
+            FILE* test_fp = fopen(argv[1], "r");
+            if (test_fp == NULL)
+            {
+                printf("Error in opening files. Exitting.\n");
+                exit(1);
+            }
+            populate_ht(hash_table, KEYWORDS_FILE);
+            int line_count = 1;
+            TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
+            init_buffer(test_fp, twin_buff);
+            GRAMMAR* grammar = generate_grammar();
+            first_follow *ff = get_first_follow_table(grammar);
+            TABLE *parse_table = (TABLE *) malloc(sizeof(TABLE));
+            create_parse_table(ff, parse_table, grammar);
+            STACK *stack = NULL;
+            PARSE_TREE *tree;
+            parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
+            astNode* ast_root = buildAST(tree);
+            printf("\nParse Tree Node Count:\t%d\n", num_parse_nodes);
+            int m1 = num_parse_nodes * sizeof(TREE_NODE);
+            printf("Allocated Memory:\t\t%d\n", m1);
+            printf("AST Node Count:\t\t%d\n", num_ast_nodes);
+            int m2 = num_ast_nodes * sizeof(astNode);
+            printf("Allocated Memory:\t\t%d\n", m2);
+            printf("Compression Percentage:\t\t%2f\n\n", ((m1 - m2) * 100.0 / m1));
         }
 
         if(option == 5)                               // Symbol Table printing
@@ -188,7 +209,10 @@ int main(int argc, char *argv[])
             // gst_print(st);                                        // instead of cool, beautiful print,
             // v_gst_print(st);                                    // do boring print
             // putchar('\n');
+            printf("\n\nPrinting Activation Record Memory:\n");
             v_activation_print(st);
+            putchar('\n');
+            putchar('\n');
             fclose(test_fp);
             free(twin_buff);
             free(parse_table);
@@ -208,6 +232,13 @@ int main(int argc, char *argv[])
                 printf("Error in opening files. Exiting.\n");
                 exit(1);
             }
+
+            clock_t start_time, end_time;
+            double total_CPU_time, total_CPU_time_in_seconds;
+            start_time = clock();
+
+            // do something
+
             populate_ht(hash_table, KEYWORDS_FILE);
             int line_count = 1;
             TWIN_BUFFER *twin_buff = (TWIN_BUFFER *) malloc(sizeof(TWIN_BUFFER));
@@ -231,6 +262,17 @@ int main(int argc, char *argv[])
             fclose(test_fp);
             free(twin_buff);
             free(parse_table);
+
+            // really fast
+
+            end_time = clock();    
+            total_CPU_time  =  (double) (end_time - start_time);
+            total_CPU_time_in_seconds =   total_CPU_time / CLOCKS_PER_SEC;
+
+            printf("\nCPU time: %lf\nCPU time(in seconds): %lf\n\n", 
+                        total_CPU_time, 
+                        total_CPU_time_in_seconds
+                        );
         }
 
         if(option == 9)                                        // Code Generation
@@ -256,14 +298,20 @@ int main(int argc, char *argv[])
             // Test Symbol table
             GST *st = create_global_st();
             traverse_the_multiverse(ast_root, st);
+            semantic_analyser(ast_root, st);
             // test code generation
-            printf("Starting code generation\n");
-            FILE* code_fp = fopen(argv[2], "w");
-            initialise_file(code_fp);
-            generate_the_multiverse(ast_root, st, code_fp);
-            print_return(code_fp);
+            if (!hasSemanticError)
+            {
+                printf("\nStarting Code Generation\n");
+                FILE* code_fp = fopen(argv[2], "w");
+                initialise_file(code_fp);
+                generate_the_multiverse(ast_root, st, code_fp);
+                print_return(code_fp);
+                fclose(code_fp);
+            }
+            else
+                printf("\n Errors Detected. Please rectify errors before Code Generation. Abort.\n\n");
             fclose(test_fp);
-            fclose(code_fp);
             free(twin_buff);
             free(parse_table);
         }
