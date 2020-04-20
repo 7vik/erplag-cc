@@ -625,7 +625,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
             {
                 if (error_line < lhs->child->tree_node->line)
                     printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->child->tree_node->line);
-                error_line = n->child->tree_node->line;
+                error_line = lhs->child->tree_node->line;
                 hasSemanticError = true;
             }
             else if (i != NULL)   // if everything else is fine,
@@ -707,6 +707,8 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                 // types must match before assignment
                 if (i->datatype->simple != get_type_expr(rhs, id_st))
                 {
+                    //printf("%s, %s\n", variables_array[i->datatype->simple], variables_array[get_type_expr(rhs, id_st)]);
+                    //printf("%d %d\n", error_line, lhs->tree_node->line);
                     if (error_line < lhs->tree_node->line)
                         printf("Semantic Error on line %d. Type Mismatch Error.\n",lhs->tree_node->line);
                     error_line = lhs->tree_node->line;
