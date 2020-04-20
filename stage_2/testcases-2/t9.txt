@@ -288,7 +288,7 @@ start
 	declare a, b: integer;
 	declare c: real;
 	declare d: boolean;
-	**x:= a+b;**
+	x:= a+b;
 	[a]:=use module for_loop_demo with parameters b, c, d;
 	switch(a)
 	start
