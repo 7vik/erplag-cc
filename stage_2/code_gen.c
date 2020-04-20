@@ -1564,8 +1564,22 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
-            int offset = id_entry->offset;
-            if(id_entry->datatype->simple != ARRAY)
+            int offset;
+            TYPE* datatype;
+            if(id_entry == NULL)
+            {
+                PARAMS* p = param_lookup(id_st->primogenitor->in_params, id_list_node->tree_node->lexeme);
+                if(p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
+                offset = p->offset - 26;
+                datatype = p->datatype;
+            }
+            else
+            {
+                offset = id_entry->offset;
+                datatype = id_entry->datatype;
+            }
+            if(datatype->simple != ARRAY)
             {
                 fprintf(fp, "xor r15, r15\n");
                 fprintf(fp, "mov r15d, [rbp - %d]\n", offset * 8);
@@ -1574,10 +1588,10 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
                 count++;
             }
 
-            else if(id_entry->datatype->simple == ARRAY)
+            else if(datatype->simple == ARRAY)
             {
-                int start_offset = id_entry->datatype->arrtype->begin_offset;
-                int end_offset = id_entry->datatype->arrtype->end_offset;
+                int start_offset = datatype->arrtype->begin_offset;
+                int end_offset = datatype->arrtype->end_offset;
                 fprintf(fp, "xor r15, r15\n");
                 fprintf(fp, "mov r15d, [rbp - %d]\n", offset * 8);
                 fprintf(fp, "\tmov %s, r15\n", registers_array[count]);
@@ -1600,7 +1614,16 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
         while(id_list_node->node_marker != EPS)
         {
             ID_TABLE_ENTRY* id_entry = st_lookup(id_list_node->tree_node->lexeme, id_st);
-            int offset = id_entry->offset;
+            int offset;
+            if(id_entry == NULL)
+            {
+                PARAMS* p = param_lookup(id_st->primogenitor->in_params, id_list_node->tree_node->lexeme);
+                if(p == NULL)
+                    p = param_lookup(id_st->primogenitor->out_params, id_list_node->tree_node->lexeme);
+                offset = p->offset - 26;
+            }
+            else
+                offset = id_entry->offset;
             fprintf(fp, "mov [rbp - %d], %s\n", offset * 8, registers_array[count]);
             id_list_node = id_list_node->sibling;
             count++;
