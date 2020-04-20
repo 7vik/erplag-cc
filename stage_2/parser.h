@@ -123,4 +123,8 @@ void parse(GRAMMAR *g, FILE *f, TABLE *table, PARSE_TREE **tree, STACK *st, TWIN
 void print_parse_tree(PARSE_TREE *tree, FILE* f);
 void v_print_parse_tree(PARSE_TREE *tree);
 void remove_comments_driver(FILE* fp);
+char *super_stylish_print_charstar(PARSE_TREE *b);
+char *stylish_pr_intttttttt(int x);
+char *stylish_print_charstar(char *input);
+
 #endif

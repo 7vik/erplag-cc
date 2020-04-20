@@ -164,8 +164,7 @@ PARSE_TREE *create_new_node (TREE_NODE *data)
 char *stylish_print_charstar(char *input)
 {
     if (input == NULL)  return "----";
-    return input;
-    
+    return input;    
 }
 
 char *stylish_pr_intttttttt(int x)

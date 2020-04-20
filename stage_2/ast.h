@@ -31,5 +31,7 @@ void print_parse_tree_json(PARSE_TREE *tree,  char *outputfile);
 void print_ast_json(astNode *tree,  char *outputfile);
 void print_parse_tree_JSON(PARSE_TREE *t, FILE *fp);
 void print_ast_JSON(astNode *t, FILE *fp);
-
+void print_ast(astNode* t);
+void v_print_ast_tree(astNode *tree);
+char *amazingly_stylish_print(astNode *n);
 #endif

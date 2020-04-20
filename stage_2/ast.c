@@ -1894,27 +1894,52 @@ void print_parse_tree_json(PARSE_TREE* tree,  char *outputfile)
     fflush(fp);
 }
 
+char *amazingly_stylish_print(astNode *n)
+{
+    if (n == NULL)
+        return "---";
+    else
+        return variables_array[n->node_marker];
+}
+
+void v_print_ast_tree(astNode *tree)
+{
+    if (tree == NULL)   
+        return;         // print nothing
+    if (tree->tree_node != NULL)    
+        printf("%20s%10s%20s%20s\n", 
+                variables_array[tree->node_marker],
+                stylish_pr_intttttttt(tree->is_leaf),
+                amazingly_stylish_print(tree->parent),
+                amazingly_stylish_print(tree->sibling)
+        );
+    if(tree->child  != NULL)
+    {        
+        astNode* temp = tree->child;
+        while(temp != NULL)
+        {
+            v_print_ast_tree(temp);
+            temp = temp->sibling;
+        }
+        printf("\n");
+        return;
+    }
+}
+
 void print_ast(astNode* t)
 {
     if(t==NULL)
         return;
-
     char *s;
-
     // if non terminal
     if(t->child != NULL)
-    {
-        s = variables_array[(t->node_marker)]; //enum to string
-    }
-
+        s = variables_array[(t->node_marker)]; 
     else
     {
-
-        s=malloc(snprintf(NULL, 0, "%20s ------> %20s",t->tree_node->token_name,t->tree_node->lexeme)+1);
-        sprintf(s,"%20s ------> %20s",t->tree_node->token_name,t->tree_node->lexeme);
+        s = malloc(snprintf(NULL, 0, "%s : %s",t->tree_node->token_name,t->tree_node->lexeme)+1);
+        sprintf(s,"%s : %s",t->tree_node->token_name,t->tree_node->lexeme);
     }
-    
-    printf("%20s ------> ", s);
+    printf("%s ; ", s);
     if(t->child  != NULL)
     {        
         astNode* temp = t->child;
@@ -1922,13 +1947,11 @@ void print_ast(astNode* t)
         {
             print_ast(temp);
             if(temp->sibling != NULL)
-                printf(" ----------> ");
+                printf(" -> ");
             temp = temp->sibling;
         }
         printf("\n");
     }
-    else
-        printf("\n");
 }
 
 /*
