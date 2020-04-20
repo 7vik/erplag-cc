@@ -47,9 +47,9 @@ The compilation is broken into the following steps. (see [Dragon Book](https://e
 
 Visualization for each of these steps is available. For instance, this is how a part of the Syntax Tree looks like:
 
-![ast](ast_visual2.png)
+![ast](ast_visual.png)
 
-# Features:
+## Features:
 
 Some salient features of `ERPLAG` are:
 - Scientific notation support for real numbers
@@ -60,7 +60,7 @@ Some salient features of `ERPLAG` are:
 
 Other features like loops, conditionals, scopes, declarations are similar to their Pascal/C counterparts.
 
-# Notes:
+## Notes:
 
 - A big thanks to [Divesh](https://github.com/diveshuttam) for his amazing AST visualiser.
 - [This](https://www.cs.cmu.edu/~aplatzer/course/Compilers/waitegoos.pdf) was an excellent reference.
@@ -68,5 +68,5 @@ Other features like loops, conditionals, scopes, declarations are similar to the
 - nasm [docs](https://www.nasm.us/doc/).
 - nasm debugging [guide](https://www.cs.umb.edu/~cheungr/cs341/Using_gdb_for_Assembly.pdf)
 
-# License
+## License
 [MPL-2.0](https://github.com/7vik/erplag-cc/blob/master/LICENSE)
