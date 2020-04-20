@@ -39,7 +39,7 @@ main:
         mov rdi, int_inMsg ;first argument
         call printf
 
-
+        call exit
         ;take input from the user
         ;scanf("%d", &var1);
 
