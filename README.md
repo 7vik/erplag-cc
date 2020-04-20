@@ -1,6 +1,6 @@
 # erplag-cc
 
-ERPLAG-CC is a compiler for the language "ERPLAG". (see language specifications), written in C.
+ERPLAG-CC is a compiler for the language "ERPLAG". (see specs), written in C.
 
 ERPLAG is derived from names of these 6 Turing Award Winners:
 
