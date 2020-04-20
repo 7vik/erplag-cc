@@ -160,7 +160,8 @@ void bound_check(FILE* fp, int start_offset, int end_offset, int index, int line
     fprintf(fp, "\tmov r8, %d\n", line);
     fprintf(fp, "\txor rax, rax\n");
     fprintf(fp, "\tcall printf\n");
-    fprintf(fp, "\tjmp main_end\n");
+    fprintf(fp, "\tpop r14\n\tpop r13\n");
+    fprintf(fp, "\tcall exit\n");
     fprintf(fp, "%s:\n", exit_label);
     fprintf(fp, "\tpop r14\n\tpop r13\n");
 }
@@ -196,7 +197,7 @@ void bound_check_dynamic(FILE* fp, int start_offset, int end_offset, int index_o
     fprintf(fp, "\tmov r8, %d\n", line);
     fprintf(fp, "\txor rax, rax\n");
     fprintf(fp, "\tcall printf\n");
-    fprintf(fp, "\tjmp main_end\n");
+    fprintf(fp, "\tcall exit\n");
     fprintf(fp, "%s:\n", exit_label);
     fprintf(fp, "\tpop r14\n\tpop r13\n");
 }
@@ -387,8 +388,6 @@ void print_array_id_dynamic(FILE* fp, int type, int base_offset, int start_offse
 // type is enum in this case
 void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset, int type)
 {
-    printf("%d %d %d\n", base_offset, lower_offset, upper_offset);
-    // fprintf(fp, "push rbp\n");
     fprintf(fp, "; prompts user for input\n");
     fprintf(fp, "\tmov ecx, [rbp - %d]\n", lower_offset);
     fprintf(fp, "\tmov r8d, [rbp - %d]\n", upper_offset);
@@ -454,7 +453,6 @@ void ask_for_array(FILE* fp, int base_offset, int lower_offset, int upper_offset
     fprintf(fp, "\tinc r13d\n");
     fprintf(fp, "\tcmp r13d, r12d\n");
     fprintf(fp, "\tjne %s\n", array_input_label);
-    // fprintf(fp, "pop rbp\n");
     fprintf(fp, "\n\n");
 
 
@@ -558,11 +556,9 @@ void evaluate_expr(astNode *ex, ID_SYMBOL_TABLE *id_st, FILE *fp)
         }
         else        // is in ID_ST
         {
-            printf("here\n");
             if(i->datatype->simple != ARRAY)
             {
                 int offset = i->offset;
-                printf("Insidde cdhvggggggggggg\n");
                 fprintf(fp, "\txor rcx, rcx\n");
                 fprintf(fp, "\tmov ecx, [rbp - %d]\n", offset * 8);
                 return;
@@ -934,10 +930,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ASSIGNOP"))
     {
-        printf("jdnn\n");
         evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
        
-        printf("evaluated\n");
        
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
@@ -964,7 +958,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 
             else
             {
-                printf("inside not function index\n");
                 base_offset = i->offset;
                 start_offset = i->datatype->arrtype->begin_offset;
                 end_offset = i->datatype->arrtype->end_offset;
@@ -974,7 +967,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             if(lhs->child->sibling->node_marker != ID)
             {
                 index = atoi(lhs->child->sibling->tree_node->lexeme);
-                printf("index xxxxxxxxxx %d\n", index);
                 fprintf(fp, "\tpush rcx\n\tpush rcx\n");
                 bound_check(fp, start_offset, end_offset, index, line);
                 fprintf(fp, "\tpop rcx\n\tpop rcx\n");
@@ -1042,8 +1034,17 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
-        
-        int offset = id_entry->offset;
+        int offset;
+
+        if(id_entry == NULL)
+        {
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params, n->child->tree_node->lexeme);
+            if(p == NULL)   
+                p = param_lookup(id_st->primogenitor->out_params, n->child->tree_node->lexeme);
+            offset = p->offset - 26;
+        }
+        else        
+            offset = id_entry->offset;
         astNode* range = n->child->sibling;
         int start = atoi(range->child->tree_node->value_if_number);
         int end = atoi(range->child->sibling->tree_node->value_if_number);
@@ -1251,7 +1252,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
             
             return;
         }
-        printf("%s\n", n->child->child->child->tree_node->lexeme);
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->child->child->tree_node->lexeme, id_st);
         
         if(id_entry != NULL)
@@ -1614,7 +1614,6 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
 // trav the ast and create ASM code 
 void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
 {
-    printf("BIG\t%s\n", variables_array[n->node_marker]);
     if (is(n,"program"))
     {
         for(astNode *temp = n->child; temp; temp = temp->sibling)
@@ -1633,7 +1632,6 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
         {
             FUNC_TABLE_ENTRY* func_entry = global_st_lookup(module_node->child->tree_node->lexeme, st);
             char* func_label = generate_func_label(module_node->child->tree_node->lexeme);
-            printf("Generating code for module %s\n", module_node->child->tree_node->lexeme);
             fprintf(fp, "%s\n\n", func_label);
             fprintf(fp, "\tpush rbp\n");
             fprintf(fp, "\tmov rbp, rsp\n");
@@ -1673,7 +1671,6 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
             fprintf(fp, "\tmov rsp, rbp\n");
             fprintf(fp, "\tpop rbp\n");
             fprintf(fp, "\tret\n"); 
-            printf("Generating code for module %s completed\n", module_node->child->tree_node->lexeme);  
             module_node = module_node->sibling; 
         }
 
@@ -1694,7 +1691,7 @@ void generate_the_multiverse(astNode *n, GST *st, FILE* fp)
     return;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 4)
@@ -1752,4 +1749,3 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/

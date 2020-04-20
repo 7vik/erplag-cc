@@ -335,7 +335,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 p = param_lookup(id_st->primogenitor->out_params, ex->child->tree_node->lexeme);
             if(p == NULL)
             {
-                if (error_line < ex->tree_node->line)
+                if (error_line < ex->child->tree_node->line)
                     printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
                 error_line = ex->child->tree_node->line;
                 hasSemanticError = true;
@@ -839,10 +839,16 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
         if (i == NULL)
         {
-            if (error_line < n->child->tree_node->line)
-                printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
-            error_line = n->child->tree_node->line;
-            hasSemanticError = true;
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+            {
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+            }
         }
         else
         {
@@ -1029,43 +1035,21 @@ void traverse_the_multiverse(astNode *n, GST *st)
 
     if (is(n, "moduleDeclarations"))
         for (astNode *temp = n->child; temp; temp = temp->sibling)
-            // st_insert_func_entry(create_function(temp, NULL, NULL, NULL), st);
             lite();
-    /*
-    if (is(n, "otherModules") && n->sibling != NULL)
-    {
-        for (astNode *m = n->child; m; m = m->sibling)
-        {
-            PARAMS *p1 = create_param(m->child->sibling->child);
-            PARAMS *p2 = create_param(m->child->sibling->sibling->child);
-            printf("aaya2\n");
-            ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-            FUNC_TABLE_ENTRY *f = create_function(m->child, p1, p2, id_st);
-            st_insert_func_entry(f, st);
-            traverse_the_universe(m->child->sibling->sibling->sibling, id_st);
-            f->activation_record_size = current_offset;
-            // printf("ALA\t%d", current_offset);
-        }
-    }
-    */
+    
     if (is(n, "driverModule"))
     {
         ID_SYMBOL_TABLE *id_st = create_id_st(NULL);
-        // printf("visited in st: %d\n", id_st->visited);
         FUNC_TABLE_ENTRY *fnew = create_function(NULL, NULL, NULL, id_st);
         st_insert_func_entry(fnew, st);
-        // printf("mil\n");
         traverse_the_universe(n->child, id_st);
         fnew->activation_record_size = current_offset;
-        // printf("ALA\t%d", current_offset);
-        // printf("gaya\n");
     }
     if (is(n, "otherModules"))// && n->sibling == NULL)
     {
         for (astNode *m = n->child; m; m = m->sibling)
         {
             PARAMS *p1 = create_param(m->child->sibling->child);
-            // printf("aaya2\n");
             PARAMS *p2 = NULL;
             if (m->child->sibling->sibling->child->node_marker == EPS)  // no output
                 p2 = NULL;
@@ -1295,7 +1279,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -1337,4 +1321,3 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/
