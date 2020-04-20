@@ -327,16 +327,23 @@ int main(int argc, char *argv[])
             // Test Symbol table
             GST *st = create_global_st();
             traverse_the_multiverse(ast_root, st);
+            printf("%p\n", &ast_root);
             semantic_analyser(ast_root, st);
+            printf("%p\n", &ast_root);
+            gst_print(st);
             // test code generation
             if (!hasSemanticError)
             {
                 printf("\nStarting Code Generation\n");
+                printf("here\n");
                 FILE* code_fp = fopen(argv[2], "w");
                 initialise_file(code_fp);
+                printf("here\n");
                 generate_the_multiverse(ast_root, st, code_fp);
+                printf("here\n");
                 print_return(code_fp);
                 fclose(code_fp);
+                
             }
             else
                 printf("\n Errors Detected. Please rectify errors before Code Generation. Abort.\n\n");
