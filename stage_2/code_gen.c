@@ -934,10 +934,8 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     }
     if (is(n, "ASSIGNOP"))
     {
-        printf("jdnn\n");
         evaluate_expr(n->child->sibling, id_st, fp); // evaluate the rhs
        
-        printf("evaluated\n");
        
         astNode *lhs = n->child;
         astNode *rhs = n->child->sibling;
@@ -1042,8 +1040,17 @@ void generate_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st, FILE* fp)
     if (is(n, "iterativeStmt") && is(n->child, "ID"))   // for lup
     {
         ID_TABLE_ENTRY* id_entry = st_lookup(n->child->tree_node->lexeme, id_st);
-        
-        int offset = id_entry->offset;
+        int offset;
+
+        if(id_entry == NULL)
+        {
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params, n->child->tree_node->lexeme);
+            if(p == NULL)   
+                p = param_lookup(id_st->primogenitor->out_params, n->child->tree_node->lexeme);
+            offset = p->offset - 26;
+        }
+        else        
+            offset = id_entry->offset;
         astNode* range = n->child->sibling;
         int start = atoi(range->child->tree_node->value_if_number);
         int end = atoi(range->child->sibling->tree_node->value_if_number);
