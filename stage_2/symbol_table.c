@@ -335,7 +335,7 @@ int get_type_expr(astNode *ex, ID_SYMBOL_TABLE *id_st)
                 p = param_lookup(id_st->primogenitor->out_params, ex->child->tree_node->lexeme);
             if(p == NULL)
             {
-                if (error_line < ex->tree_node->line)
+                if (error_line < ex->child->tree_node->line)
                     printf("Semantic Error on line %d. Variable '%s' not declared.\n", ex->child->tree_node->line, ex->child->tree_node->lexeme);
                 error_line = ex->child->tree_node->line;
                 hasSemanticError = true;
@@ -804,10 +804,16 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
         ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
         if (i == NULL)
         {
-            if (error_line < n->child->tree_node->line)
-                printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
-            error_line = n->child->tree_node->line;
-            hasSemanticError = true;
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+            {
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. For loop iterator '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+            }
         }
         else
         {
@@ -1238,7 +1244,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-/*
+
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -1280,4 +1286,3 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
-*/
