@@ -786,7 +786,7 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
                     if((start_left != start_right) || (end_left != end_right))
                     {
                         printf("Semantic error on line %d. Range of %s: %d..%d should be same as range of %s: %d..%d\n", 
-                            rhs->child->tree_node->line, rhs->child->tree_node->lexeme,
+                            rhs->child->tree_node->line, lhs->tree_node->lexeme,
                             start_left, end_left, rhs->child->tree_node->lexeme, start_right, end_right);
                         hasSemanticError = true;
                         return;
@@ -1260,7 +1260,7 @@ int get_total_width(ID_SYMBOL_TABLE *st)
     return total;
 }
 
-
+/*
 int main(int argc, char* argv[])
 {
     if(argc != 3)
@@ -1302,3 +1302,4 @@ int main(int argc, char* argv[])
     free(parse_table);
     return 0;
 }
+*/

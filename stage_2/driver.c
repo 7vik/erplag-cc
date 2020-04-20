@@ -192,6 +192,11 @@ int main(int argc, char *argv[])
             PARSE_TREE *tree;
             parse(grammar, test_fp, parse_table, &tree, stack, twin_buff, &line_count);
             astNode* ast_root = buildAST(tree);
+
+            // remove this 
+            print_ast_json(ast_root, "output_ast_tree.json");
+            // before submitting
+
             GST *st = create_global_st();
             traverse_the_multiverse(ast_root, st);
             semantic_analyser(ast_root, st);
