@@ -938,20 +938,35 @@ void traverse_the_universe(astNode *n, ID_SYMBOL_TABLE *id_st)
     {
         // the switch must have been declared beforehand
         ID_TABLE_ENTRY *i = st_lookup(n->child->tree_node->lexeme, id_st);
+        int type;
         if (i == NULL)
         {
-            if (error_line < n->child->tree_node->line)
-                printf("Semantic Error on line %d. Switch '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
-            error_line = n->child->tree_node->line;
-            hasSemanticError = true;
+            PARAMS* p = param_lookup(id_st->primogenitor->in_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+                p = param_lookup(id_st->primogenitor->out_params, n->child->tree_node->lexeme);
+            if(p == NULL)
+            {
+                if (error_line < n->child->tree_node->line)
+                    printf("Semantic Error on line %d. Switch '%s' not defined before use.\n", n->child->tree_node->line, n->child->tree_node->lexeme);
+                error_line = n->child->tree_node->line;
+                hasSemanticError = true;
+                return;
+            }
+            type = p->datatype->simple;
         }
         else
+            type = i->datatype->simple;
+
+        if(type != INTEGER && type!= BOOLEAN)
         {
-            // create a new ID ST
-            id_st->kid_st[id_st->kid_table_count++] = create_id_st(id_st);
-            // and continue traversal from there
-            traverse_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->kid_table_count - 1]);
+            printf("caught: %d\n", n->child->tree_node->line);
+            return;
         }
+
+        // create a new ID ST
+        id_st->kid_st[id_st->kid_table_count++] = create_id_st(id_st);
+        // and continue traversal from there
+        traverse_the_universe(n->child->sibling->sibling, id_st->kid_st[id_st->kid_table_count - 1]);
     }
     if (is(n, "caseStmts"))
         for (astNode *temp = n->child; temp; temp = temp->sibling)
